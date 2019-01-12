@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.Compressor;
 
 public class Superstructure implements Subsystem {
 
-    private Compressor pcm1 = new Compressor();
+    private Compressor compressor = new Compressor();
     
     private static Superstructure mInstance = new Superstructure();
 
@@ -13,6 +13,10 @@ public class Superstructure implements Subsystem {
      */
     public static Superstructure getInstance() {
         return mInstance;
+    }
+
+    private Superstructure() {
+        compressor.setClosedLoopControl(true);
     }
 
     public void update(){
@@ -25,6 +29,14 @@ public class Superstructure implements Subsystem {
 
     public void resetSensors(){
 
+    }
+
+    public void startCompressor() {
+        compressor.start();
+    }
+    
+    public void stopCompressor() {
+        compressor.stop();
     }
 
 }

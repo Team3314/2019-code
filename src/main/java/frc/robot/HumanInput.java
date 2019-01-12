@@ -32,5 +32,15 @@ public class HumanInput {
 	public double getRightThrottle() {
 		return -rightStick.getRawAxis(1);
 	}
+	public boolean getLowGear() {
+		return leftStick.getRawButton(4);
+	}
+	public boolean getHighGear() {
+		return leftStick.getRawButton(6);
+	}
+	public boolean getGyrolock() {
+		return rightStick.getRawButton(1);
+	}
+
 
 }

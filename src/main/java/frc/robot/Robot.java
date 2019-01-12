@@ -8,27 +8,34 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.SparkDrive;
+import frc.robot.subsystems.Camera;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.SparkDrive.driveMode;
 
 /**
- * The VM is configured to automatically run this class, and to call the
+ * The VM is configured to automatically run tHIs class, and to call the
  * functions corresponding to each mode, as described in the TimedRobot
- * documentation. If you change the name of this class or the package after
- * creating this project, you must also update the build.gradle file in the
+ * documentation. If you change the name of tHIs class or the package after
+ * creating tHIs project, you must also update the build.gradle file in the
  * project.
  */
 public class Robot extends TimedRobot {
 
-  DriveTrain drive = DriveTrain.getInstance();
-  Intake intake = Intake.getInstance();
-  Elevator elevator = Elevator.getInstance();
-  Superstructure superS = Superstructure.getInstance();
+  private SparkDrive drive = SparkDrive.getInstance();
+  private Intake intake = Intake.getInstance();
+  private Elevator elevator = Elevator.getInstance();
+  private Camera camera = Camera.getInstance();
+  private Superstructure superStructure = Superstructure.getInstance();
+
+  private HumanInput HI = HumanInput.getInstance();
+
+  boolean lastGyrolock = false;
 
   /**
-   * This function is run when the robot is first started up and should be used
+   * THIs function is run when the robot is first started up and should be used
    * for any initialization code.
    */
   @Override
@@ -37,6 +44,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    superStructure.stopCompressor();
   }
 
   @Override
@@ -48,6 +56,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    drive.resetSensors();
+    superStructure.stopCompressor();
   }
 
   @Override
@@ -55,10 +65,28 @@ public class Robot extends TimedRobot {
 
     allPeriodic();
 
+    // Drive Controls
+		if(HI.getGyrolock()) {
+			if(!lastGyrolock) {
+				drive.setDriveMode(driveMode.GYROLOCK);
+			}
+			drive.setDesiredSpeed(HI.getLeftThrottle());
+		}
+		
+		if(HI.getHighGear()) {
+			drive.setHighGear(true);
+		}
+		else if(HI.getLowGear()) {
+      drive.setHighGear(false);
+    }
+    drive.setStickInputs(HI.getLeftThrottle(), HI.getRightThrottle());
+
+    lastGyrolock = HI.getGyrolock();
   }
 
   @Override
   public void testInit() {
+    superStructure.startCompressor();
   }
 
   @Override
@@ -67,10 +95,11 @@ public class Robot extends TimedRobot {
 
   public void allPeriodic() {
 
+    camera.update();
     drive.update();
     intake.update();
     elevator.update();
-    superS.update();
+    superStructure.update();
 
   }
 

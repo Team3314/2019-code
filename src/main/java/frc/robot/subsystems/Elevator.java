@@ -4,15 +4,20 @@ public class Elevator implements Subsystem {
 
     private static Elevator mInstance = new Elevator();
 
-    /**
-     * @return the mInstance
-     */
+    public enum elevatorState {
+
+    }
+
     public static Elevator getInstance() {
         return mInstance;
     }
 
-    public void update(){
+    private elevatorState currentState;
 
+    public void update(){
+        switch(currentState) {
+
+        }
     }
 
     public void outputToSmartDashboard(){
