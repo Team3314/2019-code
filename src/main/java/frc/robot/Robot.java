@@ -33,6 +33,7 @@ public class Robot extends TimedRobot {
   private HumanInput HI = HumanInput.getInstance();
 
   boolean lastGyrolock = false;
+  boolean lastVision = false;
 
   /**
    * THIs function is run when the robot is first started up and should be used
@@ -72,7 +73,13 @@ public class Robot extends TimedRobot {
 			}
 			drive.setDesiredSpeed(HI.getLeftThrottle());
 		}
-		
+    
+    if (HI.getVision()) {
+      if(!lastVision) {
+        drive.setDriveMode(driveMode.VISION_CONTROL);
+      }
+    }
+
 		if(HI.getHighGear()) {
 			drive.setHighGear(true);
 		}
@@ -82,6 +89,7 @@ public class Robot extends TimedRobot {
     drive.setStickInputs(HI.getLeftThrottle(), HI.getRightThrottle());
 
     lastGyrolock = HI.getGyrolock();
+    lastVision = HI.getVision();
   }
 
   @Override

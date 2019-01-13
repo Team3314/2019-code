@@ -41,6 +41,8 @@ public class HumanInput {
 	public boolean getGyrolock() {
 		return rightStick.getRawButton(1);
 	}
-
+	public boolean getVision() {
+		return leftStick.getRawButton(1);
+	}
 
 }
