@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 public class Constants {
 
+
 //Conversions	
 		public static int kDriveEncoderCodesPerRev = 8192;
 		public static double kDegToTicksConvFactor = .038888888888888;
@@ -26,27 +27,50 @@ public class Constants {
 		public static double kDriveClosedLoopRampTime = 0;
 		public static double kMaxSpeed = 14; //fps
 
+//Elevator
+		public static int kElevatorCruiseVelocity = 0;
+		public static int kElevatorAcceleration = 0;
+		public static final double kElevatorOpenLoopRampRate = 0;
+		public static final int kElevatorContinuousCurrentLimit = 0;
+		public static final double kElevatorDeadband = 0;
+		public static final int kElevatorPeakCurrentLimit = 0;
+		public static final int kElevatorCurrentDuration = 0;
+		public static final double kElevatorClosedLoopRampTime = 0;
+		public static final int kMaxElevatorPosition = 0;
+		public static final int kMinElevatorPosition = 0;
+
+		public static final int kElevatorPickup = 0;
+		public static final int kElevatorLevel1 = 0;
+		public static final int kElevatorLevel2 = 0;
+		public static final int kElevatorLevel3 = 0;
+
+
 //PID Constants
 	//Gyrolock
 		public static double kGyroLock_kP = .025;
 		public static double kGyroLock_kI = 0;
 		public static double kGyroLock_kD = 0;
 		public static double kGyroLock_kF = 0;
-
+	//Velocity
 		public static double kVelocity_kP = .1;
 		public static double kVelocity_kI = 0;
 		public static double kVelocity_kD = 0;
 		public static double kVelocity_kF = .043;
 		public static double kVelocity_kIZone = 0;
 		public static int kVelocitySlot = 1;
-
+	//Vision
 		public static double kVisionCtrl_kP = .01;
 		public static double kVisionCtrl_kI = 0;
 		public static double kVisionCtrl_kD = 0;
 		public static double kVisionCtrl_kF = 0;
 		public static double kVisionCtrl_kIZone = 0;
 		public static int kVisionCtrlSlot = 3;
-
+	//Elevator
+		public static double kElevator_kP = 0;
+		public static double kElevator_kI = 0;
+		public static double kElevator_kD = 0;
+		public static double kElevator_kF = 0;
+		public static int kElevatorSlot = 0;
 		
 //Drive Motion Profile
 		public static int kDriveMotionControlFramePeriod = 5; //ms
@@ -77,5 +101,6 @@ public class Constants {
     //Gears
 		public static Value kHighGear = Value.kForward;
 		public static Value kLowGear = Value.kReverse;
+		public static double kElevatorVoltageScale;
 
 }
