@@ -1,3 +1,5 @@
+package frc.robot.autos;
+
 public abstract class Autonomous {
 
     public abstract void reset();

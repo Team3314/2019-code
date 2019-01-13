@@ -41,6 +41,24 @@ public class HumanInput {
 	public boolean getGyrolock() {
 		return rightStick.getRawButton(1);
 	}
-
+	//TODO buttons for elevator
+	public boolean getElevatorPickup() {
+		return false;
+	}
+	public boolean getElevatorLevel1() {
+		return false;
+	}
+	public boolean getElevatorLevel2() {
+		return false;
+	}
+	public boolean getElevatorLevel3() {
+		return false;
+	}
+	public boolean getElevatorManual() {
+		return false;
+	}
+	public double getElevatorSpeed() {
+		return 0;
+	}
 
 }

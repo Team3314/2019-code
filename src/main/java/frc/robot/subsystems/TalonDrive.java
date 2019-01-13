@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
-import frc.robot.GyroPIDOutput;
+import frc.robot.CustomPIDOutput;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -55,7 +55,7 @@ public class TalonDrive implements Subsystem {
     public Camera camera;
     
     //PID
-	private GyroPIDOutput gyroPIDOutput;
+	private CustomPIDOutput gyroPIDOutput;
 	private PIDController gyroControl;
 
     private double rawLeftSpeed, rawRightSpeed, leftStickInput, rightStickInput, desiredLeftSpeed, desiredRightSpeed, desiredAngle, desiredPosition;
@@ -87,8 +87,8 @@ public class TalonDrive implements Subsystem {
     			controlMode = ControlMode.PercentOutput;
     			break;
     		case GYROLOCK:
-    			rawLeftSpeed = desiredLeftSpeed + gyroPIDOutput.turnSpeed;
-    			rawRightSpeed = desiredRightSpeed - gyroPIDOutput.turnSpeed;
+    			rawLeftSpeed = desiredLeftSpeed + gyroPIDOutput.getOutput();
+    			rawRightSpeed = desiredRightSpeed - gyroPIDOutput.getOutput();
     			gyroControl.setSetpoint(desiredAngle);
     			setNeutralMode(NeutralMode.Brake);
     			controlMode = ControlMode.PercentOutput;
@@ -128,7 +128,7 @@ public class TalonDrive implements Subsystem {
     	navx = new AHRS(SPI.Port.kMXP);
     	
     	//Gyro PID
-    	gyroPIDOutput = new GyroPIDOutput();
+    	gyroPIDOutput = new CustomPIDOutput();
     	gyroControl = new PIDController(Constants.kGyroLock_kP, Constants.kGyroLock_kI, Constants.kGyroLock_kD,
     		Constants.kGyroLock_kF, navx, gyroPIDOutput);
 		//Sets the PID controller to treat 180 and -180 to be the same point, 
@@ -384,7 +384,7 @@ public class TalonDrive implements Subsystem {
     	SmartDashboard.putNumber("Raw Right Speed", rawRightSpeed);
     	SmartDashboard.putNumber("Desired Angle", desiredAngle);
     	SmartDashboard.putNumber("Current angle", navx.getAngle());
-    	SmartDashboard.putNumber("Gyro adjustment", gyroPIDOutput.turnSpeed);
+    	SmartDashboard.putNumber("Gyro adjustment", gyroPIDOutput.getOutput());
     	SmartDashboard.putNumber("Desired Left Speed", desiredLeftSpeed);
     	SmartDashboard.putNumber("Desired Right Speed", desiredRightSpeed);
     	SmartDashboard.putNumber("Left Voltage", mLeftMaster.getMotorOutputVoltage());

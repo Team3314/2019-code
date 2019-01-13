@@ -24,12 +24,12 @@ public class Elevator implements Subsystem {
         return mInstance;
     }
 
+    private WPI_TalonSRX mMaster;
+
     private ElevatorControlMode currentMode;
 
     private ControlMode talonControlMode;
     private double demand;
-
-    private WPI_TalonSRX mMaster;
 
     private double desiredPosition, manualCommand;
 
@@ -65,7 +65,8 @@ public class Elevator implements Subsystem {
 		mMaster.configForwardSoftLimitThreshold(Constants.kMaxElevatorPosition, Constants.kCANTimeout);
 		mMaster.configReverseSoftLimitThreshold(Constants.kMinElevatorPosition, Constants.kCANTimeout);
 		mMaster.configForwardSoftLimitEnable(true, Constants.kCANTimeout);
-		mMaster.configReverseSoftLimitEnable(true, Constants.kCANTimeout);
+        mMaster.configReverseSoftLimitEnable(true, Constants.kCANTimeout);
+        //TODO add limit switches
 
         mMaster.config_kP(Constants.kElevatorSlot, Constants.kElevator_kP, Constants.kCANTimeout);
         mMaster.config_kI(Constants.kElevatorSlot, Constants.kElevator_kI, Constants.kCANTimeout);
@@ -102,6 +103,10 @@ public class Elevator implements Subsystem {
 
     private void setNeutralMode(NeutralMode mode) {
         mMaster.setNeutralMode(mode);
+    }
+
+    public void setState(ElevatorControlMode newMode) {
+        currentMode = newMode;
     }
 
     public ElevatorControlMode getState() {

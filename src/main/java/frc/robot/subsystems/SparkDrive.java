@@ -10,14 +10,17 @@ import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SerialPort;
-import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
-import frc.robot.GyroPIDOutput;
+import frc.robot.CustomPIDOutput;
+
+/*
+SPARK FF TO DUTY CYCLE CONVERSION
+DUTY CYCLE = FF * 300
+*/
 
 public class SparkDrive implements Subsystem {
 
@@ -25,8 +28,6 @@ public class SparkDrive implements Subsystem {
     private AHRS navx;
 
     private CANSparkMax mLeftMaster, mLeftSlave1, mLeftSlave2, mRightMaster, mRightSlave1, mRightSlave2;
-
-    private Encoder leftRIOEncoder, rightRIOEncoder;
 
     private DoubleSolenoid shifter;
     
@@ -56,7 +57,7 @@ public class SparkDrive implements Subsystem {
     private double leftDrivePositionInches, rightDrivePositionInches, leftDriveSpeedRPM, rightDriveSpeedRPM;
 
     //PID
-	private GyroPIDOutput gyroPIDOutput;
+	private CustomPIDOutput gyroPIDOutput;
     private PIDController gyroControl;
     private CANPIDController leftDrive, rightDrive;
     private CANEncoder leftEncoder, rightEncoder;
@@ -78,9 +79,6 @@ public class SparkDrive implements Subsystem {
     	pdp  = new PowerDistributionPanel(0);
     	shifter = new DoubleSolenoid(0, 1);
         navx = new AHRS(SerialPort.Port.kMXP);
-
-        leftRIOEncoder = new Encoder(0, 1, false, EncodingType.k4X);
-        rightRIOEncoder = new Encoder(2, 3, false, EncodingType.k4X);
 
         mLeftMaster = new CANSparkMax(0, CANSparkMaxLowLevel.MotorType.kBrushless);
         mLeftMaster.setCANTimeout(Constants.kCANTimeout);
@@ -132,7 +130,7 @@ public class SparkDrive implements Subsystem {
 
         shifter = new DoubleSolenoid(0, 1);
 
-        gyroPIDOutput = new GyroPIDOutput();
+        gyroPIDOutput = new CustomPIDOutput();
     	gyroControl = new PIDController(Constants.kGyroLock_kP, Constants.kGyroLock_kI, Constants.kGyroLock_kD,
     		Constants.kGyroLock_kF, navx, gyroPIDOutput);
 		//Sets the PID controller to treat 180 and -180 to be the same point, 
@@ -164,8 +162,8 @@ public class SparkDrive implements Subsystem {
                 controlMode = ControlType.kDutyCycle;
                 break;
             case GYROLOCK:
-                rawLeftSpeed = desiredLeftSpeed + gyroPIDOutput.turnSpeed;
-                rawRightSpeed = desiredRightSpeed - gyroPIDOutput.turnSpeed;
+                rawLeftSpeed = desiredLeftSpeed + gyroPIDOutput.getOutput();
+                rawRightSpeed = desiredRightSpeed - gyroPIDOutput.getOutput();
                 gyroControl.setSetpoint(desiredAngle);
                 setIdleMode(IdleMode.kBrake);
                 controlMode = ControlType.kDutyCycle;
@@ -177,8 +175,8 @@ public class SparkDrive implements Subsystem {
                 controlMode = ControlType.kDutyCycle;
                 break;
             case VELOCITY:
-                rawLeftSpeed = leftStickInput + camera.getSteeringAdjust();
-                rawRightSpeed = rightStickInput - camera.getSteeringAdjust();
+                rawLeftSpeed = desiredLeftSpeed;
+                rawRightSpeed = desiredRightSpeed;
                 setIdleMode(IdleMode.kBrake);
                 controlMode = ControlType.kDutyCycle;
                 break;
@@ -311,7 +309,7 @@ public class SparkDrive implements Subsystem {
     	SmartDashboard.putNumber("Raw Right Speed", rawRightSpeed);
     	SmartDashboard.putNumber("Desired Angle", desiredAngle);
     	SmartDashboard.putNumber("Current angle", navx.getAngle());
-    	SmartDashboard.putNumber("Gyro adjustment", gyroPIDOutput.turnSpeed);
+    	SmartDashboard.putNumber("Gyro adjustment", gyroPIDOutput.getOutput());
     	SmartDashboard.putNumber("Desired Left Speed", desiredLeftSpeed);
     	SmartDashboard.putNumber("Desired Right Speed", desiredRightSpeed);
     	SmartDashboard.putNumber("Left Voltage", mLeftMaster.getAppliedOutput());
@@ -330,7 +328,7 @@ public class SparkDrive implements Subsystem {
     }
   
     public void resetDriveEncoders() {
-	}
+    }
     
     public void resetSensors() {
     	navx.reset();

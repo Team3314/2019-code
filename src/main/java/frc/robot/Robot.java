@@ -14,6 +14,7 @@ import frc.robot.subsystems.CargoIntake;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.HatchMechanism;
 import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.Elevator.ElevatorControlMode;
 import frc.robot.subsystems.SparkDrive.driveMode;
 
 /**
@@ -83,6 +84,13 @@ public class Robot extends TimedRobot {
     }
     drive.setStickInputs(HI.getLeftThrottle(), HI.getRightThrottle());
 
+    if(HI.getElevatorManual()) { 
+      elevator.setState(ElevatorControlMode.MANUAL);
+      elevator.setManualCommand(HI.getElevatorSpeed());
+    }
+    else {
+      elevator.setState(ElevatorControlMode.MOTION_MAGIC);
+    }
     lastGyrolock = HI.getGyrolock();
   }
 
