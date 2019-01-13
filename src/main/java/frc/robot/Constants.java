@@ -80,19 +80,18 @@ public class Constants {
 
 	
 //camera
-		public static int kLEDOn = 0;
+		public static int kLEDDefault = 0;
 		public static int kLEDOff = 1;
-		public static int kLEDBlink = 2;
+		public static int kLEDOn = 3;
+
 		public static int kVisionProcessorMode = 0;
 		public static int kDriverCameraMode = 1;
+		
 		public static int kSnapshotOff = 0;
 		public static int kSnapshotOn = 1;
 		
-		public static double kTrackingHeight = 11-4; //cube - camera
+		public static double kCameraHeight = 13/16; //inches
 		public static double kMountingAngle = 10; //degrees
-		
-		public static double kMinMotorCmd = 0.175;//0-1
-		public static double kMaxTrackingRPM = 0;
 	
 //Gyro
 		public static double kGyroOutputRange = .5;

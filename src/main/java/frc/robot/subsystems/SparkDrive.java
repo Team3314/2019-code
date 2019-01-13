@@ -169,8 +169,8 @@ public class SparkDrive implements Subsystem {
                 controlMode = ControlType.kDutyCycle;
                 break;
             case VISION_CONTROL:
-                rawLeftSpeed = leftStickInput + camera.getSteeringAdjust();
-                rawRightSpeed = rightStickInput - camera.getSteeringAdjust();
+                rawLeftSpeed = desiredLeftSpeed + camera.getCorrection();
+                rawRightSpeed = desiredRightSpeed - camera.getCorrection();
                 setIdleMode(IdleMode.kBrake);
                 controlMode = ControlType.kDutyCycle;
                 break;

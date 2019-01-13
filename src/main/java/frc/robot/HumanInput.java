@@ -60,5 +60,8 @@ public class HumanInput {
 	public double getElevatorSpeed() {
 		return 0;
 	}
+	public boolean getVision() {
+		return leftStick.getRawButton(1);
+	}
 
 }
