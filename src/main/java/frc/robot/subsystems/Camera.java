@@ -23,6 +23,7 @@ public class Camera implements Subsystem {
 
 	}
 
+	
 	public double getSteeringAdjust() {
 		return 0;
 	}

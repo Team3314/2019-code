@@ -10,8 +10,9 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.robot.subsystems.SparkDrive;
 import frc.robot.subsystems.Camera;
+import frc.robot.subsystems.CargoIntake;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.HatchMechanism;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.SparkDrive.driveMode;
 
@@ -25,10 +26,11 @@ import frc.robot.subsystems.SparkDrive.driveMode;
 public class Robot extends TimedRobot {
 
   private SparkDrive drive = SparkDrive.getInstance();
-  private Intake intake = Intake.getInstance();
+  private CargoIntake cargoIntake = CargoIntake.getInstance();
+  private HatchMechanism hatch = HatchMechanism.getInstance();
   private Elevator elevator = Elevator.getInstance();
   private Camera camera = Camera.getInstance();
-  private Superstructure superStructure = Superstructure.getInstance();
+  private Superstructure superstructure = Superstructure.getInstance();
 
   private HumanInput HI = HumanInput.getInstance();
 
@@ -44,7 +46,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    superStructure.stopCompressor();
+    superstructure.stopCompressor();
   }
 
   @Override
@@ -57,7 +59,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     drive.resetSensors();
-    superStructure.stopCompressor();
+    superstructure.stopCompressor();
   }
 
   @Override
@@ -86,20 +88,32 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testInit() {
-    superStructure.startCompressor();
+    superstructure.startCompressor();
   }
 
   @Override
   public void testPeriodic() {
   }
 
+  public void outputToSmartDashboard() {
+    
+		cargoIntake.outputToSmartDashboard();
+		drive.outputToSmartDashboard();
+    hatch.outputToSmartDashboard();
+    elevator.outputToSmartDashboard();
+		camera.outputToSmartDashboard();
+		superstructure.outputToSmartDashboard();
+  }
+
   public void allPeriodic() {
 
     camera.update();
     drive.update();
-    intake.update();
+    cargoIntake.update();
     elevator.update();
-    superStructure.update();
+    superstructure.update();
+    hatch.update();
+
 
   }
 
