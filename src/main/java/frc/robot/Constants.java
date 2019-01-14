@@ -44,7 +44,6 @@ public class Constants {
 		public static final int kElevatorLevel2 = 0;
 		public static final int kElevatorLevel3 = 0;
 
-
 //PID Constants
 	//Gyrolock
 		public static double kGyroLock_kP = .025;
@@ -65,6 +64,12 @@ public class Constants {
 		public static double kVisionCtrl_kF = 0;
 		public static double kVisionCtrl_kIZone = 0;
 		public static int kVisionCtrlSlot = 3;
+	//Rio Position
+		public static final double kRioPosition_kP = 0;
+		public static final double kRioPosition_kI = 0;
+		public static final double kRioPosition_kD = 0;
+		public static final double kRioPosition_kF = 0;
+
 	//Elevator
 		public static double kElevator_kP = 0;
 		public static double kElevator_kI = 0;
