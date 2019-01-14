@@ -1,5 +1,8 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import frc.robot.Constants;
+
 public class HatchMechanism implements Subsystem {
 
     private static HatchMechanism mInstance = new HatchMechanism();
@@ -7,6 +10,8 @@ public class HatchMechanism implements Subsystem {
     public static HatchMechanism getInstance() {
         return mInstance;
     }
+
+    private DoubleSolenoid hatchPiston;
 
     @Override
     public void update() {

@@ -41,7 +41,7 @@ public class HumanInput {
 	public boolean getGyrolock() {
 		return rightStick.getRawButton(1);
 	}
-	//TODO buttons for elevator
+	//TODO buttons for elevator and intakes
 	public boolean getElevatorPickup() {
 		return false;
 	}
@@ -59,6 +59,18 @@ public class HumanInput {
 	}
 	public double getElevatorSpeed() {
 		return 0;
+	}
+	public boolean getCargoIntake() {
+		return false;
+	}
+	public boolean getCargoRelease() {
+		return false;
+	}
+	public boolean getHatchMechOpen() {
+		return false;
+	}
+	public boolean getHatchMechClosed() {
+		return false;
 	}
 	public boolean getVision() {
 		return leftStick.getRawButton(1);

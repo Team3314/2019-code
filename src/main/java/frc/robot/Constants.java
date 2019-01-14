@@ -44,6 +44,10 @@ public class Constants {
 		public static final int kElevatorLevel2 = 0;
 		public static final int kElevatorLevel3 = 0;
 
+//Cargo Intake
+		public static final int kIntakeContinuousCurrentLimit = 0; //last year 15a
+		public static final int kIntakePeakCurrentLimit = 0; //last year 15a
+		public static final int kIntakeCurrentDuration = 0; //last year 100ms
 //PID Constants
 	//Gyrolock
 		public static double kGyroLock_kP = .025;
@@ -106,6 +110,10 @@ public class Constants {
     //Gears
 		public static Value kHighGear = Value.kForward;
 		public static Value kLowGear = Value.kReverse;
+		//subject to change
+		public static Value kOpen = Value.kForward;
+		public static Value kClosed = Value.kForward;
+
 		public static double kElevatorVoltageScale;
 
 }
