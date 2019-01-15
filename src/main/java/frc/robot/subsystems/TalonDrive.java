@@ -58,7 +58,7 @@ public class TalonDrive implements Subsystem {
 	private CustomPIDOutput gyroPIDOutput;
 	private PIDController gyroControl;
 
-    private double rawLeftSpeed, rawRightSpeed, leftStickInput, rightStickInput, desiredLeftSpeed, desiredRightSpeed, desiredAngle, desiredPosition;
+    private double rawLeftSpeed, rawRightSpeed, desiredLeftSpeed, desiredRightSpeed, desiredAngle, desiredPosition;
     
     private int leftDrivePositionTicks, rightDrivePositionTicks, leftDriveSpeedTicks, rightDriveSpeedTicks;
     
@@ -94,15 +94,10 @@ public class TalonDrive implements Subsystem {
     			controlMode = ControlMode.PercentOutput;
     			break;
     		case VISION_CONTROL:
-    			rawLeftSpeed = leftStickInput + camera.getSteeringAdjust();
-    			rawRightSpeed = rightStickInput - camera.getSteeringAdjust();
+    			rawLeftSpeed = desiredLeftSpeed + camera.getCorrection();
+    			rawRightSpeed = desiredRightSpeed - camera.getCorrection();
     			setNeutralMode(NeutralMode.Brake);
     			controlMode = ControlMode.PercentOutput;
-    			/*
-    			rawLeftSpeed = camera.getSteeringAdjust();
-    			rawRightSpeed = -camera.getSteeringAdjust();
-    			controlMode = ControlMode.MotionMagic;
-    			*/
     			break;
     		case MOTION_PROFILE:
     			setNeutralMode(NeutralMode.Brake);

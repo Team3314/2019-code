@@ -66,14 +66,20 @@ public class HumanInput {
 	public boolean getCargoRelease() {
 		return false;
 	}
-	public boolean getHatchMechOpen() {
+	public boolean getGripperUp() {
 		return false;
 	}
-	public boolean getHatchMechClosed() {
+	public boolean getGripperDown() {
+		return false;
+	}
+	public boolean getSliderIn() {
+		return false;
+	}
+	public boolean getSliderOut() {
 		return false;
 	}
 	public boolean getVision() {
 		return leftStick.getRawButton(1);
 	}
-
+	
 }

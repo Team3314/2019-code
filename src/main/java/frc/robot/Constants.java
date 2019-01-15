@@ -110,9 +110,12 @@ public class Constants {
     //Gears
 		public static Value kHighGear = Value.kForward;
 		public static Value kLowGear = Value.kReverse;
-		//subject to change
-		public static Value kOpen = Value.kForward;
-		public static Value kClosed = Value.kForward;
+	
+	//Hatch mechanism
+		public static Value kGripperUp = Value.kForward;
+		public static Value kGripperDown = Value.kReverse;
+		public static Value kSliderIn = Value.kForward;
+		public static Value kSliderOut = Value.kReverse;
 
 		public static double kElevatorVoltageScale;
 

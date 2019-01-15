@@ -51,7 +51,7 @@ public class SparkDrive implements Subsystem {
     //Hardware states
     private boolean mIsHighGear;
     private IdleMode idleMode;
-    private double rawLeftSpeed, rawRightSpeed, leftStickInput, rightStickInput, desiredLeftSpeed, desiredRightSpeed, desiredAngle, desiredPosition,
+    private double rawLeftSpeed, rawRightSpeed, desiredLeftSpeed, desiredRightSpeed, desiredAngle, desiredPosition,
     leftDrivePositionTicks, rightDrivePositionTicks, leftDriveSpeedTicks, rightDriveSpeedTicks;
     
     private double leftDrivePositionInches, rightDrivePositionInches, leftDriveSpeedRPM, rightDriveSpeedRPM;
@@ -127,8 +127,6 @@ public class SparkDrive implements Subsystem {
         mRightSlave2.setCANTimeout(Constants.kCANTimeout);
         mRightSlave2.follow(mRightMaster);
         mRightSlave2.setSmartCurrentLimit(Constants.kNEODriveCurrentLimit);
-
-        shifter = new DoubleSolenoid(0, 1);
 
         gyroPIDOutput = new CustomPIDOutput();
     	gyroControl = new PIDController(Constants.kGyroLock_kP, Constants.kGyroLock_kI, Constants.kGyroLock_kD,

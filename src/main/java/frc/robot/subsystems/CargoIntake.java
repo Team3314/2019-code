@@ -27,16 +27,16 @@ public class CargoIntake implements Subsystem {
 
     private CargoIntake() {
         mIntakeMotor = new WPI_TalonSRX(63);
-        mIntakeMotor.configContinuousCurrentLimit(Constants.kIntakeContinuousCurrentLimit, 0);
-        mIntakeMotor.configPeakCurrentLimit(Constants.kIntakePeakCurrentLimit, 0);
-        mIntakeMotor.configPeakCurrentDuration(Constants.kIntakeCurrentDuration, 0);
+        mIntakeMotor.configContinuousCurrentLimit(Constants.kIntakeContinuousCurrentLimit, Constants.kCANTimeout);
+        mIntakeMotor.configPeakCurrentLimit(Constants.kIntakePeakCurrentLimit, Constants.kCANTimeout);
+        mIntakeMotor.configPeakCurrentDuration(Constants.kIntakeCurrentDuration, Constants.kCANTimeout);
         mIntakeMotor.enableCurrentLimit(true);
         mIntakeMotor.setInverted(false);
-        mIntakeMotor.configPeakOutputForward(1, 0);
-        mIntakeMotor.configPeakOutputReverse(-1, 0);
-        mIntakeMotor.configForwardSoftLimitEnable(false, 0);
-        mIntakeMotor.configReverseSoftLimitEnable(false, 0);
-        mIntakeMotor.configVoltageCompSaturation(12.0, 0);
+        mIntakeMotor.configPeakOutputForward(1, Constants.kCANTimeout);
+        mIntakeMotor.configPeakOutputReverse(-1, Constants.kCANTimeout);
+        mIntakeMotor.configForwardSoftLimitEnable(false, Constants.kCANTimeout);
+        mIntakeMotor.configReverseSoftLimitEnable(false, Constants.kCANTimeout);
+        mIntakeMotor.configVoltageCompSaturation(12, Constants.kCANTimeout);
         mIntakeMotor.enableVoltageCompensation(true);
     }
 
