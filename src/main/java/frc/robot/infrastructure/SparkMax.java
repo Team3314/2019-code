@@ -1,8 +1,14 @@
 package frc.robot.infrastructure;
 
-import edu.wpi.first.wpilibj.SpeedController;
+import com.revrobotics.CANSparkMax;
 
-public class SparkMax implements SpeedController {
+public class SparkMax extends SmartSpeedController {
+
+    CANSparkMax spark;
+
+    public SparkMax(CANSparkMax spark) {
+        this.spark = spark;
+    }
 
     @Override
     public void pidWrite(double output) {
@@ -37,6 +43,16 @@ public class SparkMax implements SpeedController {
     @Override
     public void stopMotor() {
 
+    }
+
+    @Override
+    public int getEncoderCounts() {
+        return 0;
+    }
+
+    @Override
+    public double getVelocity() {
+        return 0;
     }
 
 }
