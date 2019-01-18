@@ -1,6 +1,9 @@
 
 package frc.robot;
 
+import com.revrobotics.CANSparkMaxLowLevel;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 public class Constants {
@@ -26,6 +29,7 @@ public class Constants {
 		public static double kDriveVoltageScale = 12.0;
 		public static double kDriveClosedLoopRampTime = 0;
 		public static double kMaxSpeed = 14; //fps
+		public static MotorType kSparkMotorType = CANSparkMaxLowLevel.MotorType.kBrushless;
 
 //Elevator
 		public static int kElevatorCruiseVelocity = 0;

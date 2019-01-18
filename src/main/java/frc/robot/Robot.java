@@ -9,6 +9,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.robot.subsystems.SparkDrive;
+import frc.robot.infrastructure.Drivetrain;
 import frc.robot.subsystems.Camera;
 import frc.robot.subsystems.CargoIntake;
 import frc.robot.subsystems.Elevator;
@@ -26,12 +27,15 @@ import frc.robot.subsystems.SparkDrive.driveMode;
  */
 public class Robot extends TimedRobot {
 
-  private SparkDrive drive = SparkDrive.getInstance();
+  private RobotMap map = new RobotMap();
+  private Drivetrain drive = new Drivetrain(map.leftDrive, map.rightDrive);
   private CargoIntake cargoIntake = CargoIntake.getInstance();
   private HatchMechanism hatch = HatchMechanism.getInstance();
   private Elevator elevator = Elevator.getInstance();
   private Camera camera = Camera.getInstance();
   private Superstructure superstructure = Superstructure.getInstance();
+
+
 
   private HumanInput HI = HumanInput.getInstance();
 

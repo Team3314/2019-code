@@ -6,7 +6,7 @@ public interface CustomEncoder {
         Get position
         get velocity
     */
-    public int getEncoderCounts();
+    public double getEncoderCounts();
 
     public double getVelocity();
 
