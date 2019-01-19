@@ -35,6 +35,11 @@ public class TalonSRX extends SmartSpeedController {
     }
 
     @Override
+    public void zero() {
+        talon.setSelectedSensorPosition(0,0,0);
+    }
+
+    @Override
     public double getOutputCurrent() {
         return talon.getOutputCurrent();
     }
@@ -61,7 +66,7 @@ public class TalonSRX extends SmartSpeedController {
         switch(mode) {
             case kIdle:
                 break;
-            case kDuty_Cycle:
+            case kDutyCycle:
                 this.mode = ControlMode.PercentOutput;
                 break;
             case kVoltage:

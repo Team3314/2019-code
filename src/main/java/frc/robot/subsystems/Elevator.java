@@ -9,47 +9,41 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants;
+import frc.robot.infrastructure.Lift;
+import frc.robot.infrastructure.SensorTransmission;
+import frc.robot.infrastructure.SpeedControllerMode;
 
-public class Elevator implements Subsystem {
+public class Elevator extends Lift implements Subsystem {
 
-    private static Elevator mInstance = new Elevator();
-
-    public enum ElevatorControlMode {
+    public enum ElevatorStateMachine {
         MOTION_MAGIC,
         MANUAL
     }
 
-    public static Elevator getInstance() {
-        return mInstance;
-    }
-
-    private WPI_TalonSRX mMaster;
-
-    private ElevatorControlMode currentMode;
-
-    private ControlMode talonControlMode;
+    private ElevatorStateMachine currentElevatorMode = ElevatorStateMachine.MOTION_MAGIC;
+    private SpeedControllerMode controlMode;
     private double demand;
 
     private double desiredPosition, manualCommand;
 
     public void update(){
-        switch(currentMode) {
+        switch(currentElevatorMode) {
             case MOTION_MAGIC:
-                talonControlMode = ControlMode.MotionMagic;
+                controlMode = SpeedControllerMode.kMotionMagic;
                 demand = desiredPosition;
                 break;
             case MANUAL:
-                talonControlMode = ControlMode.PercentOutput;
+                controlMode = SpeedControllerMode.kDutyCycle;
                 demand = manualCommand;
                 break;
         }
-        mMaster.set(talonControlMode, demand);
+        transmission.set(demand, controlMode);
     }
 
-    public Elevator() {
+    public Elevator(SensorTransmission transmission) {
+        super(transmission);
 
-        mMaster = new WPI_TalonSRX(6);
+        /*mMaster = new WPI_TalonSRX(6);
         mMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, Constants.kCANTimeout);
     	mMaster.setSensorPhase(false);
     	mMaster.setInverted(false);
@@ -74,23 +68,23 @@ public class Elevator implements Subsystem {
         mMaster.config_kF(Constants.kElevatorSlot, Constants.kElevator_kF, Constants.kCANTimeout);
 
         mMaster.configMotionCruiseVelocity(Constants.kElevatorCruiseVelocity, Constants.kCANTimeout);
-        mMaster.configMotionAcceleration(Constants.kElevatorAcceleration, Constants.kCANTimeout);
+        mMaster.configMotionAcceleration(Constants.kElevatorAcceleration, Constants.kCANTimeout);*/
 
         setNeutralMode(NeutralMode.Brake);
 
     }
 
     public void outputToSmartDashboard(){
-        SmartDashboard.putNumber("Elevator Current", mMaster.getOutputCurrent());
-        SmartDashboard.putNumber("Elevator Voltage", mMaster.getMotorOutputVoltage());
+        SmartDashboard.putNumber("Elevator Current", transmission.getOutputCurrent(0));
+        SmartDashboard.putNumber("Elevator Voltage", transmission.getOutputVoltage());
         SmartDashboard.putNumber("Desired Elevator Position", desiredPosition);
-        SmartDashboard.putNumber("Current Elevator Position ticks", mMaster.getSelectedSensorPosition());
-        SmartDashboard.putString("Elevator Control Mode", currentMode.toString());
+        SmartDashboard.putNumber("Current Elevator Position ticks", transmission.getPosition());
+        SmartDashboard.putString("Elevator Control Mode", getElevatorState().toString());
     }   
 
 
     public void resetSensors(){
-        mMaster.setSelectedSensorPosition(0);
+        
     } 
 
     public void setDesiredPosition(double position) {
@@ -102,15 +96,15 @@ public class Elevator implements Subsystem {
     }
 
     private void setNeutralMode(NeutralMode mode) {
-        mMaster.setNeutralMode(mode);
+        setNeutralMode(mode);
     }
 
-    public void setState(ElevatorControlMode newMode) {
-        currentMode = newMode;
+    public void setElevatorState(ElevatorStateMachine mode) {
+        currentElevatorMode = mode;
     }
 
-    public ElevatorControlMode getState() {
-		return currentMode;
+    public ElevatorStateMachine getElevatorState() {
+		return currentElevatorMode;
 	}
 
 }

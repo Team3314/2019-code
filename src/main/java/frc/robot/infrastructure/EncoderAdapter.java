@@ -20,4 +20,9 @@ public class EncoderAdapter implements CustomEncoder {
         return encoder.getRate(); 
     }
 
+    @Override
+    public void zero() {
+        encoder.reset();
+    }
+
 }

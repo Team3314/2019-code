@@ -8,15 +8,14 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import frc.robot.subsystems.SparkDrive;
-import frc.robot.infrastructure.Drivetrain;
+import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Camera;
 import frc.robot.subsystems.CargoIntake;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Elevator.ElevatorStateMachine;
 import frc.robot.subsystems.HatchMechanism;
 import frc.robot.subsystems.Superstructure;
-import frc.robot.subsystems.Elevator.ElevatorControlMode;
-import frc.robot.subsystems.SparkDrive.driveMode;
+import frc.robot.subsystems.Drive.DriveMode;
 
 /**
  * The VM is configured to automatically run tHIs class, and to call the
@@ -28,10 +27,10 @@ import frc.robot.subsystems.SparkDrive.driveMode;
 public class Robot extends TimedRobot {
 
   private RobotMap map = new RobotMap();
-  private Drivetrain drive = new Drivetrain(map.leftDrive, map.rightDrive);
-  private CargoIntake cargoIntake = CargoIntake.getInstance();
-  private HatchMechanism hatch = HatchMechanism.getInstance();
-  private Elevator elevator = Elevator.getInstance();
+  private Drive drive = new Drive(map.leftDrive, map.rightDrive, map.navx);
+  private CargoIntake cargoIntake = new CargoIntake(map.intakeTransmission);
+  private HatchMechanism hatch = new HatchMechanism(map.gripperPiston, map.sliderPiston);
+  private Elevator elevator = new Elevator(map.elevatorTransmission);
   private Camera camera = Camera.getInstance();
   private Superstructure superstructure = Superstructure.getInstance();
 
@@ -76,14 +75,14 @@ public class Robot extends TimedRobot {
     // Drive Controls
 		if(HI.getGyrolock()) {
 			if(!lastGyrolock) {
-				drive.setDriveMode(driveMode.GYROLOCK);
+				drive.setDriveMode(DriveMode.GYROLOCK);
 			}
 			drive.setDesiredSpeed(HI.getLeftThrottle());
 		}
     
     if (HI.getVision()) {
       if(!lastVision) {
-        drive.setDriveMode(driveMode.VISION_CONTROL);
+        drive.setDriveMode(DriveMode.VISION_CONTROL);
       }
     }
 
@@ -96,11 +95,11 @@ public class Robot extends TimedRobot {
     drive.setStickInputs(HI.getLeftThrottle(), HI.getRightThrottle());
 
     if(HI.getElevatorManual()) { 
-      elevator.setState(ElevatorControlMode.MANUAL);
+      elevator.setElevatorState(ElevatorStateMachine.MANUAL);
       elevator.setManualCommand(HI.getElevatorSpeed());
     }
     else {
-      elevator.setState(ElevatorControlMode.MOTION_MAGIC);
+      elevator.setElevatorState(ElevatorStateMachine.MOTION_MAGIC);
     }
     lastGyrolock = HI.getGyrolock();
     lastVision = HI.getVision();

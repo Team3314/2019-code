@@ -107,9 +107,14 @@ public class Constants {
 		public static double kAbsoluteGyroTolerance = 3;
 
 //Pneumatics
+		public static Value kSliderOut = Value.kForward;
+		public static Value kSliderIn = Value.kReverse;
+		public static Value kGripperDown = Value.kForward;
+		public static Value kGripperUp = Value.kReverse;
     //Gears
 		public static Value kHighGear = Value.kForward;
 		public static Value kLowGear = Value.kReverse;
 		public static double kElevatorVoltageScale;
+		public static MotorType kSparkMaxMotorType;
 
 }

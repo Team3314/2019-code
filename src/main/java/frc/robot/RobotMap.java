@@ -1,9 +1,11 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 
-import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.SerialPort;
 import frc.robot.infrastructure.SensorTransmission;
 import frc.robot.infrastructure.SmartSpeedController;
 import frc.robot.infrastructure.SparkMax;
@@ -16,9 +18,11 @@ public class RobotMap {
         SparkMax mLeftSlave1 = new SparkMax(new CANSparkMax(2, Constants.kSparkMotorType));
         SparkMax mLeftSlave2 = new SparkMax(new CANSparkMax(3, Constants.kSparkMotorType));
 
-        SparkMax mRightMaster = new SparkMax(new CANSparkMax(4, Constants.kSparkMotorType));
-        SparkMax mRightSlave1 = new SparkMax(new CANSparkMax(5, Constants.kSparkMotorType));
-        SparkMax mRightSlave2 = new SparkMax(new CANSparkMax(6, Constants.kSparkMotorType));
+        AHRS navx = new AHRS(SerialPort.Port.kMXP);
+
+        SparkMax mRightMaster = new SparkMax(new CANSparkMax(4, Constants.kSparkMaxMotorType));
+        SparkMax mRightSlave1 = new SparkMax(new CANSparkMax(5, Constants.kSparkMaxMotorType));
+        SparkMax mRightSlave2 = new SparkMax(new CANSparkMax(6, Constants.kSparkMaxMotorType));
 
         SmartSpeedController[] leftDriveMotors = {mLeftMaster, mLeftSlave1, mLeftSlave2};
         SmartSpeedController[] rightDriveMotors = {mRightMaster, mRightSlave1, mRightSlave2};
@@ -34,15 +38,18 @@ public class RobotMap {
 
         SensorTransmission elevatorTransmission = new SensorTransmission(elevatorMotors, mElevatorMaster);
 
-    //Intake
- 
     //Cargo intake
-        TalonSRX mIntakeMaster;
+        TalonSRX mIntakeMaster = new TalonSRX(new WPI_TalonSRX(8));
 
-        SpeedControllerGroup intakeMotors = new SpeedControllerGroup(mIntakeMaster);
+        SmartSpeedController[] intakeMotors = {mIntakeMaster};
 
-        SensorTransmission intakeTransmission = new SensorTransmission(intakeMotors);
+        SensorTransmission intakeTransmission = new SensorTransmission(intakeMotors, mIntakeMaster);
 
     //Hatch mechanism
+        DoubleSolenoid gripperPiston = new DoubleSolenoid(2, 3);
+        DoubleSolenoid sliderPiston = new DoubleSolenoid(4, 5);
+
+    public RobotMap() {
+    }
 
 }

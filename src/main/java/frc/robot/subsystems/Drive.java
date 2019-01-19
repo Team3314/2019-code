@@ -6,47 +6,48 @@ import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
-import com.revrobotics.ControlType;
-import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.CustomPIDOutput;
+import frc.robot.infrastructure.Drivetrain;
+import frc.robot.infrastructure.IdleMode;
+import frc.robot.infrastructure.SensorTransmission;
+import frc.robot.infrastructure.SpeedControllerMode;
 
 /*
 SPARK FF TO DUTY CYCLE CONVERSION
 DUTY CYCLE = FF * 300
 */
 
-public class Drive implements Subsystem {
+public class Drive extends Drivetrain implements Subsystem {
 
 //Hardware
-    private AHRS navx;
 
-    private CANSparkMax mLeftMaster, mLeftSlave1, mLeftSlave2, mRightMaster, mRightSlave1, mRightSlave2;
+    private AHRS navx;
 
     private DoubleSolenoid shifter;
     
     private PowerDistributionPanel pdp;
 
-    public enum driveMode {
+    public enum DriveMode {
 		IDLE,
 		OPEN_LOOP,
-		GYROLOCK,
+        GYROLOCK,
+        POSITION,
         VELOCITY,
         VISION_CONTROL, 
         MOTION_PROFILE
 	}
 
-    private static Drive mInstance = new Drive();
-
     //Control Modes
-    private driveMode currentDriveMode = driveMode.OPEN_LOOP;
-    ControlType controlMode = ControlType.kDutyCycle;
+    private DriveMode currentDriveMode = DriveMode.OPEN_LOOP;
+    SpeedControllerMode controlMode = SpeedControllerMode.kIdle;
     
     //Hardware states
     private boolean mIsHighGear;
@@ -55,78 +56,19 @@ public class Drive implements Subsystem {
     leftDrivePositionTicks, rightDrivePositionTicks, leftDriveSpeedTicks, rightDriveSpeedTicks;
     
     private double leftDrivePositionInches, rightDrivePositionInches, leftDriveSpeedRPM, rightDriveSpeedRPM;
-
-    //PID
-	private CustomPIDOutput gyroPIDOutput;
     private PIDController gyroControl;
-    private CANPIDController leftDrive, rightDrive;
-    private CANEncoder leftEncoder, rightEncoder;
-    
+    private CustomPIDOutput gyroPIDOutput;
+
     private Camera camera = Camera.getInstance();
 
-
-    /**
-     * @return the mInstance
-     */
-    public static Drive getInstance() {
-        return mInstance;
-    }
-
-    private Drive(){
+    public Drive(SensorTransmission left, SensorTransmission right, AHRS gyro){
+        super(left, right);
         camera = Camera.getInstance();
     	 
 		//Hardware
     	pdp  = new PowerDistributionPanel(0);
     	shifter = new DoubleSolenoid(0, 1);
         navx = new AHRS(SerialPort.Port.kMXP);
-
-        mLeftMaster = new CANSparkMax(0, CANSparkMaxLowLevel.MotorType.kBrushless);
-        mLeftMaster.setCANTimeout(Constants.kCANTimeout);
-        mLeftMaster.setSmartCurrentLimit(Constants.kNEODriveCurrentLimit);
-
-        leftDrive = new CANPIDController(mLeftMaster);
-        
-        leftDrive.setP(Constants.kVelocity_kP);
-        leftDrive.setI(Constants.kVelocity_kI);
-        leftDrive.setD(Constants.kVelocity_kD);
-        leftDrive.setFF(Constants.kVelocity_kF);
-        leftDrive.setIZone(Constants.kVelocity_kIZone);
-
-        leftEncoder = new CANEncoder(mLeftMaster);
-
-        mLeftSlave1 = new CANSparkMax(1, CANSparkMaxLowLevel.MotorType.kBrushless);
-        mLeftSlave1.setCANTimeout(Constants.kCANTimeout);
-        mLeftSlave1.follow(mLeftMaster);
-        mLeftSlave1.setSmartCurrentLimit(Constants.kNEODriveCurrentLimit);
-
-        mLeftSlave2 = new CANSparkMax(2, CANSparkMaxLowLevel.MotorType.kBrushless);
-        mLeftSlave2.setCANTimeout(Constants.kCANTimeout);
-        mLeftSlave2.follow(mLeftMaster);
-        mLeftSlave2.setSmartCurrentLimit(Constants.kNEODriveCurrentLimit);
-
-        mRightMaster = new CANSparkMax(3, CANSparkMaxLowLevel.MotorType.kBrushless);
-        mRightMaster.setCANTimeout(Constants.kCANTimeout);
-        mRightMaster.setSmartCurrentLimit(Constants.kNEODriveCurrentLimit);
-
-        rightDrive = new CANPIDController(mRightMaster);
-
-        rightDrive.setP(Constants.kVelocity_kP);
-        rightDrive.setI(Constants.kVelocity_kI);
-        rightDrive.setD(Constants.kVelocity_kD);
-        rightDrive.setFF(Constants.kVelocity_kF);
-        rightDrive.setIZone(Constants.kVelocity_kIZone);
-        
-        rightEncoder = new CANEncoder(mRightMaster);
-
-        mRightSlave1 = new CANSparkMax(4, CANSparkMaxLowLevel.MotorType.kBrushless);
-        mRightSlave1.setCANTimeout(Constants.kCANTimeout);
-        mRightSlave1.follow(mRightMaster);
-        mRightSlave1.setSmartCurrentLimit(Constants.kNEODriveCurrentLimit);
-
-        mRightSlave2 = new CANSparkMax(5, CANSparkMaxLowLevel.MotorType.kBrushless);
-        mRightSlave2.setCANTimeout(Constants.kCANTimeout);
-        mRightSlave2.follow(mRightMaster);
-        mRightSlave2.setSmartCurrentLimit(Constants.kNEODriveCurrentLimit);
 
         shifter = new DoubleSolenoid(0, 1);
 
@@ -151,45 +93,51 @@ public class Drive implements Subsystem {
     	updateSpeedAndPosition();
         switch(currentDriveMode) {
             case IDLE:
-                controlMode = ControlType.kDutyCycle;
+                controlMode = SpeedControllerMode.kDutyCycle;
                 rawLeftSpeed = 0;
                 rawRightSpeed = 0;
                 break;
             case OPEN_LOOP:
-                rawLeftSpeed = desiredLeftSpeed;
-                rawRightSpeed = desiredRightSpeed;
+                rawLeftSpeed = leftStickInput;
+                rawRightSpeed = rightStickInput;
                 setIdleMode(IdleMode.kBrake);
-                controlMode = ControlType.kDutyCycle;
+                controlMode = SpeedControllerMode.kDutyCycle;
                 break;
             case GYROLOCK:
                 rawLeftSpeed = desiredLeftSpeed + gyroPIDOutput.getOutput();
                 rawRightSpeed = desiredRightSpeed - gyroPIDOutput.getOutput();
                 gyroControl.setSetpoint(desiredAngle);
                 setIdleMode(IdleMode.kBrake);
-                controlMode = ControlType.kDutyCycle;
+                controlMode = SpeedControllerMode.kDutyCycle;
                 break;
             case VISION_CONTROL:
                 rawLeftSpeed = desiredLeftSpeed + camera.getCorrection();
                 rawRightSpeed = desiredRightSpeed - camera.getCorrection();
                 setIdleMode(IdleMode.kBrake);
-                controlMode = ControlType.kDutyCycle;
+                controlMode = SpeedControllerMode.kDutyCycle;
+                break;
+            case POSITION:
+                rawLeftSpeed = desiredLeftSpeed;
+                rawRightSpeed = desiredRightSpeed;
+                setIdleMode(IdleMode.kBrake);
+                controlMode = SpeedControllerMode.kPosition;
                 break;
             case VELOCITY:
                 rawLeftSpeed = desiredLeftSpeed;
                 rawRightSpeed = desiredRightSpeed;
                 setIdleMode(IdleMode.kBrake);
-                controlMode = ControlType.kDutyCycle;
+                controlMode = SpeedControllerMode.kDutyCycle;
                 break;
             case MOTION_PROFILE:
                 setIdleMode(IdleMode.kBrake);
-                controlMode = ControlType.kVelocity;
+                controlMode = SpeedControllerMode.kVelocity;
                 rawLeftSpeed = desiredLeftSpeed;
                 rawRightSpeed = desiredRightSpeed;
                 break;
         }
 
-        rightDrive.setReference(rawRightSpeed, controlMode);
-        leftDrive.setReference(rawLeftSpeed, controlMode);
+        rightDrive.set(rawRightSpeed, controlMode);
+        leftDrive.set(rawLeftSpeed, controlMode);
 
     }
 
@@ -197,17 +145,12 @@ public class Drive implements Subsystem {
     	if(idleMode != mode) {
             idleMode = mode;
 
-            mLeftMaster.setIdleMode(mode);
-            mLeftSlave1.setIdleMode(mode);
-            mLeftSlave2.setIdleMode(mode);
-            mRightMaster.setIdleMode(mode);
-            mRightSlave1.setIdleMode(mode);
-            mRightSlave2.setIdleMode(mode);
+            leftDrive.setIdleMode(mode);
     	}
     }
     public void setStickInputs(double leftInput, double rightInput) {
-    	desiredLeftSpeed =Math.copySign(leftInput * leftInput, leftInput);
-    	desiredRightSpeed = Math.copySign(rightInput * rightInput, rightInput);
+    	leftStickInput = leftInput * Math.abs(leftInput);
+    	rightStickInput = rightInput * Math.abs(rightInput);
     }
     
     public void setDesiredAngle(double angle) {
@@ -268,19 +211,16 @@ public class Drive implements Subsystem {
     	desiredRightSpeed = rightSpeed;
     }
     
-    public void setDriveMode(driveMode mode) {
-    	if(mode == driveMode.GYROLOCK) {
+    public void setDriveMode(DriveMode mode) {
+    	if(mode == DriveMode.GYROLOCK) {
     		gyroControl.enable();
 			setDesiredAngle(getAngle());
     	}
     	else {
     		gyroControl.disable();
     	}
-    	if(mode == driveMode.MOTION_PROFILE) {
+    	if(mode == DriveMode.MOTION_PROFILE) {
 
-    	}
-    	else {
-    		setRampRate(Constants.kDriveOpenLoopRampRate);
     	}
     	currentDriveMode = mode;
     	
@@ -293,16 +233,16 @@ public class Drive implements Subsystem {
     public void outputToSmartDashboard() {
     	SmartDashboard.putNumber("Left Encoder Ticks", leftDrivePositionTicks);
     	SmartDashboard.putNumber("Right Encoder Ticks", rightDrivePositionTicks);
-    	SmartDashboard.putNumber("Left Encoder Position", leftDrivePositionInches);
-    	SmartDashboard.putNumber("Right Encoder Position", rightDrivePositionInches);
-    	SmartDashboard.putNumber("Left Encoder Speed", leftDriveSpeedRPM);
-    	SmartDashboard.putNumber("Right Encoder Speed", rightDriveSpeedRPM);
-    	SmartDashboard.putNumber("Left Master Current", mLeftMaster.getOutputCurrent());
-    	SmartDashboard.putNumber("Left Slave 1 Current", mLeftSlave1.getOutputCurrent());
-    	SmartDashboard.putNumber("Left Slave 2 Current", mLeftSlave2.getOutputCurrent());
-    	SmartDashboard.putNumber("Right Master Current", mRightMaster.getOutputCurrent());
-    	SmartDashboard.putNumber("Right Slave 1 Current", mRightSlave1.getOutputCurrent());
-    	SmartDashboard.putNumber("Right Slave 2 Current", mRightSlave2.getOutputCurrent());
+    	SmartDashboard.putNumber("Left Encoder Position", leftDrive.getPosition());
+    	SmartDashboard.putNumber("Right Encoder Position", rightDrive.getPosition());
+    	SmartDashboard.putNumber("Left Encoder Speed", leftDrive.getVelocity());
+    	SmartDashboard.putNumber("Right Encoder Speed", rightDrive.getVelocity());
+    	SmartDashboard.putNumber("Left Master Current", leftDrive.getOutputCurrent(0));
+    	SmartDashboard.putNumber("Left Slave 1 Current", leftDrive.getOutputCurrent(1));
+    	SmartDashboard.putNumber("Left Slave 2 Current", leftDrive.getOutputCurrent(2));
+    	SmartDashboard.putNumber("Right Master Current", rightDrive.getOutputCurrent(0));
+    	SmartDashboard.putNumber("Right Slave 1 Current", rightDrive.getOutputCurrent(1));
+    	SmartDashboard.putNumber("Right Slave 2 Current", rightDrive.getOutputCurrent(2));
     	SmartDashboard.putString("Drive Mode", String.valueOf(currentDriveMode));
     	SmartDashboard.putString("Neutral Mode", String.valueOf(idleMode));
     	SmartDashboard.putNumber("Raw Left Speed", rawLeftSpeed);
@@ -312,17 +252,15 @@ public class Drive implements Subsystem {
     	SmartDashboard.putNumber("Gyro adjustment", gyroPIDOutput.getOutput());
     	SmartDashboard.putNumber("Desired Left Speed", desiredLeftSpeed);
     	SmartDashboard.putNumber("Desired Right Speed", desiredRightSpeed);
-    	SmartDashboard.putNumber("Left Voltage", mLeftMaster.getAppliedOutput());
-    	SmartDashboard.putNumber("Right Voltage", mRightMaster.getAppliedOutput());
+    	SmartDashboard.putNumber("Left Voltage", leftDrive.getOutputVoltage());
+    	SmartDashboard.putNumber("Right Voltage", rightDrive.getOutputVoltage());
     }
     
     private void updateSpeedAndPosition() {
-    	leftDrivePositionTicks = leftEncoder.getPosition();
-    	rightDrivePositionTicks = rightEncoder.getPosition();
+    	leftDrivePositionTicks = leftDrive.getPosition();
+    	rightDrivePositionTicks = rightDrive.getPosition();
     	leftDrivePositionInches = (double) leftDrivePositionTicks / Constants.kDriveEncoderCodesPerRev  * Constants.kRevToInConvFactor;
     	rightDrivePositionInches =  (double) rightDrivePositionTicks / Constants.kDriveEncoderCodesPerRev * Constants.kRevToInConvFactor;
-    	leftDriveSpeedTicks = leftEncoder.getVelocity();
-    	rightDriveSpeedTicks =  rightEncoder.getVelocity();
     	leftDriveSpeedRPM = leftDriveSpeedTicks * (600.0/ Constants.kDriveEncoderCodesPerRev);
     	rightDriveSpeedRPM =  rightDriveSpeedTicks * (600.0/ Constants.kDriveEncoderCodesPerRev);
     }
@@ -333,11 +271,6 @@ public class Drive implements Subsystem {
     public void resetSensors() {
     	navx.reset();
     	resetDriveEncoders();
-    }
-    
-    public void setRampRate(double seconds) {
-    	mLeftMaster.setRampRate(seconds);
-    	mRightMaster.setRampRate(seconds);
     }
     
     public boolean gyroInPosition() {

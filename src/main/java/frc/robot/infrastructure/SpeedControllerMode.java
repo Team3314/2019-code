@@ -2,7 +2,7 @@ package frc.robot.infrastructure;
 
 public enum SpeedControllerMode {
     kIdle,
-    kDuty_Cycle,
+    kDutyCycle,
     kVoltage,
     kPosition,
     kVelocity,

@@ -1,15 +1,11 @@
 package frc.robot.infrastructure;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-
 public class Drivetrain {
     protected SensorTransmission leftDrive, rightDrive;
-    protected DoubleSolenoid gearShifter;
 
-    public Drivetrain(SensorTransmission left, SensorTransmission right, DoubleSolenoid shift) {
+    public Drivetrain(SensorTransmission left, SensorTransmission right) {
         leftDrive = left;
         rightDrive = right;
-        gearShifter = shift;
     }
 
     public void setLeft(double input) {

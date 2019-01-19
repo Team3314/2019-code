@@ -33,6 +33,7 @@ public abstract class SmartSpeedController implements SpeedController, CustomEnc
     public void set(double speed) {
         this.set(speed);
     }
+
     public abstract void set(double speed, SpeedControllerMode mode);
 
     public abstract double getOutputCurrent();
@@ -42,5 +43,4 @@ public abstract class SmartSpeedController implements SpeedController, CustomEnc
     public abstract void setIdleMode(frc.robot.infrastructure.IdleMode mode);
 
     public abstract void setControlMode(frc.robot.infrastructure.SpeedControllerMode mode);
-
 }
