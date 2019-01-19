@@ -52,25 +52,27 @@ public class TalonSRX extends SmartSpeedController {
 
     }
     @Override
-    public void setControlMode(ControlMode mode) {
+    public void setControlMode(SpeedControllerMode mode) {
         switch(mode) {
             case kIdle:
                 break;
             case kDuty_Cycle:
-                this.mode = ControlType.kDutyCycle;
+                this.mode = ControlMode.PercentOutput;
                 break;
             case kVoltage:
-                this.mode = ControlType.kVoltage;
+                this.mode = ControlMode.Current;
                 break;
             case kPosition:
-                this.mode = ControlType.kPosition;
+                this.mode = ControlMode.Position;
                 break;
             case kVelocity:
-                this.mode = ControlType.kVelocity;
+                this.mode = ControlMode.Velocity;
                 break;
             case kMotionMagic:
+                this.mode = ControlMode.MotionMagic;
                 break;
             case kMotionProfile:
+                this.mode = ControlMode.MotionProfile;
                 break;
         }
     }

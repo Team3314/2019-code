@@ -10,13 +10,13 @@ import frc.robot.infrastructure.TalonSRX;
 public class RobotMap {
 
     //Drivetrain
-        SparkMax mLeftMaster = new SparkMax(new CANSparkMax(1, Constants.kSparkMaxMotorType));
-        SparkMax mLeftSlave1 = new SparkMax(new CANSparkMax(2, Constants.kSparkMaxMotorType));
-        SparkMax mLeftSlave2 = new SparkMax(new CANSparkMax(3, Constants.kSparkMaxMotorType));
+        SparkMax mLeftMaster = new SparkMax(new CANSparkMax(1, Constants.kSparkMotorType));
+        SparkMax mLeftSlave1 = new SparkMax(new CANSparkMax(2, Constants.kSparkMotorType));
+        SparkMax mLeftSlave2 = new SparkMax(new CANSparkMax(3, Constants.kSparkMotorType));
 
-        SparkMax mRightMaster = new SparkMax(new CANSparkMax(4, Constants.kSparkMaxMotorType));
-        SparkMax mRightSlave1 = new SparkMax(new CANSparkMax(5, Constants.kSparkMaxMotorType));
-        SparkMax mRightSlave2 = new SparkMax(new CANSparkMax(6, Constants.kSparkMaxMotorType));
+        SparkMax mRightMaster = new SparkMax(new CANSparkMax(4, Constants.kSparkMotorType));
+        SparkMax mRightSlave1 = new SparkMax(new CANSparkMax(5, Constants.kSparkMotorType));
+        SparkMax mRightSlave2 = new SparkMax(new CANSparkMax(6, Constants.kSparkMotorType));
 
         SpeedControllerGroup leftDriveMotors = new SpeedControllerGroup(mLeftMaster, mLeftSlave1, mLeftSlave2);
         SpeedControllerGroup rightDriveMotors = new SpeedControllerGroup(mRightMaster, mRightSlave1, mRightSlave2);
@@ -32,6 +32,13 @@ public class RobotMap {
 
         SensorTransmission elevatorTransmission = new SensorTransmission(elevatorMotors, mElevatorMaster);
  
-        
+    //Cargo intake
+        TalonSRX mIntakeMaster;
+
+        SpeedControllerGroup intakeMotors = new SpeedControllerGroup(mIntakeMaster);
+
+        SensorTransmission intakeTransmission = new SensorTransmission(intakeMotors);
+
+    //Hatch mechanism
 
 }

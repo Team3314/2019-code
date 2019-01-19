@@ -22,7 +22,7 @@ SPARK FF TO DUTY CYCLE CONVERSION
 DUTY CYCLE = FF * 300
 */
 
-public class SparkDrive implements Subsystem {
+public class Drive implements Subsystem {
 
 //Hardware
     private AHRS navx;
@@ -42,7 +42,7 @@ public class SparkDrive implements Subsystem {
         MOTION_PROFILE
 	}
 
-    private static SparkDrive mInstance = new SparkDrive();
+    private static Drive mInstance = new Drive();
 
     //Control Modes
     private driveMode currentDriveMode = driveMode.OPEN_LOOP;
@@ -68,11 +68,11 @@ public class SparkDrive implements Subsystem {
     /**
      * @return the mInstance
      */
-    public static SparkDrive getInstance() {
+    public static Drive getInstance() {
         return mInstance;
     }
 
-    private SparkDrive(){
+    private Drive(){
         camera = Camera.getInstance();
     	 
 		//Hardware

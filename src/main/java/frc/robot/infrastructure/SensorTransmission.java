@@ -5,12 +5,16 @@ import edu.wpi.first.wpilibj.SpeedControllerGroup;
 
 public class SensorTransmission {
 
-    SmartSpeedController[] motors;
+    SmartSpeedControllerGroup[] motors;
     CustomEncoder encoder;
 
-    public SensorTransmission(SpeedControllerGroup group, CustomEncoder enc) {
+    public SensorTransmission(SmartSpeedControllerGroup[] group, CustomEncoder enc) {
         motors = group;
         encoder = enc;
+    }
+
+    public SensorTransmission(SmartSpeedControllerGroup[] group) {
+        motors = group;
     }
 
     public void set(double input) {

@@ -36,7 +36,7 @@ public class SparkMax extends SmartSpeedController {
 
     @Override
     public double getOutputVoltage() {
-        return 0;
+        return spark.getAppliedOutput();
     }
 
     @Override
