@@ -33,6 +33,7 @@ public abstract class SmartSpeedController implements SpeedController, CustomEnc
     public void set(double speed) {
         this.set(speed);
     }
+    public abstract void set(double speed, SpeedControllerMode mode);
 
     public abstract double getOutputCurrent();
 
