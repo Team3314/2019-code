@@ -13,6 +13,11 @@ public class TalonSRX extends SmartSpeedController {
     public TalonSRX(WPI_TalonSRX talon) {
         this.talon = talon;
     }
+    @Override
+    public void set(double speed, SpeedControllerMode mode) {
+        setControlMode(mode);
+        talon.set(this.mode,speed);
+    }
 
     @Override
     public void pidWrite(double output) {
@@ -52,25 +57,26 @@ public class TalonSRX extends SmartSpeedController {
 
     }
     @Override
-    public void setControlMode(ControlMode mode) {
+    public void setControlMode(SpeedControllerMode mode) {
         switch(mode) {
             case kIdle:
                 break;
             case kDuty_Cycle:
-                this.mode = ControlType.kDutyCycle;
+                this.mode = ControlMode.PercentOutput;
                 break;
             case kVoltage:
-                this.mode = ControlType.kVoltage;
                 break;
             case kPosition:
-                this.mode = ControlType.kPosition;
+                this.mode = ControlMode.Position;
                 break;
             case kVelocity:
-                this.mode = ControlType.kVelocity;
+                this.mode = ControlMode.Velocity;
                 break;
             case kMotionMagic:
+                this.mode = ControlMode.MotionMagic;
                 break;
             case kMotionProfile:
+                this.mode = ControlMode.MotionProfile;
                 break;
         }
     }
