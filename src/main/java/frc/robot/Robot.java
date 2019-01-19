@@ -8,7 +8,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import frc.robot.subsystems.SparkDrive;
+import frc.robot.subsystems.Drive;
 import frc.robot.infrastructure.Drivetrain;
 import frc.robot.subsystems.Camera;
 import frc.robot.subsystems.CargoIntake;
@@ -16,7 +16,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.HatchMechanism;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Elevator.ElevatorControlMode;
-import frc.robot.subsystems.SparkDrive.driveMode;
+import frc.robot.subsystems.Drive.driveMode;
 
 /**
  * The VM is configured to automatically run tHIs class, and to call the
@@ -28,7 +28,7 @@ import frc.robot.subsystems.SparkDrive.driveMode;
 public class Robot extends TimedRobot {
 
   private RobotMap map = new RobotMap();
-  private Drivetrain drive = new Drivetrain(map.leftDrive, map.rightDrive);
+  private Drive drive = new Drive(map.leftDrive, map.rightDrive, map.navx);
   private CargoIntake cargoIntake = CargoIntake.getInstance();
   private HatchMechanism hatch = HatchMechanism.getInstance();
   private Elevator elevator = Elevator.getInstance();

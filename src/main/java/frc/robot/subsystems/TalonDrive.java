@@ -94,8 +94,8 @@ public class TalonDrive implements Subsystem {
     			controlMode = ControlMode.PercentOutput;
     			break;
     		case VISION_CONTROL:
-    			rawLeftSpeed = leftStickInput + camera.getSteeringAdjust();
-    			rawRightSpeed = rightStickInput - camera.getSteeringAdjust();
+    			rawLeftSpeed = leftStickInput + camera.getCorrection();
+    			rawRightSpeed = rightStickInput - camera.getCorrection();
     			setNeutralMode(NeutralMode.Brake);
     			controlMode = ControlMode.PercentOutput;
     			/*

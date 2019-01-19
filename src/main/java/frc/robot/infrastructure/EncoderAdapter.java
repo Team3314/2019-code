@@ -11,7 +11,7 @@ public class EncoderAdapter implements CustomEncoder {
     }
 
     @Override
-    public int getEncoderCounts() {
+    public double getEncoderCounts() {
         return encoder.get();
     }
 

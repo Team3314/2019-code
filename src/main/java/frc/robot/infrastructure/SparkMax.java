@@ -15,6 +15,12 @@ public class SparkMax extends SmartSpeedController {
     }
 
     @Override
+    public void set(double speed, SpeedControllerMode mode) {
+        setControlMode(mode);
+        spark.getPIDController().setReference(speed, this.mode);
+    }
+
+    @Override
     public void pidWrite(double output) {
         spark.set(output);
     }
@@ -57,7 +63,7 @@ public class SparkMax extends SmartSpeedController {
         switch(mode) {
             case kIdle:
                 break;
-            case kDuty_Cycle:
+            case kDutyCycle:
                 this.mode = ControlType.kDutyCycle;
                 break;
             case kVoltage:
@@ -75,7 +81,5 @@ public class SparkMax extends SmartSpeedController {
                 break;
         }
     }
-
-
 
 }

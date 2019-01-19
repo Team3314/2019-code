@@ -1,9 +1,10 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 
-import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.SerialPort;
 import frc.robot.infrastructure.SensorTransmission;
 import frc.robot.infrastructure.SmartSpeedController;
 import frc.robot.infrastructure.SparkMax;
@@ -15,6 +16,8 @@ public class RobotMap {
         SparkMax mLeftMaster = new SparkMax(new CANSparkMax(1, Constants.kSparkMaxMotorType));
         SparkMax mLeftSlave1 = new SparkMax(new CANSparkMax(2, Constants.kSparkMaxMotorType));
         SparkMax mLeftSlave2 = new SparkMax(new CANSparkMax(3, Constants.kSparkMaxMotorType));
+
+        AHRS navx = new AHRS(SerialPort.Port.kMXP);
 
         SparkMax mRightMaster = new SparkMax(new CANSparkMax(4, Constants.kSparkMaxMotorType));
         SparkMax mRightSlave1 = new SparkMax(new CANSparkMax(5, Constants.kSparkMaxMotorType));

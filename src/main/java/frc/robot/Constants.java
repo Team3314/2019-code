@@ -111,5 +111,6 @@ public class Constants {
 		public static Value kHighGear = Value.kForward;
 		public static Value kLowGear = Value.kReverse;
 		public static double kElevatorVoltageScale;
+		public static MotorType kSparkMaxMotorType;
 
 }

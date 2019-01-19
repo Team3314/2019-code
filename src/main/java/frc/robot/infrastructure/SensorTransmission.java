@@ -10,10 +10,18 @@ public class SensorTransmission extends SendableBase implements SpeedController 
     private boolean m_isInverted;
     private SmartSpeedController[] motors;
     private CustomEncoder encoder;
+    private static int instances;
 
     public SensorTransmission(SmartSpeedController[] group, CustomEncoder enc) {
         motors = group;
         encoder = enc;
+        addChild(motors[0]);
+        for (int i = 0; i < motors.length; i++) {
+            motors[i + 1] = motors[i];
+            addChild(motors[i]);
+        }
+        instances++;
+        setName("SpeedControllerGroup", instances);
     }
 
     @Override
@@ -83,6 +91,19 @@ public class SensorTransmission extends SendableBase implements SpeedController 
 
     public double getVelocity() {
         return encoder.getVelocity();
+    }
+
+    public double getOutputVoltage() {
+        return motors[0].getOutputVoltage();
+    }
+
+    public double getOutputCurrent(int motorID) {
+        if(motorID < motors.length) {
+            return motors[motorID].getOutputCurrent();
+        }
+        else {
+            return -1;
+        }
     }
 
 }

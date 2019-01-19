@@ -61,7 +61,7 @@ public class TalonSRX extends SmartSpeedController {
         switch(mode) {
             case kIdle:
                 break;
-            case kDuty_Cycle:
+            case kDutyCycle:
                 this.mode = ControlMode.PercentOutput;
                 break;
             case kVoltage:
