@@ -45,14 +45,14 @@ public class HatchMechanism implements Subsystem {
     /**
      * @param mIsGripperDown the mIsGripperDown to set
      */
-    public void setGripperBool(boolean gripper) {
+    public void setGripperDown(boolean gripper) {
         mIsGripperDown = gripper;
     }
 
     /**
      * @param mIsSliderOut the mIsSliderOut to set
      */
-    public void setSliderBool(boolean slider) {
+    public void setSliderOut(boolean slider) {
         mIsSliderOut = slider;
     }
 
