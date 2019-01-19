@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
@@ -59,7 +60,7 @@ public class Drive extends Drivetrain implements Subsystem {
     private PIDController gyroControl;
     private CustomPIDOutput gyroPIDOutput;
 
-    private Camera camera = Camera.getInstance();
+    private Camera camera;
 
     public Drive(SensorTransmission left, SensorTransmission right, AHRS gyro){
         super(left, right);
@@ -68,9 +69,7 @@ public class Drive extends Drivetrain implements Subsystem {
 		//Hardware
     	pdp  = new PowerDistributionPanel(0);
     	shifter = new DoubleSolenoid(0, 1);
-        navx = new AHRS(SerialPort.Port.kMXP);
-
-        shifter = new DoubleSolenoid(0, 1);
+        navx = gyro;
 
         gyroPIDOutput = new CustomPIDOutput();
     	gyroControl = new PIDController(Constants.kGyroLock_kP, Constants.kGyroLock_kI, Constants.kGyroLock_kD,
@@ -146,6 +145,7 @@ public class Drive extends Drivetrain implements Subsystem {
             idleMode = mode;
 
             leftDrive.setIdleMode(mode);
+            rightDrive.setIdleMode(mode);
     	}
     }
     public void setStickInputs(double leftInput, double rightInput) {

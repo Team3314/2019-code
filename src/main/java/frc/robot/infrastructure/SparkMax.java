@@ -6,38 +6,40 @@ import com.revrobotics.CANSparkMax.IdleMode;
 
 public class SparkMax extends SmartSpeedController {
 
-    CANSparkMax spark;
-
     ControlType mode;
 
     public SparkMax(CANSparkMax spark) {
-        this.spark = spark;
+        super.controller = spark;
     }
 
     @Override
     public void set(double speed, SpeedControllerMode mode) {
         setControlMode(mode);
-        spark.getPIDController().setReference(speed, this.mode);
+        ((CANSparkMax)controller).getPIDController().setReference(speed, this.mode);
+    }
+
+    public CANSparkMax getController() {
+        return ((CANSparkMax)controller);
     }
 
     @Override
     public void pidWrite(double output) {
-        spark.set(output);
+        ((CANSparkMax)controller).set(output);
     }
 
     @Override
     public double getEncoderCounts() {
-        return spark.getEncoder().getPosition();
+        return ((CANSparkMax)controller).getEncoder().getPosition();
     }
 
     @Override
     public double getVelocity() {
-        return spark.getEncoder().getVelocity();
+        return ((CANSparkMax)controller).getEncoder().getVelocity();
     }
 
     @Override
     public double getOutputCurrent() {
-        return spark.getOutputCurrent();
+        return ((CANSparkMax)controller).getOutputCurrent();
     }
 
     @Override
@@ -49,10 +51,10 @@ public class SparkMax extends SmartSpeedController {
     public void setIdleMode(frc.robot.infrastructure.IdleMode mode){
         switch(mode) {
             case kBrake:
-                spark.setIdleMode(IdleMode.kBrake);
+                ((CANSparkMax)controller).setIdleMode(IdleMode.kBrake);
                 break;
             case kCoast:
-                spark.setIdleMode(IdleMode.kCoast);
+                ((CANSparkMax)controller).setIdleMode(IdleMode.kCoast);
                 break;
         }
 

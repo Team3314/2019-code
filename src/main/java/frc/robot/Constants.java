@@ -23,9 +23,9 @@ public class Constants {
 		public static int kTalonDriveContinuousCurrentLimit = 40;
 		public static int kTalonDrivePeakCurrentLimit = 40;
 		public static int kTalonDrivePeakCurrentDuration = 0;
-		public static int kNEODriveCurrentLimit = 50;
+		public static int kNEODriveCurrentLimit = 80;
 		public static double kDriveDeadband = .1;
-		public static double kDriveOpenLoopRampRate = .2;
+		public static double kDriveOpenLoopRampRate = 0;
 		public static double kDriveVoltageScale = 12.0;
 		public static double kDriveClosedLoopRampTime = 0;
 		public static double kMaxSpeed = 14; //fps

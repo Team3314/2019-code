@@ -74,6 +74,9 @@ public class Robot extends TimedRobot {
     allPeriodic();
 
     // Drive Controls
+    drive.setDriveMode(driveMode.OPEN_LOOP);
+    drive.setStickInputs(1, 1);
+    /*
 		if(HI.getGyrolock()) {
 			if(!lastGyrolock) {
 				drive.setDriveMode(driveMode.GYROLOCK);
@@ -103,7 +106,7 @@ public class Robot extends TimedRobot {
       elevator.setState(ElevatorControlMode.MOTION_MAGIC);
     }
     lastGyrolock = HI.getGyrolock();
-    lastVision = HI.getVision();
+    lastVision = HI.getVision();*/
   }
 
   @Override
@@ -127,12 +130,12 @@ public class Robot extends TimedRobot {
 
   public void allPeriodic() {
 
-    camera.update();
+    //camera.update();
     drive.update();
-    cargoIntake.update();
+    /*cargoIntake.update();
     elevator.update();
     superstructure.update();
-    hatch.update();
+    hatch.update();*/
 
 
   }

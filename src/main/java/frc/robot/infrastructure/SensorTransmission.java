@@ -15,9 +15,7 @@ public class SensorTransmission extends SendableBase implements SpeedController 
     public SensorTransmission(SmartSpeedController[] group, CustomEncoder enc) {
         motors = group;
         encoder = enc;
-        addChild(motors[0]);
         for (int i = 0; i < motors.length; i++) {
-            motors[i + 1] = motors[i];
             addChild(motors[i]);
         }
         instances++;
@@ -30,7 +28,10 @@ public class SensorTransmission extends SendableBase implements SpeedController 
     }
 
     public void set(double speed, SpeedControllerMode mode) {
-        motors[0].set(speed, mode);
+        if(m_isInverted)
+            motors[0].set(speed, mode);
+        else
+            motors[0].set(-speed,mode);
 
     }
 
