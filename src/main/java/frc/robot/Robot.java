@@ -129,12 +129,12 @@ public class Robot extends TimedRobot {
 
   public void allPeriodic() {
 
-    //camera.update();
+    camera.update();
     drive.update();
-    /*cargoIntake.update();
+    cargoIntake.update();
     elevator.update();
     superstructure.update();
-    hatch.update();*/
+    hatch.update();
 
 
   }
