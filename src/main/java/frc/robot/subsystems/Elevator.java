@@ -44,7 +44,7 @@ public class Elevator implements Subsystem {
                 demand = manualCommand;
                 break;
         }
-        mMaster.set(talonControlMode, demand);
+        //mMaster.set(talonControlMode, demand);
     }
 
     public Elevator() {

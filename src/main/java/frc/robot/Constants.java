@@ -1,6 +1,9 @@
 
 package frc.robot;
 
+import com.revrobotics.CANSparkMaxLowLevel;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 public class Constants {
@@ -20,12 +23,13 @@ public class Constants {
 		public static int kTalonDriveContinuousCurrentLimit = 40;
 		public static int kTalonDrivePeakCurrentLimit = 40;
 		public static int kTalonDrivePeakCurrentDuration = 0;
-		public static int kNEODriveCurrentLimit = 50;
+		public static int kNEODriveCurrentLimit = 80;
 		public static double kDriveDeadband = .1;
-		public static double kDriveOpenLoopRampRate = .2;
+		public static double kDriveOpenLoopRampRate = 0;
 		public static double kDriveVoltageScale = 12.0;
 		public static double kDriveClosedLoopRampTime = 0;
 		public static double kMaxSpeed = 14; //fps
+		public static MotorType kSparkMotorType = CANSparkMaxLowLevel.MotorType.kBrushless;
 
 //Elevator
 		public static int kElevatorCruiseVelocity = 0;
@@ -118,5 +122,6 @@ public class Constants {
 		public static Value kSliderOut = Value.kReverse;
 
 		public static double kElevatorVoltageScale;
+		public static MotorType kSparkMaxMotorType;
 
 }
