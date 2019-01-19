@@ -76,7 +76,6 @@ public class Robot extends TimedRobot {
     // Drive Controls
     drive.setDriveMode(driveMode.OPEN_LOOP);
     drive.setStickInputs(1, 1);
-    /*
 		if(HI.getGyrolock()) {
 			if(!lastGyrolock) {
 				drive.setDriveMode(driveMode.GYROLOCK);
@@ -106,7 +105,7 @@ public class Robot extends TimedRobot {
       elevator.setState(ElevatorControlMode.MOTION_MAGIC);
     }
     lastGyrolock = HI.getGyrolock();
-    lastVision = HI.getVision();*/
+    lastVision = HI.getVision();
   }
 
   @Override

@@ -51,6 +51,7 @@ public class RobotMap {
         navx = new AHRS(SPI.Port.kMXP);
 
         mLeftMaster = new CANSparkMax(1, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
+        mLeftMaster.setInverted(false);
         mLeftMaster.setSmartCurrentLimit(Constants.kNEODriveCurrentLimit);
         mLeftMaster.setRampRate(Constants.kDriveOpenLoopRampRate);
 
@@ -65,6 +66,7 @@ public class RobotMap {
         mLeftSlave2.setRampRate(Constants.kDriveOpenLoopRampRate);
 
         mRightMaster = new CANSparkMax(4, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
+        mRightMaster.setInverted(false);
         mRightMaster.setSmartCurrentLimit(Constants.kNEODriveCurrentLimit);
         mRightMaster.setRampRate(Constants.kDriveOpenLoopRampRate);
 
@@ -90,9 +92,9 @@ public class RobotMap {
         rightDriveMotors = new SmartSpeedController[] {mRightMasterWrapper, mRightSlave1Wrapper, mRightSlave2Wrapper};
 
         leftDrive = new SensorTransmission(leftDriveMotors, mLeftMasterWrapper);
-        leftDrive.setInverted(false);
+        leftDrive.setInverted(true);
         rightDrive = new SensorTransmission(rightDriveMotors, mRightMasterWrapper);
-        rightDrive.setInverted(true);
+        rightDrive.setInverted(false);
 
 
     //Elevator
