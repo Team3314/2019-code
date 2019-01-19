@@ -4,34 +4,36 @@ import edu.wpi.first.wpilibj.SpeedController;
 
 public abstract class SmartSpeedController implements SpeedController, CustomEncoder {
 
+    SpeedController controller;
+
     @Override
     public void stopMotor() {
-        this.stopMotor();
+        controller.stopMotor();
     }
 
     @Override
     public void disable() {
-        this.disable();
+        controller.disable();
     }
 
     @Override
     public boolean getInverted() {
-        return this.getInverted();
+        return controller.getInverted();
     }
 
     @Override
     public void setInverted(boolean setInverted) {
-        this.setInverted(setInverted);
+        controller.setInverted(setInverted);
     }
 
     @Override
     public double get() {
-        return this.get();
+        return controller.get();
     }
 
     @Override
     public void set(double speed) {
-        this.set(speed);
+        controller.set(speed);
     }
 
     public abstract void set(double speed, SpeedControllerMode mode);

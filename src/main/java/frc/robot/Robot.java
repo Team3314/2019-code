@@ -73,6 +73,8 @@ public class Robot extends TimedRobot {
     allPeriodic();
 
     // Drive Controls
+    drive.setDriveMode(DriveMode.OPEN_LOOP);
+    drive.setStickInputs(1, 1);
 		if(HI.getGyrolock()) {
 			if(!lastGyrolock) {
 				drive.setDriveMode(DriveMode.GYROLOCK);
@@ -126,12 +128,12 @@ public class Robot extends TimedRobot {
 
   public void allPeriodic() {
 
-    camera.update();
+    //camera.update();
     drive.update();
-    cargoIntake.update();
+    /*cargoIntake.update();
     elevator.update();
     superstructure.update();
-    hatch.update();
+    hatch.update();*/
 
 
   }
