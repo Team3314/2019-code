@@ -15,6 +15,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorStateMachine;
 import frc.robot.subsystems.HatchMechanism;
 import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.CargoIntake.IntakeStateMachine;
 import frc.robot.subsystems.Drive.DriveMode;
 
 /**
@@ -96,6 +97,10 @@ public class Robot extends TimedRobot {
     }
     drive.setStickInputs(HI.getLeftThrottle(), HI.getRightThrottle());
 
+    /**
+     * ELEVATOR CONTROLS
+     */
+
     if(HI.getElevatorManual()) { 
       elevator.setElevatorState(ElevatorStateMachine.MANUAL);
       elevator.setManualCommand(HI.getElevatorSpeed());
@@ -103,6 +108,38 @@ public class Robot extends TimedRobot {
     else {
       elevator.setElevatorState(ElevatorStateMachine.MOTION_MAGIC);
     }
+
+    /**
+     * CARGO INTAKE CONTROLS
+     */
+
+    if (HI.getCargoIntake()) {
+      cargoIntake.setIntakeState(IntakeStateMachine.INTAKING);
+    }
+    else if (HI.getCargoRelease()) {
+      cargoIntake.setIntakeState(IntakeStateMachine.RELEASING);
+    }
+    else if (!HI.getCargoIntake() && !HI.getCargoRelease()) {
+      cargoIntake.setIntakeState(IntakeStateMachine.HOLDING);
+    }
+    
+    /**
+     * HATCH MECH CONTROLS
+     */
+
+    if (HI.getGripperDown()) {
+      hatch.setGripperDown(true);
+    }
+    else if (HI.getGripperUp()) {
+      hatch.setGripperDown(false);
+    }
+    if (HI.getSliderOut()) {
+      hatch.setSliderOut(true);
+    }
+    else if (HI.getSliderIn()) {
+      hatch.setSliderOut(false);
+    }
+
     lastGyrolock = HI.getGyrolock();
     lastVision = HI.getVision();
   }
@@ -128,12 +165,12 @@ public class Robot extends TimedRobot {
 
   public void allPeriodic() {
 
-    //camera.update();
+    camera.update();
     drive.update();
-    /*cargoIntake.update();
+    cargoIntake.update();
     elevator.update();
     superstructure.update();
-    hatch.update();*/
+    hatch.update();
 
 
   }

@@ -45,7 +45,7 @@ public class HatchMechanism implements Subsystem {
     /**
      * @param mIsSliderOut the mIsSliderOut to set
      */
-    public void setSliderDown(boolean slide) {
+    public void setSliderOut(boolean slide) {
         mIsSliderOut = slide;
     }
 

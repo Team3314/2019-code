@@ -9,6 +9,7 @@ public class AutoModeSelector {
 	private Autonomous autoMode;
 	
 	public Autonomous getSelectedAutoMode() {
+		autoModeDecimal = Integer.parseInt(autoModeBinary, 2);
 		autoMode.reset();
  		return autoMode;
 	}

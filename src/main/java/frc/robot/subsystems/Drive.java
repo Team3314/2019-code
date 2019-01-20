@@ -53,8 +53,8 @@ public class Drive extends Drivetrain implements Subsystem {
     //Hardware states
     private boolean mIsHighGear;
     private IdleMode idleMode;
-    private double rawLeftSpeed, rawRightSpeed, leftStickInput, rightStickInput, desiredLeftSpeed, desiredRightSpeed, desiredAngle, desiredPosition,
-    leftDrivePositionTicks, rightDrivePositionTicks, leftDriveSpeedTicks, rightDriveSpeedTicks;
+    private double rawLeftSpeed, rawRightSpeed, desiredLeftSpeed, desiredRightSpeed, desiredAngle, desiredPosition,
+    leftDrivePositionTicks, rightDrivePositionTicks, leftDriveSpeedTicks, rightDriveSpeedTicks, leftStickInput, rightStickInput;
     
     private double leftDrivePositionInches, rightDrivePositionInches, leftDriveSpeedRPM, rightDriveSpeedRPM;
     private PIDController gyroControl;
