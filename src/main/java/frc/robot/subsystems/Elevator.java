@@ -1,11 +1,6 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
-import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
-import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.robot.infrastructure.Lift;
@@ -41,33 +36,6 @@ public class Elevator extends Lift implements Subsystem {
 
     public Elevator(SensorTransmission transmission) {
         super(transmission);
-
-        /*mMaster = new WPI_TalonSRX(6);
-        mMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, Constants.kCANTimeout);
-    	mMaster.setSensorPhase(false);
-    	mMaster.setInverted(false);
-    	mMaster.configVoltageCompSaturation(Constants.kElevatorVoltageScale, Constants.kCANTimeout);
-    	mMaster.enableVoltageCompensation(true);
-    	mMaster.configOpenloopRamp(Constants.kElevatorOpenLoopRampRate, Constants.kCANTimeout);
-    	mMaster.configNeutralDeadband(Constants.kElevatorDeadband, Constants.kCANTimeout);
-    	mMaster.configContinuousCurrentLimit(Constants.kElevatorContinuousCurrentLimit, Constants.kCANTimeout);
-    	mMaster.configPeakCurrentLimit(Constants.kElevatorPeakCurrentLimit, Constants.kCANTimeout);
-    	mMaster.configPeakCurrentDuration(Constants.kElevatorCurrentDuration, Constants.kCANTimeout);
-    	mMaster.enableCurrentLimit(true);
-    	mMaster.configClosedloopRamp(Constants.kElevatorClosedLoopRampTime, Constants.kCANTimeout);
-		mMaster.configForwardSoftLimitThreshold(Constants.kMaxElevatorPosition, Constants.kCANTimeout);
-		mMaster.configReverseSoftLimitThreshold(Constants.kMinElevatorPosition, Constants.kCANTimeout);
-		mMaster.configForwardSoftLimitEnable(true, Constants.kCANTimeout);
-        mMaster.configReverseSoftLimitEnable(true, Constants.kCANTimeout);
-        //TODO add limit switches
-
-        mMaster.config_kP(Constants.kElevatorSlot, Constants.kElevator_kP, Constants.kCANTimeout);
-        mMaster.config_kI(Constants.kElevatorSlot, Constants.kElevator_kI, Constants.kCANTimeout);
-        mMaster.config_kD(Constants.kElevatorSlot, Constants.kElevator_kD, Constants.kCANTimeout);
-        mMaster.config_kF(Constants.kElevatorSlot, Constants.kElevator_kF, Constants.kCANTimeout);
-
-        mMaster.configMotionCruiseVelocity(Constants.kElevatorCruiseVelocity, Constants.kCANTimeout);
-        mMaster.configMotionAcceleration(Constants.kElevatorAcceleration, Constants.kCANTimeout);*/
 
         setNeutralMode(NeutralMode.Brake);
 
