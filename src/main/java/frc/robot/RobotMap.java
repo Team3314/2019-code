@@ -39,14 +39,18 @@ public class RobotMap {
 
 
     //Elevator
-        TalonSRX mElevatorMaster;
+        WPI_TalonSRX mElevatorMaster;
+
+        TalonSRX mElevatorMasterWrapper;
 
         SmartSpeedController[] elevatorMotors;
 
         SensorTransmission elevatorTransmission;
 
     //Intake
-        TalonSRX mIntakeMaster;
+        WPI_TalonSRX mIntakeMaster;
+
+        TalonSRX mIntakeMasterWrapper;
         
         SmartSpeedController[] intakeMotors;
 
@@ -108,18 +112,22 @@ public class RobotMap {
 
 
     //Elevator
-        mElevatorMaster = new TalonSRX(new WPI_TalonSRX(7));
+        mElevatorMaster = new WPI_TalonSRX(7);
 
-        elevatorMotors = new SmartSpeedController[] {mElevatorMaster};
+        mElevatorMasterWrapper = new TalonSRX(mElevatorMaster);
 
-        elevatorTransmission = new SensorTransmission(elevatorMotors, mElevatorMaster);
+        elevatorMotors = new SmartSpeedController[] {mElevatorMasterWrapper};
+
+        elevatorTransmission = new SensorTransmission(elevatorMotors, mElevatorMasterWrapper);
 
     //Cargo intake
-        mIntakeMaster = new TalonSRX(new WPI_TalonSRX(8));
+        mIntakeMaster = new WPI_TalonSRX(8);
 
-        intakeMotors = new SmartSpeedController[] {mIntakeMaster};
+        mIntakeMasterWrapper = new TalonSRX(mIntakeMaster);
 
-        intakeTransmission = new SensorTransmission(intakeMotors, mIntakeMaster);
+        intakeMotors = new SmartSpeedController[] {mIntakeMasterWrapper};
+
+        intakeTransmission = new SensorTransmission(intakeMotors, mIntakeMasterWrapper);
 
     //Hatch mechanism
         gripperPiston = new DoubleSolenoid(2, 3);

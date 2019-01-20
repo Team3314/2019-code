@@ -14,8 +14,7 @@ public class Camera implements Subsystem {
         return mInstance;
     }
 
-    private NetworkTableInstance networktables = NetworkTableInstance.getDefault();
-    private NetworkTable limelight = networktables.getTable("limelight");
+    private NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
 
     private double targetInView, targetHorizError, targetVertError, targetArea, targetSkew, targetLatency;
 	
@@ -35,12 +34,12 @@ public class Camera implements Subsystem {
 			setLEDMode(Constants.kLEDOff);
 		}
 
-        targetInView = limelight.getEntry("tv").getDouble(0);
-        targetHorizError = limelight.getEntry("tx").getDouble(-1337.254); //deg
-        targetVertError = limelight.getEntry("ty").getDouble(-1337.254); //deg
-		targetArea = limelight.getEntry("ta").getDouble(0);
-		targetSkew = limelight.getEntry("ts").getDouble(0);
-		targetLatency = 11 + limelight.getEntry("tl").getDouble(0);
+        targetInView = table.getEntry("tv").getDouble(0);
+        targetHorizError = table.getEntry("tx").getDouble(-1337.254); //deg
+        targetVertError = table.getEntry("ty").getDouble(-1337.254); //deg
+		targetArea = table.getEntry("ta").getDouble(0);
+		targetSkew = table.getEntry("ts").getDouble(0);
+		targetLatency = 11 + table.getEntry("tl").getDouble(0);
 
 		correction = targetHorizError * Constants.kVisionCtrl_kP;
 
@@ -117,15 +116,15 @@ public class Camera implements Subsystem {
 	 * Setters
 	 */
 	public void setLEDMode(int ledMode) {
-		limelight.getEntry("ledMode").setDouble(ledMode);
+	 table.getEntry("ledMode").setDouble(ledMode);
 	}
 	
 	public void setCamMode(int camMode) {
-		limelight.getEntry("camMode").setDouble(camMode);
+	 table.getEntry("camMode").setDouble(camMode);
 	}
 	
 	public void setSnapshot(int snapshot) {
-		limelight.getEntry("snapshot").setDouble(snapshot);
+	 table.getEntry("snapshot").setDouble(snapshot);
 	}
 	
 	@Override
