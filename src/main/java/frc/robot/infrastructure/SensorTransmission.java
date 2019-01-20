@@ -9,7 +9,7 @@ public class SensorTransmission extends Transmission {
     public SensorTransmission(SmartSpeedController[] group, CustomEncoder enc) {
         super(group);
         encoder = enc;
-        setName("SensorTransmission", instances);
+        setName("SensorTransmission", super.instances);
     }
 
     public double getPosition() {

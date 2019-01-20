@@ -8,7 +8,7 @@ public class Transmission extends SendableBase implements SpeedController {
 
     private boolean m_isInverted;
     private SmartSpeedController[] motors;
-    private static int instances;
+    protected static int instances;
 
     public Transmission(SmartSpeedController[] group) {
         motors = group;
