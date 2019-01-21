@@ -1,7 +1,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.infrastructure.SensorTransmission;
+import frc.robot.infrastructure.EncoderTransmission;
 import frc.robot.infrastructure.SpeedControllerMode;
 
 public class CargoIntake implements Subsystem {
@@ -12,26 +12,14 @@ public class CargoIntake implements Subsystem {
         RELEASING
     }
 
-    private SensorTransmission intake;
+    private EncoderTransmission intake;
     private double speed;
 
     private IntakeStateMachine currentIntakeMode = IntakeStateMachine.HOLDING;
     SpeedControllerMode controlMode = SpeedControllerMode.kDutyCycle;
 
-    public CargoIntake(SensorTransmission transmission) {
+    public CargoIntake(EncoderTransmission transmission) {
         intake = transmission;
-        /*mIntakeMotor = new WPI_TalonSRX(63);
-        mIntakeMotor.configContinuousCurrentLimit(Constants.kIntakeContinuousCurrentLimit, Constants.kCANTimeout);
-        mIntakeMotor.configPeakCurrentLimit(Constants.kIntakePeakCurrentLimit, Constants.kCANTimeout);
-        mIntakeMotor.configPeakCurrentDuration(Constants.kIntakeCurrentDuration, Constants.kCANTimeout);
-        mIntakeMotor.enableCurrentLimit(true);
-        mIntakeMotor.setInverted(false);
-        mIntakeMotor.configPeakOutputForward(1, Constants.kCANTimeout);
-        mIntakeMotor.configPeakOutputReverse(-1, Constants.kCANTimeout);
-        mIntakeMotor.configForwardSoftLimitEnable(false, Constants.kCANTimeout);
-        mIntakeMotor.configReverseSoftLimitEnable(false, Constants.kCANTimeout);
-        mIntakeMotor.configVoltageCompSaturation(12, Constants.kCANTimeout);
-        mIntakeMotor.enableVoltageCompensation(true);*/
     }
 
     @Override

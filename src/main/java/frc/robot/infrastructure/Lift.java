@@ -1,13 +1,14 @@
 package frc.robot.infrastructure;
 
 public class Lift {
-    protected SensorTransmission transmission;
+    protected EncoderTransmission transmission;
+    protected double demand;
 
-    public Lift(SensorTransmission t) {
+    public Lift(EncoderTransmission t) {
         transmission = t;
     }
 
     public void set(double command) {
-        transmission.set(command);
+        demand = command;
     }
 }

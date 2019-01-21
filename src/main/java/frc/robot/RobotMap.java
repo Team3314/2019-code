@@ -124,7 +124,7 @@ public class RobotMap {
 
         elevatorMotors = new SmartSpeedController[] {mElevatorMasterWrapper};
 
-        elevatorTransmission = new EncoderTransmission(elevatorMotors, mElevatorMasterWrapper, Constants.kElevatorPIDPeriod);
+        elevatorTransmission = new EncoderTransmission(elevatorMotors, mElevatorMasterWrapper);
 
     //Cargo intake
         mIntakeMaster = new WPI_TalonSRX(8);

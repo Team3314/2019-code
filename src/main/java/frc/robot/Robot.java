@@ -72,7 +72,6 @@ public class Robot extends TimedRobot {
     allPeriodic();
 
     // Drive Controls
-    drive.setDriveMode(DriveMode.OPEN_LOOP);
 		if(HI.getGyrolock()) {
       drive.setDriveMode(DriveMode.GYROLOCK);
       drive.set(HI.getLeftThrottle(), HI.getLeftThrottle());
@@ -81,6 +80,7 @@ public class Robot extends TimedRobot {
       drive.setDriveMode(DriveMode.VISION_CONTROL);
     }
     else {  
+      drive.setDriveMode(DriveMode.OPEN_LOOP);
       drive.set(HI.getLeftThrottle(), HI.getRightThrottle());
     }
 

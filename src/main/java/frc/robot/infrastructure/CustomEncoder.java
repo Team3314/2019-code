@@ -1,6 +1,8 @@
 package frc.robot.infrastructure;
 
-public interface CustomEncoder {
+import edu.wpi.first.wpilibj.PIDSource;
+
+public interface CustomEncoder extends PIDSource {
 
     /*Required Functionality:
         Get position

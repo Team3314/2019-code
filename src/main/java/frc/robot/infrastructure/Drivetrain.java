@@ -1,9 +1,10 @@
 package frc.robot.infrastructure;
 
 public class Drivetrain {
-    protected SensorTransmission leftDrive, rightDrive;
+    protected EncoderTransmission leftDrive, rightDrive;
+    protected double leftDemand, rightDemand;
 
-    public Drivetrain(SensorTransmission left, SensorTransmission right) {
+    public Drivetrain(EncoderTransmission left, EncoderTransmission right) {
         leftDrive = left;
         rightDrive = right;
     }
@@ -17,7 +18,7 @@ public class Drivetrain {
     }
 
     public void set(double left, double right) {
-        leftDrive.set(left);
-        rightDrive.set(right);
+        leftDemand = left;
+        rightDemand = right;
     }
 }

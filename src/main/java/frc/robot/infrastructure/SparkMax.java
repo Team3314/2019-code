@@ -80,6 +80,8 @@ public class SparkMax extends SmartSpeedController {
             case kVoltage:
                 this.mode = ControlType.kVoltage;
                 break;
+            case kCurrent:
+                break;
             case kPosition:
                 this.mode = ControlType.kPosition;
                 break;
@@ -88,8 +90,8 @@ public class SparkMax extends SmartSpeedController {
                 break;
             case kMotionMagic:
                 break;
-        case kMotionProfile:
-            break;
+            case kMotionProfile:
+                break;
         }
     }
 }

@@ -38,7 +38,7 @@ public class Elevator extends Lift implements Subsystem {
     public void outputToSmartDashboard(){
         SmartDashboard.putNumber("Elevator Current", transmission.getOutputCurrent(0));
         SmartDashboard.putNumber("Elevator Voltage", transmission.getOutputVoltage());
-        SmartDashboard.putNumber("Desired Elevator Position", desiredPosition);
+        SmartDashboard.putNumber("Desired Elevator Position", demand);
         SmartDashboard.putNumber("Current Elevator Position ticks", transmission.getPosition());
         SmartDashboard.putString("Elevator Control Mode", getElevatorState().toString());
     }   
