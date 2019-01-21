@@ -48,9 +48,10 @@ public class Drive extends Drivetrain implements Subsystem {
     //Hardware states
     private boolean mIsHighGear;
     private IdleMode idleMode;
-    private double rawLeftSpeed, rawRightSpeed, desiredAngle, leftDrivePositionTicks, rightDrivePositionTicks, leftDriveSpeedTicks, rightDriveSpeedTicks;
+    private double rawLeftSpeed, rawRightSpeed, desiredAngle;
     
-    private double leftDrivePositionInches, rightDrivePositionInches, leftDriveSpeedRPM, rightDriveSpeedRPM;
+    private double leftDrivePositionInches, rightDrivePositionInches, leftDrivePositionRevs, rightDrivePositionRevs, leftDriveSpeedRPM, rightDriveSpeedRPM, 
+        leftDriveSpeedInches, rightDriveSpeedInches;
     private PIDController gyroControl;
     private CustomPIDOutput gyroPIDOutput;
 
@@ -153,24 +154,8 @@ public class Drive extends Drivetrain implements Subsystem {
     	return desiredAngle;
     }
     
-    public double getAveragePositionTicks() {
-    	return (leftDrivePositionTicks + rightDrivePositionTicks) / 2;
-    }
-    
-    public double getAverageDistance() {
-    	return getAveragePositionTicks() / Constants.kFeetToEncoderCodes;
-    }
-    
     public double getAngle() {
     	return navx.getYaw();
-    }
-    
-    public double getLeftPositionTicks() {
-    	return leftDrivePositionTicks;
-    }
-    
-    public double getRightPositionTicks() {
-    	return rightDrivePositionTicks;
     }
     
     public double getLeftPosition() {
@@ -217,18 +202,32 @@ public class Drive extends Drivetrain implements Subsystem {
             currentDriveMode = mode;
         }
     }
+
+    public void updateSpeedAndPosition() {
+        leftDrivePositionRevs = leftDrive.getPosition();
+        rightDrivePositionRevs = rightDrive.getPosition();
+        leftDrivePositionInches = leftDrivePositionRevs * Constants.kRevToInConvFactor;
+        rightDrivePositionInches = rightDrivePositionRevs * Constants.kRevToInConvFactor;
+        leftDriveSpeedRPM = leftDrive.getVelocity();
+        rightDriveSpeedRPM = rightDrive.getVelocity();
+        leftDriveSpeedInches = leftDriveSpeedRPM/60 * Constants.kRevToInConvFactor;
+        rightDriveSpeedInches = rightDriveSpeedRPM/60 * Constants.kRevToInConvFactor;
+
+    }
     
     public void setHighGear(boolean highGear) {
     	mIsHighGear = highGear;
     }
     
     public void outputToSmartDashboard() {
-    	SmartDashboard.putNumber("Left Encoder Position Revs", leftDrive.getPosition());
-    	SmartDashboard.putNumber("Right Encoder Position Revs", rightDrive.getPosition());
-    	SmartDashboard.putNumber("Left Encoder Inches", leftDrive.getPosition() * Constants.kRevToInConvFactor);
-    	SmartDashboard.putNumber("Right Encoder Inches", rightDrive.getPosition() * Constants.kRevToInConvFactor);
-    	SmartDashboard.putNumber("Left Encoder Speed RPM", leftDrive.getVelocity());
-    	SmartDashboard.putNumber("Right Encoder Speed RPM", rightDrive.getVelocity());
+    	SmartDashboard.putNumber("Left Encoder Position Revs", leftDrivePositionRevs);
+    	SmartDashboard.putNumber("Right Encoder Position Revs", rightDrivePositionRevs);
+    	SmartDashboard.putNumber("Left Encoder Inches", leftDrivePositionInches);
+    	SmartDashboard.putNumber("Right Encoder Inches", rightDrivePositionInches);
+    	SmartDashboard.putNumber("Left Encoder Speed RPM", leftDriveSpeedRPM);
+        SmartDashboard.putNumber("Right Encoder Speed RPM", rightDriveSpeedRPM);
+        SmartDashboard.putNumber("Left Encoder Speed Inches/Second", leftDriveSpeedInches);
+        SmartDashboard.putNumber("Right Encoder Speed Inches/Second", rightDriveSpeedInches);
     	SmartDashboard.putNumber("Left Master Current", leftDrive.getOutputCurrent(0));
     	SmartDashboard.putNumber("Left Slave 1 Current", leftDrive.getOutputCurrent(1));
     	SmartDashboard.putNumber("Left Slave 2 Current", leftDrive.getOutputCurrent(2));
