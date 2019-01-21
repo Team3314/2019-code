@@ -85,6 +85,9 @@ public class Constants {
 		public static double kElevator_kD = 0;
 		public static double kElevator_kF = 0;
 		public static int kElevatorSlot = 0;
+
+
+	public static double kDrivePIDPeriod = .02;
 		
 //Drive Motion Profile
 		public static int kDriveMotionControlFramePeriod = 5; //ms

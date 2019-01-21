@@ -5,6 +5,7 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -12,7 +13,7 @@ import frc.robot.Constants;
 import frc.robot.CustomPIDOutput;
 import frc.robot.infrastructure.Drivetrain;
 import frc.robot.infrastructure.IdleMode;
-import frc.robot.infrastructure.SensorTransmission;
+import frc.robot.infrastructure.EncoderTransmission;
 import frc.robot.infrastructure.SpeedControllerMode;
 
 /*
@@ -47,8 +48,7 @@ public class Drive extends Drivetrain implements Subsystem {
     //Hardware states
     private boolean mIsHighGear;
     private IdleMode idleMode;
-    private double rawLeftSpeed, rawRightSpeed, desiredLeftSpeed, desiredRightSpeed, desiredAngle, desiredPosition,
-    leftDrivePositionTicks, rightDrivePositionTicks, leftDriveSpeedTicks, rightDriveSpeedTicks, leftStickInput, rightStickInput;
+    private double rawLeftSpeed, rawRightSpeed, desiredAngle, leftDrivePositionTicks, rightDrivePositionTicks, leftDriveSpeedTicks, rightDriveSpeedTicks;
     
     private double leftDrivePositionInches, rightDrivePositionInches, leftDriveSpeedRPM, rightDriveSpeedRPM;
     private PIDController gyroControl;
@@ -56,7 +56,7 @@ public class Drive extends Drivetrain implements Subsystem {
 
     private Camera camera;
 
-    public Drive(SensorTransmission left, SensorTransmission right, AHRS gyro){
+    public Drive(EncoderTransmission left, EncoderTransmission right, AHRS gyro){
         super(left, right);
         camera = Camera.getInstance();
     	 
@@ -83,49 +83,51 @@ public class Drive extends Drivetrain implements Subsystem {
     	else {
     		shifter.set(Constants.kLowGear);
         }
-    	updateSpeedAndPosition();
         switch(currentDriveMode) {
             case IDLE:
                 controlMode = SpeedControllerMode.kDutyCycle;
+                setIdleMode(IdleMode.kBrake);
                 rawLeftSpeed = 0;
                 rawRightSpeed = 0;
                 break;
             case OPEN_LOOP:
-                rawLeftSpeed = leftStickInput;
-                rawRightSpeed = rightStickInput;
+                rawLeftSpeed = leftDemand * Math.abs(leftDemand);
+                rawRightSpeed = rightDemand * Math.abs(rightDemand);
                 setIdleMode(IdleMode.kBrake);
                 controlMode = SpeedControllerMode.kDutyCycle;
                 break;
             case GYROLOCK:
-                rawLeftSpeed = desiredLeftSpeed + gyroPIDOutput.getOutput();
-                rawRightSpeed = desiredRightSpeed - gyroPIDOutput.getOutput();
+                rawLeftSpeed = leftDemand + gyroPIDOutput.getOutput();
+                rawRightSpeed = rightDemand - gyroPIDOutput.getOutput();
                 gyroControl.setSetpoint(desiredAngle);
                 setIdleMode(IdleMode.kBrake);
                 controlMode = SpeedControllerMode.kDutyCycle;
                 break;
             case VISION_CONTROL:
-                rawLeftSpeed = desiredLeftSpeed + camera.getCorrection();
-                rawRightSpeed = desiredRightSpeed - camera.getCorrection();
+                rawLeftSpeed = leftDemand + camera.getCorrection();
+                rawRightSpeed = rightDemand - camera.getCorrection();
                 setIdleMode(IdleMode.kBrake);
                 controlMode = SpeedControllerMode.kDutyCycle;
                 break;
             case POSITION:
-                rawLeftSpeed = desiredLeftSpeed;
-                rawRightSpeed = desiredRightSpeed;
+                rawLeftSpeed = leftDrive.getPIDOutput();
+                rawRightSpeed = rightDrive.getPIDOutput();
+                leftDrive.setSetpoint(leftDemand);
+                rightDrive.setSetpoint(rightDemand);
                 setIdleMode(IdleMode.kBrake);
-                controlMode = SpeedControllerMode.kPosition;
+                controlMode = SpeedControllerMode.kDutyCycle;
                 break;
             case VELOCITY:
-                rawLeftSpeed = desiredLeftSpeed;
-                rawRightSpeed = desiredRightSpeed;
+                rawLeftSpeed = leftDrive.getPIDOutput();
+                rawRightSpeed = rightDrive.getPIDOutput();
                 setIdleMode(IdleMode.kBrake);
                 controlMode = SpeedControllerMode.kDutyCycle;
                 break;
             case MOTION_PROFILE:
                 setIdleMode(IdleMode.kBrake);
                 controlMode = SpeedControllerMode.kVelocity;
-                rawLeftSpeed = desiredLeftSpeed;
-                rawRightSpeed = desiredRightSpeed;
+                rawLeftSpeed = leftDemand;
+                rawRightSpeed = rightDemand;
                 break;
         }
 
@@ -142,21 +144,9 @@ public class Drive extends Drivetrain implements Subsystem {
             rightDrive.setIdleMode(mode);
     	}
     }
-    public void setStickInputs(double leftInput, double rightInput) {
-    	leftStickInput = leftInput * Math.abs(leftInput);
-    	rightStickInput = rightInput * Math.abs(rightInput);
-    }
     
     public void setDesiredAngle(double angle) {
     	desiredAngle = angle;
-    }
-    
-    public void setDesiredPosition(double d) {
-    	desiredPosition = d * Constants.kFeetToEncoderCodes;
-    }
-    
-    public double getDesiredPosition() {
-    	return desiredPosition;
     }
     
     public double getDesiredAngle() {
@@ -195,29 +185,37 @@ public class Drive extends Drivetrain implements Subsystem {
     	return (leftDrivePositionInches+rightDrivePositionInches)/2;
     }
     
-    public void setDesiredSpeed(double speed) {
-    	desiredLeftSpeed = speed;
-    	desiredRightSpeed = speed;
-    }
-    
-    public void setDesiredSpeed(double leftSpeed, double rightSpeed) {
-    	desiredLeftSpeed = leftSpeed;
-    	desiredRightSpeed = rightSpeed;
-    }
-    
     public void setDriveMode(DriveMode mode) {
-    	if(mode == DriveMode.GYROLOCK) {
-    		gyroControl.enable();
-			setDesiredAngle(getAngle());
-    	}
-    	else {
-    		gyroControl.disable();
-    	}
-    	if(mode == DriveMode.MOTION_PROFILE) {
+        if(mode != currentDriveMode) {
+            if(mode == DriveMode.GYROLOCK) {
+                gyroControl.enable();
+                setDesiredAngle(getAngle());
+            }
+            else {
+                gyroControl.disable();
+            }
+            if(mode == DriveMode.POSITION) {
+                leftDrive.enablePID();
+                rightDrive.enablePID();
+                leftDrive.setPIDSourceType(PIDSourceType.kDisplacement);
+                rightDrive.setPIDSourceType(PIDSourceType.kDisplacement);
+            }
+            else if(mode == DriveMode.VELOCITY) {
+                leftDrive.enablePID();
+                rightDrive.enablePID();
+                leftDrive.setPIDSourceType(PIDSourceType.kRate);
+                rightDrive.setPIDSourceType(PIDSourceType.kRate);
+            }
+            else {
+                leftDrive.disablePID();
+                rightDrive.disablePID();
+            }
 
-    	}
-    	currentDriveMode = mode;
-    	
+            if(mode == DriveMode.MOTION_PROFILE) {
+
+            }
+            currentDriveMode = mode;
+        }
     }
     
     public void setHighGear(boolean highGear) {
@@ -225,12 +223,12 @@ public class Drive extends Drivetrain implements Subsystem {
     }
     
     public void outputToSmartDashboard() {
-    	SmartDashboard.putNumber("Left Encoder Ticks", leftDrivePositionTicks);
-    	SmartDashboard.putNumber("Right Encoder Ticks", rightDrivePositionTicks);
-    	SmartDashboard.putNumber("Left Encoder Position", leftDrive.getPosition());
-    	SmartDashboard.putNumber("Right Encoder Position", rightDrive.getPosition());
-    	SmartDashboard.putNumber("Left Encoder Speed", leftDrive.getVelocity());
-    	SmartDashboard.putNumber("Right Encoder Speed", rightDrive.getVelocity());
+    	SmartDashboard.putNumber("Left Encoder Position Revs", leftDrive.getPosition());
+    	SmartDashboard.putNumber("Right Encoder Position Revs", rightDrive.getPosition());
+    	SmartDashboard.putNumber("Left Encoder Inches", leftDrive.getPosition() * Constants.kRevToInConvFactor);
+    	SmartDashboard.putNumber("Right Encoder Inches", rightDrive.getPosition() * Constants.kRevToInConvFactor);
+    	SmartDashboard.putNumber("Left Encoder Speed RPM", leftDrive.getVelocity());
+    	SmartDashboard.putNumber("Right Encoder Speed RPM", rightDrive.getVelocity());
     	SmartDashboard.putNumber("Left Master Current", leftDrive.getOutputCurrent(0));
     	SmartDashboard.putNumber("Left Slave 1 Current", leftDrive.getOutputCurrent(1));
     	SmartDashboard.putNumber("Left Slave 2 Current", leftDrive.getOutputCurrent(2));
@@ -244,19 +242,10 @@ public class Drive extends Drivetrain implements Subsystem {
     	SmartDashboard.putNumber("Desired Angle", desiredAngle);
     	SmartDashboard.putNumber("Current angle", navx.getAngle());
     	SmartDashboard.putNumber("Gyro adjustment", gyroPIDOutput.getOutput());
-    	SmartDashboard.putNumber("Desired Left Speed", desiredLeftSpeed);
-    	SmartDashboard.putNumber("Desired Right Speed", desiredRightSpeed);
+    	SmartDashboard.putNumber("Left Demand", leftDemand);
+    	SmartDashboard.putNumber("Right Demand", rightDemand);
     	SmartDashboard.putNumber("Left Voltage", leftDrive.getOutputVoltage());
     	SmartDashboard.putNumber("Right Voltage", rightDrive.getOutputVoltage());
-    }
-    
-    private void updateSpeedAndPosition() {
-    	leftDrivePositionTicks = leftDrive.getPosition();
-    	rightDrivePositionTicks = rightDrive.getPosition();
-    	leftDrivePositionInches = (double) leftDrivePositionTicks / Constants.kDriveEncoderCodesPerRev  * Constants.kRevToInConvFactor;
-    	rightDrivePositionInches =  (double) rightDrivePositionTicks / Constants.kDriveEncoderCodesPerRev * Constants.kRevToInConvFactor;
-    	leftDriveSpeedRPM = leftDriveSpeedTicks * (600.0/ Constants.kDriveEncoderCodesPerRev);
-    	rightDriveSpeedRPM =  rightDriveSpeedTicks * (600.0/ Constants.kDriveEncoderCodesPerRev);
     }
   
     public void resetDriveEncoders() {

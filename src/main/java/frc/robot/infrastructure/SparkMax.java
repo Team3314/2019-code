@@ -2,6 +2,7 @@ package frc.robot.infrastructure;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
+
 import com.revrobotics.CANSparkMax.IdleMode;
 
 public class SparkMax extends SmartSpeedController {
@@ -87,8 +88,8 @@ public class SparkMax extends SmartSpeedController {
                 break;
             case kMotionMagic:
                 break;
-            case kMotionProfile:
-                break;
+        case kMotionProfile:
+            break;
         }
     }
 }

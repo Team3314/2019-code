@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SPI;
 import frc.robot.infrastructure.EncoderAdapter;
-import frc.robot.infrastructure.SensorTransmission;
+import frc.robot.infrastructure.EncoderTransmission;
 import frc.robot.infrastructure.SmartSpeedController;
 import frc.robot.infrastructure.SparkMax;
 import frc.robot.infrastructure.TalonSRX;
@@ -39,8 +39,8 @@ public class RobotMap {
         SmartSpeedController[] leftDriveMotors;
         SmartSpeedController[] rightDriveMotors;
 
-        SensorTransmission leftDrive;
-        SensorTransmission rightDrive;
+        EncoderTransmission leftDrive;
+        EncoderTransmission rightDrive;
 
 
     //Elevator
@@ -50,7 +50,7 @@ public class RobotMap {
 
         SmartSpeedController[] elevatorMotors;
 
-        SensorTransmission elevatorTransmission;
+        EncoderTransmission elevatorTransmission;
 
     //Intake
         WPI_TalonSRX mIntakeMaster;
@@ -59,7 +59,7 @@ public class RobotMap {
         
         SmartSpeedController[] intakeMotors;
 
-        SensorTransmission intakeTransmission;
+        EncoderTransmission intakeTransmission;
 
     //Hatch mechanism
         DoubleSolenoid gripperPiston;
@@ -111,9 +111,9 @@ public class RobotMap {
         leftDriveMotors = new SmartSpeedController[] {mLeftMasterWrapper, mLeftSlave1Wrapper, mLeftSlave2Wrapper};
         rightDriveMotors = new SmartSpeedController[] {mRightMasterWrapper, mRightSlave1Wrapper, mRightSlave2Wrapper};
 
-        leftDrive = new SensorTransmission(leftDriveMotors, leftDriveEncoder);
+        leftDrive = new EncoderTransmission(leftDriveMotors, leftDriveEncoder, Constants.kDrivePIDPeriod);
         leftDrive.setInverted(true);
-        rightDrive = new SensorTransmission(rightDriveMotors, rightDriveEncoder);
+        rightDrive = new EncoderTransmission(rightDriveMotors, rightDriveEncoder, Constants.kDrivePIDPeriod);
         rightDrive.setInverted(false);
 
 
@@ -124,7 +124,7 @@ public class RobotMap {
 
         elevatorMotors = new SmartSpeedController[] {mElevatorMasterWrapper};
 
-        elevatorTransmission = new SensorTransmission(elevatorMotors, mElevatorMasterWrapper);
+        elevatorTransmission = new EncoderTransmission(elevatorMotors, mElevatorMasterWrapper, Constants.kElevatorPIDPeriod);
 
     //Cargo intake
         mIntakeMaster = new WPI_TalonSRX(8);
@@ -133,7 +133,7 @@ public class RobotMap {
 
         intakeMotors = new SmartSpeedController[] {mIntakeMasterWrapper};
 
-        intakeTransmission = new SensorTransmission(intakeMotors, mIntakeMasterWrapper);
+        intakeTransmission = new EncoderTransmission(intakeMotors, mIntakeMasterWrapper);
 
     //Hatch mechanism
         gripperPiston = new DoubleSolenoid(2, 3);

@@ -74,16 +74,14 @@ public class Robot extends TimedRobot {
     // Drive Controls
     drive.setDriveMode(DriveMode.OPEN_LOOP);
 		if(HI.getGyrolock()) {
-			if(!lastGyrolock) {
-				drive.setDriveMode(DriveMode.GYROLOCK);
-			}
-			drive.setDesiredSpeed(HI.getLeftThrottle());
+      drive.setDriveMode(DriveMode.GYROLOCK);
+      drive.set(HI.getLeftThrottle(), HI.getLeftThrottle());
 		}
-    
-    if (HI.getVision()) {
-      if(!lastVision) {
-        drive.setDriveMode(DriveMode.VISION_CONTROL);
-      }
+    else if (HI.getVision()) {
+      drive.setDriveMode(DriveMode.VISION_CONTROL);
+    }
+    else {  
+      drive.set(HI.getLeftThrottle(), HI.getRightThrottle());
     }
 
 		if(HI.getHighGear()) {
@@ -92,7 +90,6 @@ public class Robot extends TimedRobot {
 		else if(HI.getLowGear()) {
       drive.setHighGear(false);
     }
-    drive.setStickInputs(HI.getLeftThrottle(), HI.getRightThrottle());
 
     /**
      * ELEVATOR CONTROLS
@@ -100,7 +97,7 @@ public class Robot extends TimedRobot {
 
     if(HI.getElevatorManual()) { 
       elevator.setElevatorState(ElevatorStateMachine.MANUAL);
-      elevator.setManualCommand(HI.getElevatorSpeed());
+      elevator.set(HI.getElevatorSpeed());
     }
     else {
       elevator.setElevatorState(ElevatorStateMachine.MOTION_MAGIC);
