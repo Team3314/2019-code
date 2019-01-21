@@ -14,7 +14,10 @@ public class TalonSRX extends SmartSpeedController {
     @Override
     public void set(double speed, SpeedControllerMode mode) {
         setControlMode(mode);
-        ((WPI_TalonSRX)controller).set(this.mode,speed);
+        if(isInverted)
+            ((WPI_TalonSRX)controller).set(this.mode,-speed);
+        else
+            ((WPI_TalonSRX)controller).set(this.mode,speed);
     }
 
     @Override

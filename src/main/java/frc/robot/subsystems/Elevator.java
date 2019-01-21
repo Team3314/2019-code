@@ -2,7 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
+import frc.robot.infrastructure.IdleMode;
 import frc.robot.infrastructure.Lift;
 import frc.robot.infrastructure.SensorTransmission;
 import frc.robot.infrastructure.SpeedControllerMode;
@@ -37,7 +37,7 @@ public class Elevator extends Lift implements Subsystem {
     public Elevator(SensorTransmission transmission) {
         super(transmission);
 
-        setNeutralMode(NeutralMode.Brake);
+        setNeutralMode(IdleMode.kBrake);
 
     }
 
@@ -53,6 +53,9 @@ public class Elevator extends Lift implements Subsystem {
     public void resetSensors(){
         
     } 
+    private void setNeutralMode(IdleMode mode) {
+        transmission.setIdleMode(mode);
+    }
 
     public void setDesiredPosition(double position) {
         desiredPosition = position;
@@ -62,14 +65,9 @@ public class Elevator extends Lift implements Subsystem {
         manualCommand = command;
     }
 
-    private void setNeutralMode(NeutralMode mode) {
-        setNeutralMode(mode);
-    }
-
     public void setElevatorState(ElevatorStateMachine mode) {
         currentElevatorMode = mode;
     }
-
     public ElevatorStateMachine getElevatorState() {
 		return currentElevatorMode;
 	}

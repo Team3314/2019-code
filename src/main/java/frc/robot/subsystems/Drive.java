@@ -260,6 +260,8 @@ public class Drive extends Drivetrain implements Subsystem {
     }
   
     public void resetDriveEncoders() {
+        leftDrive.reset();
+        rightDrive.reset();
     }
     
     public void resetSensors() {

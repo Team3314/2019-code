@@ -11,4 +11,8 @@ public interface CustomEncoder {
     public double getVelocity();
 
     public void zero();
+
+    public void setDistancePerPulse(double distancePerPulse);
+
+    public double getDistance();
 }

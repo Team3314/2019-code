@@ -15,7 +15,10 @@ public class SparkMax extends SmartSpeedController {
     @Override
     public void set(double speed, SpeedControllerMode mode) {
         setControlMode(mode);
-        ((CANSparkMax)controller).getPIDController().setReference(speed, this.mode);
+        if(isInverted)
+            ((CANSparkMax)controller).getPIDController().setReference(-speed, this.mode);
+        else
+            ((CANSparkMax)controller).getPIDController().setReference(speed, this.mode);
     }
 
     public CANSparkMax getController() {

@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 public class Transmission extends SendableBase implements SpeedController {
 
     private boolean m_isInverted;
-    private SmartSpeedController[] motors;
+    protected SmartSpeedController[] motors;
     protected static int instances;
 
     public Transmission(SmartSpeedController[] group) {
@@ -26,9 +26,9 @@ public class Transmission extends SendableBase implements SpeedController {
 
     public void set(double speed, SpeedControllerMode mode) {
         if(m_isInverted)
-            motors[0].set(speed, mode);
+            motors[0].set(-speed, mode);
         else
-            motors[0].set(-speed,mode);
+            motors[0].set(speed,mode);
 
     }
 

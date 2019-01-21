@@ -5,7 +5,9 @@ import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SPI;
+import frc.robot.infrastructure.EncoderAdapter;
 import frc.robot.infrastructure.SensorTransmission;
 import frc.robot.infrastructure.SmartSpeedController;
 import frc.robot.infrastructure.SparkMax;
@@ -14,6 +16,9 @@ import frc.robot.infrastructure.TalonSRX;
 public class RobotMap {
     // Drivetrain
         AHRS navx;
+
+        EncoderAdapter leftDriveEncoder;
+        EncoderAdapter rightDriveEncoder;
 
         CANSparkMax mLeftMaster;
         CANSparkMax mLeftSlave1;
@@ -64,37 +69,34 @@ public class RobotMap {
 
         navx = new AHRS(SPI.Port.kMXP);
 
+        leftDriveEncoder = new EncoderAdapter(new Encoder(0, 1));
+        rightDriveEncoder = new EncoderAdapter(new Encoder(2, 3));
+
         mLeftMaster = new CANSparkMax(1, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
-        mLeftMaster.setInverted(false);
         mLeftMaster.setSmartCurrentLimit(Constants.kNEODriveCurrentLimit);
         mLeftMaster.setRampRate(Constants.kDriveOpenLoopRampRate);
 
         mLeftSlave1 = new CANSparkMax(2, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
-        mLeftSlave1.follow(mLeftMaster);
-        mLeftSlave1.setInverted(true);
+        mLeftSlave1.follow(mLeftMaster, true);
         mLeftSlave1.setSmartCurrentLimit(Constants.kNEODriveCurrentLimit);
         mLeftSlave1.setRampRate(Constants.kDriveOpenLoopRampRate);
 
         mLeftSlave2 = new CANSparkMax(3, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
-        mLeftSlave2.follow(mLeftMaster);
-        mLeftSlave2.setInverted(false);
+        mLeftSlave2.follow(mLeftMaster, false);
         mLeftSlave2.setSmartCurrentLimit(Constants.kNEODriveCurrentLimit);
         mLeftSlave2.setRampRate(Constants.kDriveOpenLoopRampRate);
 
         mRightMaster = new CANSparkMax(4, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
-        mRightMaster.setInverted(false);
         mRightMaster.setSmartCurrentLimit(Constants.kNEODriveCurrentLimit);
         mRightMaster.setRampRate(Constants.kDriveOpenLoopRampRate);
 
         mRightSlave1 = new CANSparkMax(5, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
-        mRightSlave1.follow(mRightMaster);
-        mRightSlave1.setInverted(true);
+        mRightSlave1.follow(mRightMaster, true);
         mRightSlave1.setSmartCurrentLimit(Constants.kNEODriveCurrentLimit);
         mRightSlave1.setRampRate(Constants.kDriveOpenLoopRampRate);
 
         mRightSlave2 = new CANSparkMax(6, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
-        mRightSlave2.follow(mRightMaster);
-        mRightSlave2.setInverted(false);
+        mRightSlave2.follow(mRightMaster, false);
         mRightSlave2.setSmartCurrentLimit(Constants.kNEODriveCurrentLimit);
         mRightSlave2.setRampRate(Constants.kDriveOpenLoopRampRate);
 
@@ -109,9 +111,9 @@ public class RobotMap {
         leftDriveMotors = new SmartSpeedController[] {mLeftMasterWrapper, mLeftSlave1Wrapper, mLeftSlave2Wrapper};
         rightDriveMotors = new SmartSpeedController[] {mRightMasterWrapper, mRightSlave1Wrapper, mRightSlave2Wrapper};
 
-        leftDrive = new SensorTransmission(leftDriveMotors, mLeftMasterWrapper);
+        leftDrive = new SensorTransmission(leftDriveMotors, leftDriveEncoder);
         leftDrive.setInverted(true);
-        rightDrive = new SensorTransmission(rightDriveMotors, mRightMasterWrapper);
+        rightDrive = new SensorTransmission(rightDriveMotors, rightDriveEncoder);
         rightDrive.setInverted(false);
 
 

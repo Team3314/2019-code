@@ -35,8 +35,6 @@ public class Robot extends TimedRobot {
   private Camera camera = Camera.getInstance();
   private Superstructure superstructure = Superstructure.getInstance();
 
-
-
   private HumanInput HI = HumanInput.getInstance();
 
   boolean lastGyrolock = false;
@@ -75,7 +73,6 @@ public class Robot extends TimedRobot {
 
     // Drive Controls
     drive.setDriveMode(DriveMode.OPEN_LOOP);
-    drive.setStickInputs(1, 1);
 		if(HI.getGyrolock()) {
 			if(!lastGyrolock) {
 				drive.setDriveMode(DriveMode.GYROLOCK);
@@ -99,7 +96,7 @@ public class Robot extends TimedRobot {
 
     /**
      * ELEVATOR CONTROLS
-     */
+    */
 
     if(HI.getElevatorManual()) { 
       elevator.setElevatorState(ElevatorStateMachine.MANUAL);
@@ -111,7 +108,7 @@ public class Robot extends TimedRobot {
 
     /**
      * CARGO INTAKE CONTROLS
-     */
+    */
 
     if (HI.getCargoIntake()) {
       cargoIntake.setIntakeState(IntakeStateMachine.INTAKING);
@@ -122,10 +119,9 @@ public class Robot extends TimedRobot {
     else if (!HI.getCargoIntake() && !HI.getCargoRelease()) {
       cargoIntake.setIntakeState(IntakeStateMachine.HOLDING);
     }
-    
     /**
      * HATCH MECH CONTROLS
-     */
+    */
 
     if (HI.getGripperDown()) {
       hatch.setGripperDown(true);
@@ -164,14 +160,14 @@ public class Robot extends TimedRobot {
   }
 
   public void allPeriodic() {
-
-    camera.update();
+    
     drive.update();
+    camera.update();
     cargoIntake.update();
     elevator.update();
     superstructure.update();
     hatch.update();
-
+    outputToSmartDashboard();
 
   }
 

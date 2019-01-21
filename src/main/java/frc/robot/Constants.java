@@ -14,6 +14,7 @@ public class Constants {
 		public static double kDegToTicksConvFactor = .038888888888888;
 		public static double kRevToInConvFactor = 7.90274223082;
 		public static double kFeetToEncoderCodes = (12.0 *kDriveEncoderCodesPerRev) / kRevToInConvFactor;
+		public static double kDriveTicksToInches = kRevToInConvFactor / kDriveEncoderCodesPerRev;
 		public static double kFPSToTicksPer100ms = (kFeetToEncoderCodes / 10);
 		public static double kVoltageToNativeTalonUnits = 1023.0/12.0;
 

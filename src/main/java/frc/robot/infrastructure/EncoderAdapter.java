@@ -24,5 +24,15 @@ public class EncoderAdapter implements CustomEncoder {
     public void zero() {
         encoder.reset();
     }
+    
+    @Override
+    public void setDistancePerPulse(double distancePerPulse){ 
+        encoder.setDistancePerPulse(distancePerPulse);
+    }
+
+    @Override
+    public double getDistance() {
+        return encoder.getDistance();
+    }
 
 }
