@@ -6,11 +6,11 @@ public class AutoModeSelector {
 	private HumanInput hi = HumanInput.getInstance();
 	private String autoModeBinary, delayBinary;
 	private int autoModeDecimal, delayDecimal;
-	private Autonomous autoMode;
+	//private Autonomous autoMode;
 	
-	public Autonomous getSelectedAutoMode() {
+/*public Autonomous getSelectedAutoMode() {
 		autoModeDecimal = Integer.parseInt(autoModeBinary, 2);
 		autoMode.reset();
  		return autoMode;
-	}
+	}*/
 }

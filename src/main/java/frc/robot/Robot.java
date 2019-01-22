@@ -27,18 +27,15 @@ import frc.robot.subsystems.Drive.DriveMode;
  */
 public class Robot extends TimedRobot {
 
-  private RobotMap map = new RobotMap();
-  private Drive drive = new Drive(map.leftDrive, map.rightDrive, map.navx);
-  private CargoIntake cargoIntake = new CargoIntake(map.intakeTransmission);
-  private HatchMechanism hatch = new HatchMechanism(map.gripperPiston, map.sliderPiston);
-  private Elevator elevator = new Elevator(map.elevatorTransmission);
-  private Camera camera = Camera.getInstance();
-  private Superstructure superstructure = Superstructure.getInstance();
+  public static RobotMap map = new RobotMap();
+  public static Drive drive = new Drive(map.leftDrive, map.rightDrive, map.navx);
+  public static CargoIntake cargoIntake = new CargoIntake(map.intakeTransmission);
+  public static HatchMechanism hatch = new HatchMechanism(map.gripperPiston, map.sliderPiston);
+  public static Elevator elevator = new Elevator(map.elevatorTransmission);
+  public static Camera camera = Camera.getInstance();
+  public static Superstructure superstructure = Superstructure.getInstance();
 
-  private HumanInput HI = HumanInput.getInstance();
-
-  boolean lastGyrolock = false;
-  boolean lastVision = false;
+  public static HumanInput HI = HumanInput.getInstance();
 
   /**
    * THIs function is run when the robot is first started up and should be used
@@ -70,12 +67,11 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
 
     allPeriodic();
-
     // Drive Controls
 		if(HI.getGyrolock()) {
       drive.setDriveMode(DriveMode.GYROLOCK);
       drive.set(HI.getLeftThrottle(), HI.getLeftThrottle());
-		}
+    }
     else if (HI.getVision()) {
       drive.setDriveMode(DriveMode.VISION_CONTROL);
     }
@@ -132,9 +128,6 @@ public class Robot extends TimedRobot {
     else if (HI.getSliderIn()) {
       hatch.setSliderOut(false);
     }
-
-    lastGyrolock = HI.getGyrolock();
-    lastVision = HI.getVision();
   }
 
   @Override
@@ -147,7 +140,6 @@ public class Robot extends TimedRobot {
   }
 
   public void outputToSmartDashboard() {
-    
 		cargoIntake.outputToSmartDashboard();
 		drive.outputToSmartDashboard();
     hatch.outputToSmartDashboard();

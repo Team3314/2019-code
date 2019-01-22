@@ -227,7 +227,7 @@ public class Drive extends Drivetrain implements Subsystem {
     	SmartDashboard.putNumber("Left Encoder Speed RPM", leftDriveSpeedRPM);
         SmartDashboard.putNumber("Right Encoder Speed RPM", rightDriveSpeedRPM);
         SmartDashboard.putNumber("Left Encoder Speed Inches/Second", leftDriveSpeedInches);
-        SmartDashboard.putNumber("Right Encoder Speed Inches/Second", rightDriveSpeedInches);
+        SmartDashboard.putNumber("Left Encoder Speed Inches/Second", leftDriveSpeedInches);
     	SmartDashboard.putNumber("Left Master Current", leftDrive.getOutputCurrent(0));
     	SmartDashboard.putNumber("Left Slave 1 Current", leftDrive.getOutputCurrent(1));
     	SmartDashboard.putNumber("Left Slave 2 Current", leftDrive.getOutputCurrent(2));

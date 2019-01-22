@@ -18,7 +18,7 @@ public class Constants {
 		public static double kFPSToTicksPer100ms = (kFeetToEncoderCodes / 10);
 		public static double kVoltageToNativeTalonUnits = 1023.0/12.0;
 
-		public static int kCANTimeout = 0;
+		public static int kCANTimeout = 50;
 
 //Drivetrain
 		public static int kTalonDriveContinuousCurrentLimit = 40;
@@ -55,7 +55,7 @@ public class Constants {
 		public static final int kIntakeCurrentDuration = 0; //last year 100ms
 //PID Constants
 	//Gyrolock
-		public static double kGyroLock_kP = .025;
+		public static double kGyroLock_kP = .015;
 		public static double kGyroLock_kI = 0;
 		public static double kGyroLock_kD = 0;
 		public static double kGyroLock_kF = 0;
