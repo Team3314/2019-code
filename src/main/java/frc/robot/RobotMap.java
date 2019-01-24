@@ -7,11 +7,13 @@ import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import frc.robot.infrastructure.EncoderAdapter;
 import frc.robot.infrastructure.EncoderTransmission;
 import frc.robot.infrastructure.SmartSpeedController;
 import frc.robot.infrastructure.SparkMax;
 import frc.robot.infrastructure.TalonSRX;
+import frc.robot.infrastructure.Transmission;
 
 public class RobotMap {
     // Drivetrain
@@ -59,7 +61,7 @@ public class RobotMap {
         
         SmartSpeedController[] intakeMotors;
 
-        EncoderTransmission intakeTransmission;
+        Transmission intakeTransmission;
 
     //Hatch mechanism
         DoubleSolenoid gripperPiston;
@@ -69,8 +71,8 @@ public class RobotMap {
 
         navx = new AHRS(SPI.Port.kMXP);
 
-        leftDriveEncoder = new EncoderAdapter(new Encoder(0, 1));
-        rightDriveEncoder = new EncoderAdapter(new Encoder(2, 3));
+        leftDriveEncoder = new EncoderAdapter(new Encoder(0, 1, false, EncodingType.k4X));
+        rightDriveEncoder = new EncoderAdapter(new Encoder(2, 3, false, EncodingType.k4X));
 
         mLeftMaster = new CANSparkMax(1, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
         mLeftMaster.setSmartCurrentLimit(Constants.kNEODriveCurrentLimit);
@@ -117,9 +119,9 @@ public class RobotMap {
         leftDriveMotors = new SmartSpeedController[] {mLeftMasterWrapper, mLeftSlave1Wrapper, mLeftSlave2Wrapper};
         rightDriveMotors = new SmartSpeedController[] {mRightMasterWrapper, mRightSlave1Wrapper, mRightSlave2Wrapper};
 
-        leftDrive = new EncoderTransmission(leftDriveMotors, mLeftMasterWrapper, Constants.kDrivePIDPeriod);
+        leftDrive = new EncoderTransmission(leftDriveMotors, leftDriveEncoder, Constants.kDrivePIDPeriod);
         leftDrive.setInverted(false);
-        rightDrive = new EncoderTransmission(rightDriveMotors, mRightMasterWrapper, Constants.kDrivePIDPeriod);
+        rightDrive = new EncoderTransmission(rightDriveMotors, rightDriveEncoder, Constants.kDrivePIDPeriod);
         rightDrive.setInverted(true);
 
 
@@ -139,7 +141,7 @@ public class RobotMap {
 
         intakeMotors = new SmartSpeedController[] {mIntakeMasterWrapper};
 
-        intakeTransmission = new EncoderTransmission(intakeMotors, mIntakeMasterWrapper);
+        intakeTransmission = new Transmission(intakeMotors);
 
     //Hatch mechanism
         gripperPiston = new DoubleSolenoid(2, 3);

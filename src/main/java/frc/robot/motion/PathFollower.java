@@ -8,9 +8,12 @@ import frc.robot.subsystems.Drive.DriveMode;
 
 import edu.wpi.first.wpilibj.Notifier;
 
+import jaci.pathfinder.Pathfinder;
+import jaci.pathfinder.followers.EncoderFollower;
+
 public class PathFollower {
 	
-	/*private Drive drive = Robot.drive;
+	private Drive drive = Robot.drive;
 	private EncoderFollower left, right;
 	private double leftVIntercept, rightVIntercept, lastHeading = 0, lastHeadingChange = 0, lastHeadingError = 0;
 	private int direction;
@@ -19,8 +22,8 @@ public class PathFollower {
 	class PeriodicRunnable implements java.lang.Runnable {
 		@Override
 		public void run() {
-		    double leftSpeed = left.calculate(drive.getLeftPositionTicks() * direction) * direction + leftVIntercept;
-			double rightSpeed = right.calculate(drive.getRightPositionTicks() * direction) * direction + rightVIntercept;
+		    double leftSpeed = left.calculate((int)drive.getLeftPositionTicks() * direction) * direction + leftVIntercept;
+			double rightSpeed = right.calculate((int)drive.getRightPositionTicks() * direction) * direction + rightVIntercept;
 			double gyroHeading = -drive.getAngle();
 			double desiredHeading = Pathfinder.r2d(left.getHeading());
 			double angleDifference = Pathfinder.boundHalfDegrees(desiredHeading - gyroHeading);
@@ -91,8 +94,8 @@ public class PathFollower {
 			direction = 1;
 			break;
 		}
-   		left.configureEncoder(drive.getLeftPositionTicks(), Constants.kDriveEncoderCodesPerRev , Constants.kPulleyDiameter / 12);
-		right.configureEncoder(drive.getRightPositionTicks(), Constants.kDriveEncoderCodesPerRev , Constants.kPulleyDiameter / 12);
+   		left.configureEncoder((int)drive.getLeftPositionTicks(), Constants.kDriveEncoderCodesPerRev , Constants.kPulleyDiameter / 12);
+		right.configureEncoder((int)drive.getRightPositionTicks(), Constants.kDriveEncoderCodesPerRev , Constants.kPulleyDiameter / 12);
 		pathFinished = false;
 		
 		drive.set(0, 0);
@@ -109,6 +112,6 @@ public class PathFollower {
 		right = null;
 		pathFinished = true;
 		drive.setDriveMode(DriveMode.IDLE);
-	}*/
+	}
 
 }

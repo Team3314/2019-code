@@ -1,8 +1,8 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.infrastructure.EncoderTransmission;
 import frc.robot.infrastructure.SpeedControllerMode;
+import frc.robot.infrastructure.Transmission;
 
 public class CargoIntake implements Subsystem {
 
@@ -12,13 +12,13 @@ public class CargoIntake implements Subsystem {
         RELEASING
     }
 
-    private EncoderTransmission intake;
+    private Transmission intake;
     private double speed;
 
     private IntakeStateMachine currentIntakeMode = IntakeStateMachine.HOLDING;
     SpeedControllerMode controlMode = SpeedControllerMode.kDutyCycle;
 
-    public CargoIntake(EncoderTransmission transmission) {
+    public CargoIntake(Transmission transmission) {
         intake = transmission;
     }
 

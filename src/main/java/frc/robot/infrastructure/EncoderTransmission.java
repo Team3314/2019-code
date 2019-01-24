@@ -22,7 +22,6 @@ public class EncoderTransmission extends Transmission {
     public EncoderTransmission(SmartSpeedController[] group, CustomEncoder enc) {
         super(group);
         encoder = enc;
-        pidOutput = new CustomPIDOutput(); 
         setName("SensorTransmission", Transmission.instances);
     }
 
@@ -42,11 +41,17 @@ public class EncoderTransmission extends Transmission {
     }
 
     public void setPIDF(double kP, double kI, double kD, double kF) {
-        pid.setPID(kP, kI, kD, kF);
+        if(pid != null)
+            pid.setPID(kP, kI, kD, kF);
+        else
+            System.out.println("Transmission has no PIDController object!");
     }
 
     public void setSetpoint(double setpoint) {
-        pid.setSetpoint(setpoint);
+        if(pid != null)
+            pid.setSetpoint(setpoint);
+        else
+            System.out.println("Transmission has no PIDController object!");
     }
     
     public double getPIDOutput() {
@@ -54,10 +59,16 @@ public class EncoderTransmission extends Transmission {
     }
     
     public void enablePID() {
-        pid.enable();
+        if(pid != null)
+            pid.enable();
+        else
+            System.out.println("Transmission has no PIDController object!");
     }
 
     public void disablePID() {
-        pid.disable();
+        if(pid != null)
+            pid.disable();
+        else
+            System.out.println("Transmission has no PIDController object!");
     }
 }

@@ -4,18 +4,10 @@ import edu.wpi.first.wpilibj.Compressor;
 
 public class Superstructure implements Subsystem {
 
-    private Compressor compressor = new Compressor();
+    private Compressor compressor;
     
-    private static Superstructure mInstance = new Superstructure();
-
-    /**
-     * @return the mInstance
-     */
-    public static Superstructure getInstance() {
-        return mInstance;
-    }
-
-    private Superstructure() {
+    public Superstructure() {
+        compressor = new Compressor();
         compressor.setClosedLoopControl(true);
     }
 

@@ -32,8 +32,8 @@ public class Robot extends TimedRobot {
   public static CargoIntake cargoIntake = new CargoIntake(map.intakeTransmission);
   public static HatchMechanism hatch = new HatchMechanism(map.gripperPiston, map.sliderPiston);
   public static Elevator elevator = new Elevator(map.elevatorTransmission);
-  public static Camera camera = Camera.getInstance();
-  public static Superstructure superstructure = Superstructure.getInstance();
+  public static Camera camera = new Camera();
+  public static Superstructure superstructure = new Superstructure();
 
   public static HumanInput HI = HumanInput.getInstance();
 

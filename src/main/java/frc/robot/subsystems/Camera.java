@@ -8,11 +8,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * Camera
  */
 public class Camera implements Subsystem {
-    private static Camera mInstance = new Camera();
-
-    public static Camera getInstance() {
-        return mInstance;
-    }
 
     private NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
 

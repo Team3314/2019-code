@@ -4,14 +4,14 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.robot.HumanInput;
 import frc.robot.Robot;
 import frc.robot.motion.Path;
-//import frc.robot.motion.PathFollower;
+import frc.robot.motion.PathFollower;
 import frc.robot.motion.PathList;
 import frc.robot.subsystems.Camera;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Drive.DriveMode;
 
 public abstract class Autonomous {
-/*
+
     private Drive drive = Robot.drive;
 	private HumanInput HI = Robot.HI;
 	private Camera camera = Robot.camera;
@@ -102,5 +102,5 @@ public abstract class Autonomous {
 	}
 	public double getTime() {
 		return timer.get();
-	}*/
+	}
 }

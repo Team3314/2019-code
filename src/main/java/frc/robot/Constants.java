@@ -11,8 +11,9 @@ public class Constants {
 
 //Conversions	
 		public static int kDriveEncoderCodesPerRev = 8192;
+		
 		public static double kDegToTicksConvFactor = .038888888888888;
-		public static double kRevToInConvFactor = 7.90274223082;
+		public static double kRevToInConvFactor = 1.28167; //XXX OLD 7.90274223082;
 		public static double kFeetToEncoderCodes = (12.0 *kDriveEncoderCodesPerRev) / kRevToInConvFactor;
 		public static double kDriveTicksToInches = kRevToInConvFactor / kDriveEncoderCodesPerRev;
 		public static double kFPSToTicksPer100ms = (kFeetToEncoderCodes / 10);
@@ -31,10 +32,13 @@ public class Constants {
 		public static double kDriveClosedLoopRampTime = 0;
 		public static double kMaxSpeed = 14; //fps
 		public static MotorType kSparkMotorType = CANSparkMaxLowLevel.MotorType.kBrushless;
+		public static double kDrivePIDPeriod = .02;
+		
 
 //Elevator
 		public static int kElevatorCruiseVelocity = 0;
 		public static int kElevatorAcceleration = 0;
+		public static double kElevatorVoltageScale = 0;
 		public static final double kElevatorOpenLoopRampRate = 0;
 		public static final int kElevatorContinuousCurrentLimit = 0;
 		public static final double kElevatorDeadband = 0;
@@ -79,23 +83,64 @@ public class Constants {
 		public static final double kRioPosition_kD = 0;
 		public static final double kRioPosition_kF = 0;
 
+	//Motion Profile	
+		public static final double kMotionProfile_kP = 0;
+		public static final double kMotionProfile_kI = 0;
+		public static final double kMotionProfile_kD = 0;
+
+	//Motion Profile Heading
+		public static double kMotionProfileHeading_kP =  .025;
+		public static double kMotionProfileHeading_kI = 0;
+		public static double kMotionProfileHeading_kD =0;
+		public static double kMotionProfileHeading_kF = 0;
+		public static double kMotionProfileHeading_kA = 0;
+
 	//Elevator
 		public static double kElevator_kP = 0;
 		public static double kElevator_kI = 0;
 		public static double kElevator_kD = 0;
 		public static double kElevator_kF = 0;
 		public static int kElevatorSlot = 0;
-
-
-	public static double kDrivePIDPeriod = .02;
 		
 //Drive Motion Profile
 		public static int kDriveMotionControlFramePeriod = 5; //ms
 		public static int kDriveMotionControlTrajectoryPeriod = 10; //ms
 		public static int kDrivetrainAcceleration = (int)(12 * Constants.kFPSToTicksPer100ms);
 		public static int kDrivetrainCruiseVelocity = 0;
+		public static int kPulleyDiameter = 0;
 
+	//Backward High
+		public static final int kMotionProfileLeftBackHigh_kV = 0;
+		public static final int kMotionProfileLeftBackHigh_kA = 0;
+		public static final int kMotionProfileRightBackHigh_kV = 0;
+		public static final int kMotionProfileRightBackHigh_kA = 0;
+		public static final int kMotionProfileLeftBackHigh_Intercept = 0;
+		public static final int kMotionProfileRightBackHigh_Intercept = 0;
 	
+	//Backward Low
+		public static final int kMotionProfileLeftBackLow_kV = 0;
+		public static final int kMotionProfileLeftBackLow_kA = 0;
+		public static final int kMotionProfileRightBackLow_kV = 0;
+		public static final int kMotionProfileRightBackLow_kA = 0;
+		public static final int kMotionProfileLeftBackLow_Intercept = 0;
+		public static final int kMotionProfileRightBackLow_Intercept = 0;
+
+	//Forward High
+		public static final int kMotionProfileLeftForeHigh_kV = 0;
+		public static final int kMotionProfileLeftForeHigh_kA = 0;
+		public static final int kMotionProfileRightForeHigh_kV = 0;
+		public static final int kMotionProfileRightForeHigh_kA = 0;
+		public static final int kMotionProfileLeftForeHigh_Intercept = 0;
+		public static final int kMotionProfileRightForeHigh_Intercept = 0;
+
+	//Forward Low
+		public static final int kMotionProfileLeftForeLow_kV = 0;
+		public static final int kMotionProfileLeftForeLow_kA = 0;
+		public static final int kMotionProfileRightForeLow_kA = 0;
+		public static final int kMotionProfileRightForeLow_kV = 0;
+		public static final int kMotionProfileLeftForeLow_Intercept = 0;
+		public static final int kMotionProfileRightForeLow_Intercept = 0;
+		
 //camera
 		public static int kLEDDefault = 0;
 		public static int kLEDOff = 1;
@@ -124,8 +169,5 @@ public class Constants {
 		public static Value kGripperDown = Value.kReverse;
 		public static Value kSliderIn = Value.kForward;
 		public static Value kSliderOut = Value.kReverse;
-
-		public static double kElevatorVoltageScale;
-		public static MotorType kSparkMaxMotorType;
 
 }

@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.robot.Constants;
 import frc.robot.CustomPIDOutput;
+import frc.robot.Robot;
 import frc.robot.infrastructure.Drivetrain;
 import frc.robot.infrastructure.IdleMode;
 import frc.robot.infrastructure.EncoderTransmission;
@@ -50,7 +51,7 @@ public class Drive extends Drivetrain implements Subsystem {
     private IdleMode idleMode;
     private double rawLeftSpeed, rawRightSpeed, desiredAngle;
     
-    private double leftDrivePositionInches, rightDrivePositionInches, leftDrivePositionRevs, rightDrivePositionRevs, leftDriveSpeedRPM, rightDriveSpeedRPM, 
+    private double leftDrivePositionInches, rightDrivePositionInches, leftDrivePositionTicks, rightDrivePositionTicks, leftDriveSpeedRPM, rightDriveSpeedRPM, 
         leftDriveSpeedInches, rightDriveSpeedInches;
     private PIDController gyroControl;
     private CustomPIDOutput gyroPIDOutput;
@@ -59,7 +60,7 @@ public class Drive extends Drivetrain implements Subsystem {
 
     public Drive(EncoderTransmission left, EncoderTransmission right, AHRS gyro){
         super(left, right);
-        camera = Camera.getInstance();
+        camera = Robot.camera;
     	 
 		//Hardware
     	pdp  = new PowerDistributionPanel(0);
@@ -84,6 +85,7 @@ public class Drive extends Drivetrain implements Subsystem {
     	else {
     		shifter.set(Constants.kLowGear);
         }
+        updateSpeedAndPosition();
         switch(currentDriveMode) {
             case IDLE:
                 controlMode = SpeedControllerMode.kDutyCycle;
@@ -94,7 +96,7 @@ public class Drive extends Drivetrain implements Subsystem {
             case OPEN_LOOP:
                 rawLeftSpeed = leftDemand * Math.abs(leftDemand);
                 rawRightSpeed = rightDemand * Math.abs(rightDemand);
-                setIdleMode(IdleMode.kBrake);
+                setIdleMode(IdleMode.kCoast);
                 controlMode = SpeedControllerMode.kDutyCycle;
                 break;
             case GYROLOCK:
@@ -119,10 +121,10 @@ public class Drive extends Drivetrain implements Subsystem {
                 controlMode = SpeedControllerMode.kDutyCycle;
                 break;
             case VELOCITY:
-                rawLeftSpeed = leftDrive.getPIDOutput();
-                rawRightSpeed = rightDrive.getPIDOutput();
+                rawLeftSpeed = leftDemand;
+                rawRightSpeed = rightDemand;
                 setIdleMode(IdleMode.kBrake);
-                controlMode = SpeedControllerMode.kDutyCycle;
+                controlMode = SpeedControllerMode.kVelocity;
                 break;
             case MOTION_PROFILE:
                 setIdleMode(IdleMode.kBrake);
@@ -156,6 +158,14 @@ public class Drive extends Drivetrain implements Subsystem {
     
     public double getAngle() {
     	return navx.getYaw();
+    }
+
+    public double getLeftPositionTicks() {
+        return leftDrivePositionTicks;
+    }
+
+    public double getRightPositionTicks() {
+        return rightDrivePositionTicks;
     }
     
     public double getLeftPosition() {
@@ -204,10 +214,10 @@ public class Drive extends Drivetrain implements Subsystem {
     }
 
     public void updateSpeedAndPosition() {
-        leftDrivePositionRevs = leftDrive.getPosition();
-        rightDrivePositionRevs = rightDrive.getPosition();
-        leftDrivePositionInches = leftDrivePositionRevs * Constants.kRevToInConvFactor;
-        rightDrivePositionInches = rightDrivePositionRevs * Constants.kRevToInConvFactor;
+        leftDrivePositionTicks = leftDrive.getPosition();
+        rightDrivePositionTicks = rightDrive.getPosition();
+        leftDrivePositionInches = leftDrivePositionTicks * Constants.kRevToInConvFactor;
+        rightDrivePositionInches = rightDrivePositionTicks * Constants.kRevToInConvFactor;
         leftDriveSpeedRPM = leftDrive.getVelocity();
         rightDriveSpeedRPM = rightDrive.getVelocity();
         leftDriveSpeedInches = leftDriveSpeedRPM/60 * Constants.kRevToInConvFactor;
@@ -220,14 +230,14 @@ public class Drive extends Drivetrain implements Subsystem {
     }
     
     public void outputToSmartDashboard() {
-    	SmartDashboard.putNumber("Left Encoder Position Revs", leftDrivePositionRevs);
-    	SmartDashboard.putNumber("Right Encoder Position Revs", rightDrivePositionRevs);
+    	SmartDashboard.putNumber("Left Encoder Position Ticks", leftDrivePositionTicks);
+    	SmartDashboard.putNumber("Right Encoder Position Ticks", rightDrivePositionTicks);
     	SmartDashboard.putNumber("Left Encoder Inches", leftDrivePositionInches);
     	SmartDashboard.putNumber("Right Encoder Inches", rightDrivePositionInches);
     	SmartDashboard.putNumber("Left Encoder Speed RPM", leftDriveSpeedRPM);
         SmartDashboard.putNumber("Right Encoder Speed RPM", rightDriveSpeedRPM);
         SmartDashboard.putNumber("Left Encoder Speed Inches/Second", leftDriveSpeedInches);
-        SmartDashboard.putNumber("Left Encoder Speed Inches/Second", leftDriveSpeedInches);
+        SmartDashboard.putNumber("Left Encoder Speed Inches/Second", rightDriveSpeedInches);
     	SmartDashboard.putNumber("Left Master Current", leftDrive.getOutputCurrent(0));
     	SmartDashboard.putNumber("Left Slave 1 Current", leftDrive.getOutputCurrent(1));
     	SmartDashboard.putNumber("Left Slave 2 Current", leftDrive.getOutputCurrent(2));
