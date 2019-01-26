@@ -5,10 +5,9 @@ import edu.wpi.first.wpilibj.Compressor;
 public class Superstructure implements Subsystem {
 
     private Compressor compressor;
-    
-    public Superstructure() {
-        compressor = new Compressor();
-        compressor.setClosedLoopControl(true);
+
+    public Superstructure(Compressor compressor) {
+        this.compressor = compressor;
     }
 
     public void update(){

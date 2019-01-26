@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Camera;
@@ -28,12 +29,22 @@ import frc.robot.subsystems.Drive.DriveMode;
 public class Robot extends TimedRobot {
 
   public static RobotMap map = new RobotMap();
-  public static Drive drive = new Drive(map.leftDrive, map.rightDrive, map.navx);
+  public static Drive drive = new Drive(map.leftDrive, map.rightDrive, map.navx, map.shifter);
   public static CargoIntake cargoIntake = new CargoIntake(map.intakeTransmission);
   public static HatchMechanism hatch = new HatchMechanism(map.gripperPiston, map.sliderPiston);
   public static Elevator elevator = new Elevator(map.elevatorTransmission);
   public static Camera camera = new Camera();
-  public static Superstructure superstructure = new Superstructure();
+  public static Superstructure superstructure = new Superstructure(map.compressor);
+
+  public Runnable smartDashboardRunnable = new Runnable(){
+  
+    @Override
+    public void run() {
+      outputToSmartDashboard();
+    }
+  };
+
+  public Notifier smartDashboardNotifier = new Notifier(smartDashboardRunnable);
 
   public static HumanInput HI = HumanInput.getInstance();
 
@@ -43,11 +54,16 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    smartDashboardNotifier.startPeriodic(.1);
+  }
+
+  @Override
+  public void disabledPeriodic() {
+    outputToSmartDashboard();
   }
 
   @Override
   public void autonomousInit() {
-    superstructure.stopCompressor();
   }
 
   @Override
@@ -60,7 +76,6 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     drive.resetSensors();
-    superstructure.stopCompressor();
   }
 
   @Override
@@ -74,6 +89,10 @@ public class Robot extends TimedRobot {
     }
     else if (HI.getVision()) {
       drive.setDriveMode(DriveMode.VISION_CONTROL);
+    }
+    else if (HI.getVelocityControl()) {
+      drive.setDriveMode(DriveMode.VELOCITY);
+      drive.set(HI.getLeftThrottle(), HI.getRightThrottle());
     }
     else {  
       drive.setDriveMode(DriveMode.OPEN_LOOP);
@@ -90,7 +109,6 @@ public class Robot extends TimedRobot {
     /**
      * ELEVATOR CONTROLS
     */
-
     if(HI.getElevatorManual()) { 
       elevator.setElevatorState(ElevatorStateMachine.MANUAL);
       elevator.set(HI.getElevatorSpeed());
@@ -102,7 +120,6 @@ public class Robot extends TimedRobot {
     /**
      * CARGO INTAKE CONTROLS
     */
-
     if (HI.getCargoIntake()) {
       cargoIntake.setIntakeState(IntakeStateMachine.INTAKING);
     }
@@ -132,7 +149,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testInit() {
-    superstructure.startCompressor();
   }
 
   @Override
@@ -140,7 +156,7 @@ public class Robot extends TimedRobot {
   }
 
   public void outputToSmartDashboard() {
-		cargoIntake.outputToSmartDashboard();
+	  cargoIntake.outputToSmartDashboard();
 		drive.outputToSmartDashboard();
     hatch.outputToSmartDashboard();
     elevator.outputToSmartDashboard();
@@ -149,14 +165,12 @@ public class Robot extends TimedRobot {
   }
 
   public void allPeriodic() {
-    
     drive.update();
     camera.update();
     cargoIntake.update();
-    elevator.update();
+    elevator.update();  
     superstructure.update();
     hatch.update();
-    outputToSmartDashboard();
 
   }
 

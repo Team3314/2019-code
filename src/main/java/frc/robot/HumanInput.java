@@ -41,6 +41,9 @@ public class HumanInput {
 	public boolean getGyrolock() {
 		return rightStick.getRawButton(1);
 	}
+	public boolean getVelocityControl() {
+		return rightStick.getRawButton(2);
+	}
 	//TODO buttons for elevator and intakes
 	public boolean getElevatorPickup() {
 		return false;

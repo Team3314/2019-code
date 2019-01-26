@@ -16,13 +16,11 @@ public class EncoderTransmission extends Transmission {
         encoder = enc;
         pidOutput = new CustomPIDOutput(); 
         pid = new PIDController(0, 0, 0, 0, encoder, pidOutput, pidPeriod);
-        setName("SensorTransmission", Transmission.instances);
     }
 
     public EncoderTransmission(SmartSpeedController[] group, CustomEncoder enc) {
         super(group);
         encoder = enc;
-        setName("SensorTransmission", Transmission.instances);
     }
 
     public double getPosition() {
