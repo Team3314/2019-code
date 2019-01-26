@@ -12,11 +12,6 @@ public class Transmission extends SendableBase implements SpeedController {
 
     public Transmission(SmartSpeedController[] group) {
         motors = group;
-        for (int i = 0; i < motors.length; i++) {
-            addChild(motors[i]);
-        }
-        instances++;
-        setName("Transmission", instances);
     }
 
     @Override

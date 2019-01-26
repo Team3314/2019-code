@@ -13,13 +13,15 @@ public class Constants {
 		public static int kDriveEncoderCodesPerRev = 8192;
 		
 		public static double kDegToTicksConvFactor = .038888888888888;
-		public static double kRevToInConvFactor = 1.28167; //XXX OLD 7.90274223082;
+		public static double kRevToInConvFactor = 1;
+		public static double kRevToInConvFactorLowGear = 1.28167; //XXX OLD 7.90274223082 High Gear;
+		public static double kRevToInConvFactorHighGear = 2.945;
 		public static double kFeetToEncoderCodes = (12.0 *kDriveEncoderCodesPerRev) / kRevToInConvFactor;
 		public static double kDriveTicksToInches = kRevToInConvFactor / kDriveEncoderCodesPerRev;
 		public static double kFPSToTicksPer100ms = (kFeetToEncoderCodes / 10);
 		public static double kVoltageToNativeTalonUnits = 1023.0/12.0;
 
-		public static int kCANTimeout = 50;
+		public static int kCANTimeout =0;
 
 //Drivetrain
 		public static int kTalonDriveContinuousCurrentLimit = 40;
@@ -30,7 +32,8 @@ public class Constants {
 		public static double kDriveOpenLoopRampRate = 0;
 		public static double kDriveVoltageScale = 12.0;
 		public static double kDriveClosedLoopRampTime = 0;
-		public static double kMaxSpeed = 14; //fps
+		public static double kMaxSpeedLowGear = 9 * 12 * 60 / kRevToInConvFactorLowGear; //fps * 12 * 60 / kRevtoin
+		public static double kMaxSpeedHighGear = 20.5 * 12 * 60 / kRevToInConvFactorHighGear;//fps * 12 * 60 / kRevtoin
 		public static MotorType kSparkMotorType = CANSparkMaxLowLevel.MotorType.kBrushless;
 		public static double kDrivePIDPeriod = .02;
 		
@@ -64,11 +67,12 @@ public class Constants {
 		public static double kGyroLock_kD = 0;
 		public static double kGyroLock_kF = 0;
 	//Velocity
-		public static double kVelocity_kP = .1;
+		public static double kVelocity_kP = 2e-6;
 		public static double kVelocity_kI = 0;
 		public static double kVelocity_kD = 0;
-		public static double kVelocity_kF = .043;
+		public static double kVelocity_kF = 1.8e-4;
 		public static double kVelocity_kIZone = 0;
+		public static double kVelocity_MaxOutput = 1;
 		public static int kVelocitySlot = 1;
 	//Vision
 		public static double kVisionCtrl_kP = .01;

@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 public class TalonSRX extends SmartSpeedController {
 
     ControlMode mode;
+    int pidSlot;
 
     public TalonSRX(WPI_TalonSRX talon) {
         super.controller = talon;

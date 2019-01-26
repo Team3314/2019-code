@@ -49,22 +49,22 @@ public class Drive extends Drivetrain implements Subsystem {
     //Hardware states
     private boolean mIsHighGear;
     private IdleMode idleMode;
-    private double rawLeftSpeed, rawRightSpeed, desiredAngle;
+    private double rawLeftSpeed, rawRightSpeed, desiredAngle, revToInConversion;
     
-    private double leftDrivePositionInches, rightDrivePositionInches, leftDrivePositionTicks, rightDrivePositionTicks, leftDriveSpeedRPM, rightDriveSpeedRPM, 
-        leftDriveSpeedInches, rightDriveSpeedInches;
+    private double leftDrivePositionInches, rightDrivePositionInches, leftDrivePositionTicks, rightDrivePositionTicks, leftDriveSpeedTicks, rightDriveSpeedTicks, 
+        leftDriveSpeedInches, rightDriveSpeedInches, distanceLeftHighGear, distanceLeftLowGear, distanceRightHighGear, distanceRightLowGear;
     private PIDController gyroControl;
     private CustomPIDOutput gyroPIDOutput;
 
     private Camera camera;
 
-    public Drive(EncoderTransmission left, EncoderTransmission right, AHRS gyro){
+    public Drive(EncoderTransmission left, EncoderTransmission right, AHRS gyro, DoubleSolenoid shifter){
         super(left, right);
         camera = Robot.camera;
     	 
 		//Hardware
     	pdp  = new PowerDistributionPanel(0);
-    	shifter = new DoubleSolenoid(0, 1);
+    	this.shifter = shifter;
         navx = gyro;
 
         gyroPIDOutput = new CustomPIDOutput();
@@ -80,10 +80,14 @@ public class Drive extends Drivetrain implements Subsystem {
 
     public void update(){
         if(mIsHighGear) {
-    		shifter.set(Constants.kHighGear);
+            shifter.set(Constants.kHighGear);
+            distanceLeftLowGear =  getLeftPositionTicks() - distanceLeftHighGear;
+            distanceRightLowGear = getRightPositionTicks() - distanceRightHighGear;
     	}
     	else {
-    		shifter.set(Constants.kLowGear);
+            shifter.set(Constants.kLowGear);
+            distanceLeftHighGear =  getLeftPositionTicks() - distanceLeftLowGear;
+            distanceRightHighGear = getRightPositionTicks() - distanceRightLowGear;
         }
         updateSpeedAndPosition();
         switch(currentDriveMode) {
@@ -121,9 +125,15 @@ public class Drive extends Drivetrain implements Subsystem {
                 controlMode = SpeedControllerMode.kDutyCycle;
                 break;
             case VELOCITY:
-                rawLeftSpeed = leftDemand;
-                rawRightSpeed = rightDemand;
-                setIdleMode(IdleMode.kBrake);
+                if(mIsHighGear) {
+                    rawLeftSpeed = leftDemand * Constants.kMaxSpeedHighGear;
+                    rawRightSpeed = rightDemand * Constants.kMaxSpeedHighGear;
+                }
+                else {
+                    rawLeftSpeed = leftDemand * Constants.kMaxSpeedLowGear;
+                    rawRightSpeed = rightDemand * Constants.kMaxSpeedLowGear;
+                }
+                setIdleMode(IdleMode.kCoast);
                 controlMode = SpeedControllerMode.kVelocity;
                 break;
             case MOTION_PROFILE:
@@ -161,11 +171,11 @@ public class Drive extends Drivetrain implements Subsystem {
     }
 
     public double getLeftPositionTicks() {
-        return leftDrivePositionTicks;
+        return leftDrive.getPosition();
     }
 
     public double getRightPositionTicks() {
-        return rightDrivePositionTicks;
+        return rightDrive.getPosition();
     }
     
     public double getLeftPosition() {
@@ -216,17 +226,17 @@ public class Drive extends Drivetrain implements Subsystem {
     public void updateSpeedAndPosition() {
         leftDrivePositionTicks = leftDrive.getPosition();
         rightDrivePositionTicks = rightDrive.getPosition();
-        leftDrivePositionInches = leftDrivePositionTicks * Constants.kRevToInConvFactor;
-        rightDrivePositionInches = rightDrivePositionTicks * Constants.kRevToInConvFactor;
-        leftDriveSpeedRPM = leftDrive.getVelocity();
-        rightDriveSpeedRPM = rightDrive.getVelocity();
-        leftDriveSpeedInches = leftDriveSpeedRPM/60 * Constants.kRevToInConvFactor;
-        rightDriveSpeedInches = rightDriveSpeedRPM/60 * Constants.kRevToInConvFactor;
+        leftDrivePositionInches = distanceLeftHighGear * Constants.kRevToInConvFactorHighGear + distanceLeftLowGear * Constants.kRevToInConvFactorLowGear;
+        rightDrivePositionInches = distanceRightHighGear * Constants.kRevToInConvFactorHighGear + distanceRightLowGear * Constants.kRevToInConvFactorLowGear;
+        leftDriveSpeedTicks = leftDrive.getVelocity();
+        rightDriveSpeedTicks = rightDrive.getVelocity();
+        leftDriveSpeedInches = leftDriveSpeedTicks * revToInConversion;
+        rightDriveSpeedInches = rightDriveSpeedTicks * revToInConversion;
 
     }
     
     public void setHighGear(boolean highGear) {
-    	mIsHighGear = highGear;
+        mIsHighGear = highGear;
     }
     
     public void outputToSmartDashboard() {
@@ -234,10 +244,10 @@ public class Drive extends Drivetrain implements Subsystem {
     	SmartDashboard.putNumber("Right Encoder Position Ticks", rightDrivePositionTicks);
     	SmartDashboard.putNumber("Left Encoder Inches", leftDrivePositionInches);
     	SmartDashboard.putNumber("Right Encoder Inches", rightDrivePositionInches);
-    	SmartDashboard.putNumber("Left Encoder Speed RPM", leftDriveSpeedRPM);
-        SmartDashboard.putNumber("Right Encoder Speed RPM", rightDriveSpeedRPM);
-        SmartDashboard.putNumber("Left Encoder Speed Inches/Second", leftDriveSpeedInches);
-        SmartDashboard.putNumber("Left Encoder Speed Inches/Second", rightDriveSpeedInches);
+    	SmartDashboard.putNumber("Left Encoder Speed RPS", leftDriveSpeedTicks);
+        SmartDashboard.putNumber("Right Encoder Speed RPS", rightDriveSpeedTicks);
+        SmartDashboard.putNumber("Left Encoder Speed Inches", leftDriveSpeedInches);
+        SmartDashboard.putNumber("Right Encoder Speed Inches", rightDriveSpeedInches);
     	SmartDashboard.putNumber("Left Master Current", leftDrive.getOutputCurrent(0));
     	SmartDashboard.putNumber("Left Slave 1 Current", leftDrive.getOutputCurrent(1));
     	SmartDashboard.putNumber("Left Slave 2 Current", leftDrive.getOutputCurrent(2));
@@ -251,10 +261,8 @@ public class Drive extends Drivetrain implements Subsystem {
     	SmartDashboard.putNumber("Desired Angle", desiredAngle);
     	SmartDashboard.putNumber("Current angle", navx.getAngle());
     	SmartDashboard.putNumber("Gyro adjustment", gyroPIDOutput.getOutput());
-    	SmartDashboard.putNumber("Left Demand", leftDemand);
-    	SmartDashboard.putNumber("Right Demand", rightDemand);
     	SmartDashboard.putNumber("Left Voltage", leftDrive.getOutputVoltage());
-    	SmartDashboard.putNumber("Right Voltage", rightDrive.getOutputVoltage());
+        SmartDashboard.putNumber("Right Voltage", rightDrive.getOutputVoltage());
     }
   
     public void resetDriveEncoders() {

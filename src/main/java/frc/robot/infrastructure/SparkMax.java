@@ -5,9 +5,12 @@ import com.revrobotics.ControlType;
 
 import com.revrobotics.CANSparkMax.IdleMode;
 
+import frc.robot.Constants;
+
 public class SparkMax extends SmartSpeedController {
 
     ControlType mode;
+    int pidSlot;
 
     public SparkMax(CANSparkMax spark) {
         super.controller = spark;
@@ -17,9 +20,9 @@ public class SparkMax extends SmartSpeedController {
     public void set(double speed, SpeedControllerMode mode) {
         setControlMode(mode);
         if(isInverted)
-            ((CANSparkMax)controller).getPIDController().setReference(-speed, this.mode);
+            ((CANSparkMax)controller).getPIDController().setReference(-speed, this.mode, pidSlot);
         else
-            ((CANSparkMax)controller).getPIDController().setReference(speed, this.mode);
+            ((CANSparkMax)controller).getPIDController().setReference(speed, this.mode, pidSlot);
     }
 
     public CANSparkMax getController() {
@@ -76,17 +79,21 @@ public class SparkMax extends SmartSpeedController {
                 break;
             case kDutyCycle:
                 this.mode = ControlType.kDutyCycle;
+                pidSlot = 0;
                 break;
             case kVoltage:
                 this.mode = ControlType.kVoltage;
+                pidSlot = 0;
                 break;
             case kCurrent:
                 break;
             case kPosition:
                 this.mode = ControlType.kPosition;
+                pidSlot = 0;
                 break;
             case kVelocity:
                 this.mode = ControlType.kVelocity;
+                pidSlot = Constants.kVelocitySlot;
                 break;
             case kMotionMagic:
                 break;

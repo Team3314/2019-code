@@ -17,6 +17,7 @@ public class PathFollower {
 	private EncoderFollower left, right;
 	private double leftVIntercept, rightVIntercept, lastHeading = 0, lastHeadingChange = 0, lastHeadingError = 0;
 	private int direction;
+	private double maxSpeed;
 	private boolean pathFinished = false;
 	
 	class PeriodicRunnable implements java.lang.Runnable {
@@ -36,8 +37,8 @@ public class PathFollower {
 			double headingD = Constants.kMotionProfileHeading_kD * (headingErrorChange/.01) ;
 			leftSpeed = leftSpeed - turn - headingF - headingA - headingD;
 			rightSpeed = rightSpeed + turn + headingF + headingA + headingD;
-			leftSpeed *= Constants.kMaxSpeed * Constants.kFPSToTicksPer100ms;
-			rightSpeed *=Constants.kMaxSpeed * Constants.kFPSToTicksPer100ms;
+			leftSpeed *= maxSpeed * Constants.kFPSToTicksPer100ms;
+			rightSpeed *= maxSpeed * Constants.kFPSToTicksPer100ms;
 			drive.set(leftSpeed, rightSpeed);
 			lastHeading = desiredHeading;
 			lastHeadingChange = angleSetpointChange;
@@ -65,6 +66,7 @@ public class PathFollower {
 			leftVIntercept = Constants.kMotionProfileLeftBackHigh_Intercept / 12;
 			rightVIntercept = Constants.kMotionProfileRightBackHigh_Intercept / 12;
 			direction = -1;
+			maxSpeed = Constants.kMaxSpeedHighGear;
 			break;
 		case BACKWARD_LOW:
 			left = new EncoderFollower(Pathfinder.readFromCSV(path.getRightPath()));
@@ -73,6 +75,7 @@ public class PathFollower {
 			right.configurePIDVA(Constants.kMotionProfile_kP, Constants.kMotionProfile_kI, Constants.kMotionProfile_kD, Constants.kMotionProfileRightBackLow_kV / 12, Constants.kMotionProfileRightBackLow_kA / 12);
 			leftVIntercept = Constants.kMotionProfileLeftBackLow_Intercept / 12;
 			rightVIntercept = Constants.kMotionProfileRightBackLow_Intercept / 12;
+			maxSpeed = Constants.kMaxSpeedLowGear;
 			direction = -1;
 			break;
 		case FORWARD_HIGH:
@@ -83,6 +86,7 @@ public class PathFollower {
 			leftVIntercept = Constants.kMotionProfileLeftForeHigh_Intercept / 12;
 			rightVIntercept = Constants.kMotionProfileRightForeHigh_Intercept / 12;
 			direction = 1;
+			maxSpeed = Constants.kMaxSpeedHighGear;
 			break;
 		case FORWARD_LOW:
 			left = new EncoderFollower(Pathfinder.readFromCSV(path.getLeftPath()));
@@ -92,6 +96,7 @@ public class PathFollower {
 			leftVIntercept = Constants.kMotionProfileLeftForeLow_Intercept / 12;
 			rightVIntercept = Constants.kMotionProfileRightForeLow_Intercept / 12;
 			direction = 1;
+			maxSpeed = Constants.kMaxSpeedLowGear;
 			break;
 		}
    		left.configureEncoder((int)drive.getLeftPositionTicks(), Constants.kDriveEncoderCodesPerRev , Constants.kPulleyDiameter / 12);
