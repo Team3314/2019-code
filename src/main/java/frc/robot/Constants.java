@@ -70,7 +70,7 @@ public class Constants {
 		public static double kVelocity_kP = 2e-6;
 		public static double kVelocity_kI = 0;
 		public static double kVelocity_kD = 0;
-		public static double kVelocity_kF = 1.8e-4;
+		public static double kVelocity_kF = 1.7e-4;
 		public static double kVelocity_kIZone = 0;
 		public static double kVelocity_MaxOutput = 1;
 		public static int kVelocitySlot = 1;
