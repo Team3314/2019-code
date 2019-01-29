@@ -10,16 +10,21 @@ public class Constants {
 
 
 //Conversions	
-		public static int kDriveEncoderCodesPerRev = 8192;
+		public static int kDriveEncoderCodesPerRev = 42;// AMT-102v = 8192;
+		public static int kNEODriveEncoderCodesPerRev = 42;
 		
 		public static double kDegToTicksConvFactor = .038888888888888;
 		public static double kRevToInConvFactor = 1;
-		public static double kRevToInConvFactorLowGear = 1.28167; //XXX OLD 7.90274223082 High Gear;
-		public static double kRevToInConvFactorHighGear = 2.945;
+		public static double kRevToInConvFactorLowGear = 1.2245; //first stage (12/44) * second stage(14/60) * wheel circumference (6.125 * pi)
+		public static double kRevToInConvFactorHighGear = 3.578; //first stage (12/44) * second stage(30/44) * wheel circumference (6.125 * pi)
+		public static double kTicksToInHighGear = kRevToInConvFactorHighGear / kNEODriveEncoderCodesPerRev;
+		public static double kTicksToInLowGear = kRevToInConvFactorLowGear / kNEODriveEncoderCodesPerRev;
 		public static double kFeetToEncoderCodes = (12.0 *kDriveEncoderCodesPerRev) / kRevToInConvFactor;
 		public static double kDriveTicksToInches = kRevToInConvFactor / kDriveEncoderCodesPerRev;
 		public static double kFPSToTicksPer100ms = (kFeetToEncoderCodes / 10);
 		public static double kVoltageToNativeTalonUnits = 1023.0/12.0;
+
+		public static double kElevatorTicksToInches = 0;
 
 		public static int kCANTimeout =0;
 
@@ -32,10 +37,13 @@ public class Constants {
 		public static double kDriveOpenLoopRampRate = 0;
 		public static double kDriveVoltageScale = 12.0;
 		public static double kDriveClosedLoopRampTime = 0;
-		public static double kMaxSpeedLowGear = 9 * 12 * 60 / kRevToInConvFactorLowGear; //fps * 12 * 60 / kRevtoin
-		public static double kMaxSpeedHighGear = 20.5 * 12 * 60 / kRevToInConvFactorHighGear;//fps * 12 * 60 / kRevtoin
+		public static double kMaxSpeedLowGear = 9;// * 12 * 60 / kRevToInConvFactorLowGear; //fps * 12 * 60 / kRevtoin
+		public static double kMaxSpeedHighGear = 20.5;// * 12 * 60 / kRevToInConvFactorHighGear;//fps * 12 * 60 / kRevtoin
+		public static double kMaxSpeed = 5500;
 		public static MotorType kSparkMotorType = CANSparkMaxLowLevel.MotorType.kBrushless;
 		public static double kDrivePIDPeriod = .02;
+		public static double kRaisedElevatorDriveRampRate = 1;
+		public static double kRaisedElevatorDriveSpeedCap = kMaxSpeedLowGear;
 		
 
 //Elevator
@@ -50,6 +58,8 @@ public class Constants {
 		public static final double kElevatorClosedLoopRampTime = 0;
 		public static final int kMaxElevatorPosition = 0;
 		public static final int kMinElevatorPosition = 0;
+
+		public static final int kElevatorLowAccelerationThreshold = 1;
 
 		public static final int kElevatorPickup = 0;
 		public static final int kElevatorLevel1 = 0;

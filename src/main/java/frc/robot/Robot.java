@@ -82,6 +82,7 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
 
     allPeriodic();
+    
     // Drive Controls
 		if(HI.getGyrolock()) {
       drive.setDriveMode(DriveMode.GYROLOCK);
@@ -105,6 +106,8 @@ public class Robot extends TimedRobot {
 		else if(HI.getLowGear()) {
       drive.setHighGear(false);
     }
+
+    drive.setElevatorUp(elevator.getPosition() >= Constants.kElevatorLowAccelerationThreshold);
 
     /**
      * ELEVATOR CONTROLS

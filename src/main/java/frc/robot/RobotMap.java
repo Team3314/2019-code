@@ -79,6 +79,7 @@ public class RobotMap {
         navx = new AHRS(SPI.Port.kMXP);
 
         leftDriveEncoder = new EncoderAdapter(new Encoder(0, 1, false, EncodingType.k4X));
+
         rightDriveEncoder = new EncoderAdapter(new Encoder(2, 3, false, EncodingType.k4X));
 
         mLeftMaster = new CANSparkMax(1, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);

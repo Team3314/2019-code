@@ -77,4 +77,6 @@ public abstract class SmartSpeedController implements SpeedController, CustomEnc
     public abstract void setIdleMode(frc.robot.infrastructure.IdleMode mode);
 
     public abstract void setControlMode(frc.robot.infrastructure.SpeedControllerMode mode);
+
+    public abstract void setRampRate(double rate);
 }

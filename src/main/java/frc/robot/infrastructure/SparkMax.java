@@ -36,12 +36,12 @@ public class SparkMax extends SmartSpeedController {
 
     @Override
     public double getEncoderCounts() {
-        return ((CANSparkMax)controller).getEncoder().getPosition();
+        return (Math.round(((CANSparkMax)controller).getEncoder().getPosition() * 42));
     }
 
     @Override
     public double getVelocity() {
-        return ((CANSparkMax)controller).getEncoder().getVelocity();
+        return ((CANSparkMax)controller).getEncoder().getVelocity() * 42 / 60;
     }
 
     @Override
@@ -100,5 +100,10 @@ public class SparkMax extends SmartSpeedController {
             case kMotionProfile:
                 break;
         }
+    }
+
+    @Override
+    public void setRampRate(double rate) {
+        ((CANSparkMax)controller).setRampRate(rate);
     }
 }

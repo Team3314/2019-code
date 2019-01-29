@@ -30,6 +30,10 @@ public class EncoderTransmission extends Transmission {
     public double getVelocity() {
         return encoder.getVelocity();
     }
+
+    public void setRampRate(double rate) {
+        motors[0].setRampRate(rate);
+    }
     
     public void reset() {
         encoder.zero();
@@ -68,5 +72,9 @@ public class EncoderTransmission extends Transmission {
             pid.disable();
         else
             System.out.println("Transmission has no PIDController object!");
+    }
+
+    public boolean encoderIsSparkMax() {
+        return encoder instanceof SparkMax;
     }
 }

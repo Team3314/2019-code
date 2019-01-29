@@ -44,6 +44,9 @@ public class HumanInput {
 	public boolean getVelocityControl() {
 		return rightStick.getRawButton(2);
 	}
+	public boolean getElevatorUP() {
+		return leftStick.getRawButton(2);
+	}
 	//TODO buttons for elevator and intakes
 	public boolean getElevatorPickup() {
 		return false;

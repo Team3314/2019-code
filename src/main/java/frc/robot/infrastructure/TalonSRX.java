@@ -90,6 +90,11 @@ public class TalonSRX extends SmartSpeedController {
                 break;
         }
     }
+
+    @Override
+    public void setRampRate(double rate) {
+        ((WPI_TalonSRX)controller).configOpenloopRamp(rate);
+    }
     
 
 }

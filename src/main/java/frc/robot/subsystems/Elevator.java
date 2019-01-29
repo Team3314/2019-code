@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.infrastructure.IdleMode;
 import frc.robot.infrastructure.Lift;
+import frc.robot.Constants;
 import frc.robot.infrastructure.EncoderTransmission;
 import frc.robot.infrastructure.SpeedControllerMode;
 
@@ -40,15 +41,24 @@ public class Elevator extends Lift implements Subsystem {
         SmartDashboard.putNumber("Elevator Voltage", transmission.getOutputVoltage());
         SmartDashboard.putNumber("Desired Elevator Position", demand);
         SmartDashboard.putNumber("Current Elevator Position ticks", transmission.getPosition());
+        SmartDashboard.putNumber("Current Elevator Position Inches", getHeight());
         SmartDashboard.putString("Elevator Control Mode", getElevatorState().toString());
     }   
 
 
     public void resetSensors(){
-        
+        transmission.reset();
     } 
     private void setNeutralMode(IdleMode mode) {
         transmission.setIdleMode(mode);
+    }
+
+    public double getPosition() {
+        return transmission.getPosition();
+    }
+
+    public double getHeight() {
+        return getPosition() * Constants.kElevatorTicksToInches;
     }
 
     public void setElevatorState(ElevatorStateMachine mode) {
