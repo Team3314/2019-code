@@ -74,7 +74,7 @@ public class Constants {
 		public static double kVelocity_MaxOutput = 1;
 		public static int kVelocitySlot = 1;
 	//Vision
-		public static double kVisionCtrl_kP = .02;
+		public static double kVisionCtrl_kP = .015;
 		public static double kVisionCtrl_kI = 0;
 		public static double kVisionCtrl_kD = 0;
 		public static double kVisionCtrl_kF = 0;

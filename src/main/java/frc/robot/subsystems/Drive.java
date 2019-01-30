@@ -290,6 +290,6 @@ public class Drive extends Drivetrain implements Subsystem {
     	return gyroControl.onTarget();
     }
     public boolean collision(){
-        return Math.round(100* navx.getWorldLinearAccelY()) > 40 ;
+        return Math.round(100* navx.getWorldLinearAccelY()) > 20 ;
     }
 }

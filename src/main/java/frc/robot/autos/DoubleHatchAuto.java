@@ -61,13 +61,14 @@ public class DoubleHatchAuto extends Autonomous{
     switch (currentState) {
       case START:
       resetDriveEncoders();
-      currentState = states.ALIGN1;
+      currentState = states.START_FORWARD;
+      //currentState = states.ALIGN1;
       //currentState = states.START_FORWARD;
       break;
 
       case START_FORWARD:
         drivePower(0.5);
-        if(getAveragePosition() >= 48){
+        if(getAveragePosition() >= 1/*48*/){
           currentState = states.ROTATE1_TO_ROCKET1;
           resetDriveEncoders();
           driveGyrolock(0, -30);
@@ -87,6 +88,7 @@ public class DoubleHatchAuto extends Autonomous{
         if(Math.abs(getCorrection()) <= 0.07 && isTargetInView()){
           currentState = states.ALIGN1;
           //currentState = states.FORWARD_TO_TARGET1;
+
         }
         waitingFor = "Target to Center";
       break;
@@ -191,6 +193,5 @@ public class DoubleHatchAuto extends Autonomous{
     SmartDashboard.putNumber("Accelerometer", getAccelerometer());
     SmartDashboard.putBoolean("collision?", collision());
     SmartDashboard.putNumber("Correction", getCorrection());
-    "hello"
   }
 }
