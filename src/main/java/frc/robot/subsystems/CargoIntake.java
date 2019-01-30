@@ -1,15 +1,14 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DigitalOutput;
-import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.infrastructure.SpeedControllerMode;
 import frc.robot.infrastructure.Transmission;
 
-public class CargoMechanism implements Subsystem {
+public class CargoIntake implements Subsystem {
 
     public enum CargoStateMachine {
-        HOLDING,
+        WAITING,
         INTAKING,
         RAISING,
         TRANSFERRING,
@@ -27,18 +26,19 @@ public class CargoMechanism implements Subsystem {
     private boolean hasCargo, elevatorInPosition, intakeCommand, outtakeCommand;
 
     private DigitalOutput cargoSensor = new DigitalOutput(0);
-    private CargoStateMachine currentIntakeState = CargoStateMachine.HOLDING;
+    private CargoStateMachine currentIntakeState = CargoStateMachine.WAITING;
     SpeedControllerMode intakeControlMode = SpeedControllerMode.kDutyCycle;
     SpeedControllerMode outtakeControlMode = SpeedControllerMode.kDutyCycle;
 
-    public CargoMechanism(Transmission transmission) {
+    public CargoIntake(Transmission transmission) {
         intake = transmission;
     }
 
     @Override
     public void update() {
         switch (currentIntakeState) {
-            case HOLDING:
+            case WAITING:
+                setIntakeUp();
                 setIntakeSpeed(0);
                 break;
             case INTAKING:
@@ -62,7 +62,6 @@ public class CargoMechanism implements Subsystem {
             case VOMIT:
                 setIntakeSpeed(-1);
                 break;
-            case S
             case OVERRIDE:
                 setIntakeDown();
                 setIntakeSpeed(1);
@@ -114,7 +113,7 @@ public class CargoMechanism implements Subsystem {
 
     @Override
     public void resetSensors() {
-        setIntakeState(CargoStateMachine.HOLDING);
+        setIntakeState(CargoStateMachine.WAITING);
     }
 
 

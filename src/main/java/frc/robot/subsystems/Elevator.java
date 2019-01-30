@@ -66,6 +66,9 @@ public class Elevator extends Lift implements Subsystem {
     }
     public ElevatorStateMachine getElevatorState() {
 		return currentElevatorMode;
-	}
+    }
+    public boolean inPosition() {
+        return Math.abs(transmission.getPosition() - demand) <= Constants.kElevatorTolerance;
+    }
 
 }
