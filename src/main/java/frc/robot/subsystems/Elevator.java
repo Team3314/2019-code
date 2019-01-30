@@ -6,6 +6,7 @@ import frc.robot.infrastructure.Lift;
 import frc.robot.Constants;
 import frc.robot.infrastructure.EncoderTransmission;
 import frc.robot.infrastructure.SpeedControllerMode;
+import frc.robot.infrastructure.Transmission;
 
 public class Elevator extends Lift implements Subsystem {
 
@@ -15,6 +16,7 @@ public class Elevator extends Lift implements Subsystem {
     }
 
     private ElevatorStateMachine currentElevatorMode = ElevatorStateMachine.MOTION_MAGIC;
+    private Transmission outake;
     private SpeedControllerMode controlMode;
 
     public void update(){

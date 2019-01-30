@@ -73,7 +73,6 @@ public class EncoderTransmission extends Transmission {
         else
             System.out.println("Transmission has no PIDController object!");
     }
-
     public boolean encoderIsSparkMax() {
         return encoder instanceof SparkMax;
     }

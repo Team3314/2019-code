@@ -16,7 +16,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorStateMachine;
 import frc.robot.subsystems.HatchMechanism;
 import frc.robot.subsystems.Superstructure;
-import frc.robot.subsystems.CargoIntake.IntakeStateMachine;
+import frc.robot.subsystems.CargoIntake.IntakeState;
 import frc.robot.subsystems.Drive.DriveMode;
 
 /**
@@ -124,13 +124,13 @@ public class Robot extends TimedRobot {
      * CARGO INTAKE CONTROLS
     */
     if (HI.getCargoIntake()) {
-      cargoIntake.setIntakeState(IntakeStateMachine.INTAKING);
+      cargoIntake.setIntakeState(IntakeState.INTAKING);
     }
     else if (HI.getCargoRelease()) {
-      cargoIntake.setIntakeState(IntakeStateMachine.RELEASING);
+      cargoIntake.setIntakeState(IntakeState.VOMIT);
     }
     else if (!HI.getCargoIntake() && !HI.getCargoRelease()) {
-      cargoIntake.setIntakeState(IntakeStateMachine.HOLDING);
+      cargoIntake.setIntakeState(IntakeState.WAITING);
     }
     /**
      * HATCH MECH CONTROLS

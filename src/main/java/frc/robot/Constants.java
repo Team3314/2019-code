@@ -59,6 +59,8 @@ public class Constants {
 		public static final int kMaxElevatorPosition = 0;
 		public static final int kMinElevatorPosition = 0;
 
+		public static final int kElevatorTolerance = 0;
+
 		public static final int kElevatorLowAccelerationThreshold = 1;
 
 		public static final int kElevatorPickup = 0;

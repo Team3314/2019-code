@@ -7,12 +7,13 @@ import frc.robot.infrastructure.Transmission;
 
 public class CargoIntake implements Subsystem {
 
-    public enum CargoStateMachine {
+    public enum IntakeState {
         WAITING,
         INTAKING,
         RAISING,
         TRANSFERRING,
         VOMIT,
+        PLACE,
         OVERRIDE
     }
 
@@ -23,10 +24,10 @@ public class CargoIntake implements Subsystem {
     */
     private double intakeSpeed, outtakeSpeed;
 
-    private boolean hasCargo, elevatorInPosition, intakeCommand, outtakeCommand;
+    private boolean hasCargo, elevatorInPosition, intakeCommand, outtakeCommand, cargoInCarriage;
 
     private DigitalOutput cargoSensor = new DigitalOutput(0);
-    private CargoStateMachine currentIntakeState = CargoStateMachine.WAITING;
+    private IntakeState currentIntakeState = IntakeState.WAITING;
     SpeedControllerMode intakeControlMode = SpeedControllerMode.kDutyCycle;
     SpeedControllerMode outtakeControlMode = SpeedControllerMode.kDutyCycle;
 
@@ -44,20 +45,17 @@ public class CargoIntake implements Subsystem {
             case INTAKING:
                 setIntakeDown();
                 setIntakeSpeed(1);
-                if(hasCargo) {
-                    currentIntakeState = CargoStateMachine.RAISING;
-                }
                 break;
             case RAISING:
                 setIntakeUp();
                 setIntakeSpeed(0);
-                if(elevatorInPosition) {
-                    currentIntakeState = CargoStateMachine.TRANSFERRING;
-                }
                 break;
             case TRANSFERRING:
                 setIntakeSpeed(1);
-                setOuttakeSpeed(-1);
+                setOuttakeSpeed(1);
+                break;
+            case PLACE:
+                setOuttakeSpeed(1);
                 break;
             case VOMIT:
                 setIntakeSpeed(-1);
@@ -93,14 +91,14 @@ public class CargoIntake implements Subsystem {
     /**
      * @param currentState the currentState to set
      */
-    public void setIntakeState(CargoStateMachine mode) {
+    public void setIntakeState(IntakeState mode) {
         currentIntakeState = mode;
     }
 
     /**
      * @return the currentState
      */
-    public CargoStateMachine getIntakeState() {
+    public IntakeState getIntakeState() {
         return currentIntakeState;
     }
 
@@ -113,7 +111,7 @@ public class CargoIntake implements Subsystem {
 
     @Override
     public void resetSensors() {
-        setIntakeState(CargoStateMachine.WAITING);
+        setIntakeState(IntakeState.WAITING);
     }
 
 
@@ -123,5 +121,13 @@ public class CargoIntake implements Subsystem {
 
     public void setIntake(boolean intake) {
 
+    }
+
+    public boolean getHasCargo() {
+        return hasCargo;
+    }
+
+    public boolean getCargoInCarriage() {
+        return cargoInCarriage;
     }
 }

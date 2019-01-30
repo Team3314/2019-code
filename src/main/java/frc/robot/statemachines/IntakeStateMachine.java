@@ -1,5 +1,6 @@
 package frc.robot.statemachines;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.subsystems.CargoIntake;
@@ -10,7 +11,6 @@ public class IntakeStateMachine {
     public enum States {
         WAITING,
         INTAKING,
-        DROPPING,
         RAISING,
         TRANSFER
     } 
@@ -18,9 +18,11 @@ public class IntakeStateMachine {
     CargoIntake intake;
     Elevator elevator;
 
+
+
     private States currentState = States.WAITING;
 
-    private boolean intakeRequest;
+    private boolean intakeRequest, lastIntakeRequest;
 
 
     public IntakeStateMachine() {
@@ -29,10 +31,13 @@ public class IntakeStateMachine {
     }
 
     public void update() {
-
+        if(!intakeRequest) {
+            currentState = States.WAITING;
+        }
         switch(currentState) { 
             case WAITING:
-                if(intakeRequest) {
+                intake.setIntakeState(IntakeState.WAITING);
+                if(intakeRequest && !lastIntakeRequest) {
                     currentState = States.INTAKING;
                 }
                 break;
@@ -45,15 +50,25 @@ public class IntakeStateMachine {
                 break;
             case RAISING:
                 intake.setIntakeState(IntakeState.RAISING);
-                if(elevator.inPosition()
+                if(elevator.inPosition()) {
+                    currentState = States.TRANSFER;
+                }
                 break;
             case TRANSFER:
+                intake.setIntakeState(IntakeState.TRANSFERRING);
+                if(intake.getCargoInCarriage()) {
+                    currentState = States.WAITING;
+                }
                 break;
         }
+        lastIntakeRequest = intakeRequest;
+    }  
 
+    public void setIntakeRequest(boolean request) {
+        intakeRequest = request;
     }
 
     public void outputToSmartDashboard() {
-
+        SmartDashboard.putString("Intake State Machine State", currentState.toString());
     }
 }
