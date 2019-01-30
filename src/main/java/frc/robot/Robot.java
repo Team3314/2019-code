@@ -10,6 +10,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.robot.subsystems.Drive;
+import frc.robot.autos.DoubleHatchAuto;
 import frc.robot.subsystems.Camera;
 import frc.robot.subsystems.CargoIntake;
 import frc.robot.subsystems.Elevator;
@@ -27,7 +28,7 @@ import frc.robot.subsystems.Drive.DriveMode;
  * project.
  */
 public class Robot extends TimedRobot {
-
+  
   public static RobotMap map = new RobotMap();
   public static Drive drive = new Drive(map.leftDrive, map.rightDrive, map.navx, map.shifter);
   public static CargoIntake cargoIntake = new CargoIntake(map.intakeTransmission);
@@ -35,7 +36,7 @@ public class Robot extends TimedRobot {
   public static Elevator elevator = new Elevator(map.elevatorTransmission);
   public static Camera camera = new Camera();
   public static Superstructure superstructure = new Superstructure(map.compressor);
-
+  DoubleHatchAuto auto1 = new DoubleHatchAuto();
   public Runnable smartDashboardRunnable = new Runnable(){
   
     @Override
@@ -54,21 +55,28 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    smartDashboardNotifier.startPeriodic(.1);
+    //smartDashboardNotifier.startPeriodic(.1);
+    drive.resetSensors();
+    auto1.reset();
   }
 
   @Override
   public void disabledPeriodic() {
-    outputToSmartDashboard();
+    
   }
-
+  @Override
+  public void robotPeriodic() {
+    outputToSmartDashboard();
+}
   @Override
   public void autonomousInit() {
+    drive.resetSensors();
+    auto1.reset();
   }
 
   @Override
   public void autonomousPeriodic() { 
-
+    auto1.update();
     allPeriodic();
     
   }
@@ -171,7 +179,7 @@ public class Robot extends TimedRobot {
     elevator.update();  
     superstructure.update();
     hatch.update();
-
+    
   }
 
 }

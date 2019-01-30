@@ -20,7 +20,6 @@ public class Constants {
 		public static double kDriveTicksToInches = kRevToInConvFactor / kDriveEncoderCodesPerRev;
 		public static double kFPSToTicksPer100ms = (kFeetToEncoderCodes / 10);
 		public static double kVoltageToNativeTalonUnits = 1023.0/12.0;
-
 		public static int kCANTimeout =0;
 
 //Drivetrain
@@ -75,7 +74,7 @@ public class Constants {
 		public static double kVelocity_MaxOutput = 1;
 		public static int kVelocitySlot = 1;
 	//Vision
-		public static double kVisionCtrl_kP = .01;
+		public static double kVisionCtrl_kP = .02;
 		public static double kVisionCtrl_kI = 0;
 		public static double kVisionCtrl_kD = 0;
 		public static double kVisionCtrl_kF = 0;
