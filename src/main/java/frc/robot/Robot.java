@@ -10,6 +10,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.robot.subsystems.Drive;
+import frc.robot.statemachines.IntakeStateMachine;
 import frc.robot.subsystems.Camera;
 import frc.robot.subsystems.CargoIntake;
 import frc.robot.subsystems.Elevator;
@@ -30,21 +31,12 @@ public class Robot extends TimedRobot {
 
   public static RobotMap map = new RobotMap();
   public static Drive drive = new Drive(map.leftDrive, map.rightDrive, map.navx, map.shifter);
-  public static CargoIntake cargoIntake = new CargoIntake(map.intakeTransmission);
+  public static CargoIntake cargoIntake = new CargoIntake(map.intakeTransmission, map.outtakeTransmission, map.pivotPiston);
   public static HatchMechanism hatch = new HatchMechanism(map.gripperPiston, map.sliderPiston);
   public static Elevator elevator = new Elevator(map.elevatorTransmission);
   public static Camera camera = new Camera();
   public static Superstructure superstructure = new Superstructure(map.compressor);
-
-  public Runnable smartDashboardRunnable = new Runnable(){
-  
-    @Override
-    public void run() {
-      outputToSmartDashboard();
-    }
-  };
-
-  public Notifier smartDashboardNotifier = new Notifier(smartDashboardRunnable);
+  public static IntakeStateMachine intakeStateMachine = new IntakeStateMachine();
 
   public static HumanInput HI = HumanInput.getInstance();
 
@@ -54,7 +46,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    smartDashboardNotifier.startPeriodic(.1);
+    //smartDashboardNotifier.startPeriodic(.1);
   }
 
   @Override
@@ -112,25 +104,47 @@ public class Robot extends TimedRobot {
     /**
      * ELEVATOR CONTROLS
     */
-    if(HI.getElevatorManual()) { 
-      elevator.setElevatorState(ElevatorStateMachine.MANUAL);
-      elevator.set(HI.getElevatorSpeed());
+    if(HI.getAutoCargoIntake()) {
+      intakeStateMachine.setIntakeRequest(true);
     }
     else {
-      elevator.setElevatorState(ElevatorStateMachine.MOTION_MAGIC);
-    }
+      intakeStateMachine.setIntakeRequest(false);
+      if(HI.getElevatorManual()) { 
+        elevator.setElevatorState(ElevatorStateMachine.MANUAL);
+        elevator.set(HI.getElevatorSpeed());
+      }
+      else {
+        elevator.setElevatorState(ElevatorStateMachine.MOTION_MAGIC);
+        if(HI.getElevatorLevel1()) {
+          elevator.set(Constants.kElevatorLevel1);
+        }
+        else if (HI.getElevatorLevel2()) {
+          elevator.set(Constants.kElevatorLevel2);
+        }
+        else if(HI.getElevatorLevel3()) {
+          elevator.set(Constants.kElevatorLevel3);
+        }
+        
+      }
 
-    /**
-     * CARGO INTAKE CONTROLS
-    */
-    if (HI.getCargoIntake()) {
-      cargoIntake.setIntakeState(IntakeState.INTAKING);
-    }
-    else if (HI.getCargoRelease()) {
-      cargoIntake.setIntakeState(IntakeState.VOMIT);
-    }
-    else if (!HI.getCargoIntake() && !HI.getCargoRelease()) {
-      cargoIntake.setIntakeState(IntakeState.WAITING);
+      /**
+       * CARGO INTAKE CONTROLS
+      */
+      if (HI.getCargoIntake()) {
+        cargoIntake.setIntakeState(IntakeState.INTAKING);
+      }
+      else if (HI.getCargoPlace()) {
+        cargoIntake.setIntakeState(IntakeState.PLACE);
+      }
+      else if (HI.getCargoTransfer()) {
+        cargoIntake.setIntakeState(IntakeState.TRANSFERRING);
+      }
+      else if(HI.getCargoEject()) {
+        cargoIntake.setIntakeState(IntakeState.VOMIT);
+      }
+      else {
+        cargoIntake.setIntakeState(IntakeState.WAITING);
+      }
     }
     /**
      * HATCH MECH CONTROLS

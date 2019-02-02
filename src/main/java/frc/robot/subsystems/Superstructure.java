@@ -1,15 +1,19 @@
 package frc.robot.subsystems;
 
+import java.util.List;
+
 import edu.wpi.first.wpilibj.Compressor;
 import frc.robot.Robot;
 
 public class Superstructure implements Subsystem {
 
     private Compressor compressor;
+    
+    private List actions;
 
-    private Elevator elevator = Robot.elevator;
-    private CargoIntake cargoIntake = Robot.cargoIntake;
-    private HatchMechanism hatch = Robot.hatch;
+    //private Elevator elevator = Robot.elevator;
+   // private CargoIntake cargoIntake = Robot.cargoIntake;
+   // private HatchMechanism hatch = Robot.hatch;
 
 
     public Superstructure(Compressor compressor) {

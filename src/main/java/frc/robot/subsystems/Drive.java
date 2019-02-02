@@ -5,8 +5,6 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.PIDSourceType;
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.robot.Constants;
@@ -29,8 +27,6 @@ public class Drive extends Drivetrain implements Subsystem {
     private AHRS navx;
 
     private DoubleSolenoid shifter;
-    
-    private PowerDistributionPanel pdp;
 
     public enum DriveMode {
 		IDLE,
@@ -71,7 +67,6 @@ public class Drive extends Drivetrain implements Subsystem {
 
     	
 		//Hardware
-    	pdp  = new PowerDistributionPanel(0);
     	this.shifter = shifter;
         navx = gyro;
 

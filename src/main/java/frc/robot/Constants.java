@@ -186,4 +186,8 @@ public class Constants {
 		public static Value kSliderIn = Value.kForward;
 		public static Value kSliderOut = Value.kReverse;
 
+	//Cargo Intake	
+		public static final Value kIntakeDown = Value.kForward;
+		public static final Value kIntakeUp = Value.kReverse;
+
 }

@@ -1,7 +1,10 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DigitalOutput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants;
 import frc.robot.infrastructure.SpeedControllerMode;
 import frc.robot.infrastructure.Transmission;
 
@@ -18,36 +21,38 @@ public class CargoIntake implements Subsystem {
     }
 
     private Transmission intake, outtake;
-    /* TODO Pick motor or piston
-    private EncoderTransmission pivot;
     private DoubleSolenoid pivot;
-    */
+
     private double intakeSpeed, outtakeSpeed;
 
-    private boolean hasCargo, elevatorInPosition, intakeCommand, outtakeCommand, cargoInCarriage;
+    private boolean cargoInCarriage;
 
-    private DigitalOutput cargoSensor = new DigitalOutput(0);
+    private Value pivotState = Constants.kIntakeUp;
+
+    private DigitalOutput cargoSensor;
     private IntakeState currentIntakeState = IntakeState.WAITING;
     SpeedControllerMode intakeControlMode = SpeedControllerMode.kDutyCycle;
     SpeedControllerMode outtakeControlMode = SpeedControllerMode.kDutyCycle;
 
-    public CargoIntake(Transmission transmission) {
-        intake = transmission;
+    public CargoIntake(Transmission intake, Transmission outtake, DoubleSolenoid pivotPiston) {
+        this.intake = intake;
+        this.outtake = outtake;
+        pivot = pivotPiston;
     }
 
     @Override
     public void update() {
         switch (currentIntakeState) {
             case WAITING:
-                setIntakeUp();
+                setIntakeDown(false);
                 setIntakeSpeed(0);
                 break;
             case INTAKING:
-                setIntakeDown();
+                setIntakeDown(true);
                 setIntakeSpeed(1);
                 break;
             case RAISING:
-                setIntakeUp();
+                setIntakeDown(false);
                 setIntakeSpeed(0);
                 break;
             case TRANSFERRING:
@@ -61,10 +66,11 @@ public class CargoIntake implements Subsystem {
                 setIntakeSpeed(-1);
                 break;
             case OVERRIDE:
-                setIntakeDown();
+                setIntakeDown(true);
                 setIntakeSpeed(1);
                 break;
         }
+        pivot.set(pivotState);
         intake.set(intakeSpeed, intakeControlMode);
         outtake.set(outtakeSpeed, outtakeControlMode);
 
@@ -80,12 +86,13 @@ public class CargoIntake implements Subsystem {
         this.outtakeSpeed = speed;
     }
 
-    public void setIntakeDown() {
-
-    }
-
-    public void setIntakeUp() {
-
+    public void setIntakeDown(boolean down) {
+        if(down) {
+            pivotState = Constants.kIntakeDown;
+        }
+        else {
+            pivotState = Constants.kIntakeUp;
+        }
     }
 
     /**
@@ -114,17 +121,8 @@ public class CargoIntake implements Subsystem {
         setIntakeState(IntakeState.WAITING);
     }
 
-
-    public void setElevatorInPosition(boolean elevator){
-        elevatorInPosition = elevator;
-    }
-
-    public void setIntake(boolean intake) {
-
-    }
-
     public boolean getHasCargo() {
-        return hasCargo;
+        return cargoSensor.get();
     }
 
     public boolean getCargoInCarriage() {

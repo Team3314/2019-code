@@ -59,12 +59,18 @@ public class RobotMap {
 
     //Intake
         WPI_TalonSRX mIntakeMaster;
+        WPI_TalonSRX mOuttakeMaster;
 
         TalonSRX mIntakeMasterWrapper;
+        TalonSRX mOuttakeMasterWrapper;
         
         SmartSpeedController[] intakeMotors;
+        SmartSpeedController[] outtakeMotors;
 
         Transmission intakeTransmission;
+        Transmission outtakeTransmission;
+
+        DoubleSolenoid pivotPiston;
 
     //Hatch mechanism
         DoubleSolenoid gripperPiston;
@@ -156,12 +162,18 @@ public class RobotMap {
 
     //Cargo intake
         mIntakeMaster = new WPI_TalonSRX(8);
+        mOuttakeMaster = new WPI_TalonSRX(9);
 
         mIntakeMasterWrapper = new TalonSRX(mIntakeMaster);
+        mOuttakeMasterWrapper = new TalonSRX(mOuttakeMaster);
 
         intakeMotors = new SmartSpeedController[] {mIntakeMasterWrapper};
+        outtakeMotors = new SmartSpeedController[] {mOuttakeMasterWrapper};
 
         intakeTransmission = new Transmission(intakeMotors);
+        outtakeTransmission = new Transmission(outtakeMotors);
+
+        pivotPiston = new DoubleSolenoid(6,7);
 
     //Hatch mechanism
         gripperPiston = new DoubleSolenoid(2, 3);

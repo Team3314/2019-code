@@ -2,6 +2,7 @@ package frc.robot.statemachines;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
+import frc.robot.HumanInput;
 import frc.robot.Robot;
 import frc.robot.subsystems.CargoIntake;
 import frc.robot.subsystems.Elevator;
@@ -17,6 +18,7 @@ public class IntakeStateMachine {
 
     CargoIntake intake;
     Elevator elevator;
+    HumanInput HI = Robot.HI;
 
 
 

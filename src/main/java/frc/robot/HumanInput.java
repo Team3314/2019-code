@@ -25,7 +25,7 @@ public class HumanInput {
 		autoSelector = new Joystick(4);
 
     }
-
+//Drive Controls
     public double getLeftThrottle() {
 		return -leftStick.getRawAxis(1);
 	}
@@ -44,21 +44,22 @@ public class HumanInput {
 	public boolean getVelocityControl() {
 		return rightStick.getRawButton(2);
 	}
-	public boolean getElevatorUP() {
-		return leftStick.getRawButton(2);
+	public boolean getVision() {
+		return leftStick.getRawButton(1);
 	}
 	//TODO buttons for elevator and intakes
+	//Elevator Controls
 	public boolean getElevatorPickup() {
 		return false;
 	}
 	public boolean getElevatorLevel1() {
-		return false;
+		return leftStick.getRawButton(11);
 	}
 	public boolean getElevatorLevel2() {
-		return false;
+		return leftStick.getRawButton(9);
 	}
 	public boolean getElevatorLevel3() {
-		return false;
+		return leftStick.getRawButton(7);
 	}
 	public boolean getElevatorManual() {
 		return false;
@@ -66,12 +67,23 @@ public class HumanInput {
 	public double getElevatorSpeed() {
 		return 0;
 	}
+	//Cargo Intake Controls
+	public boolean getAutoCargoIntake() {
+		return gamepad.getRawButton(1);
+	}
 	public boolean getCargoIntake() {
 		return false;
 	}
-	public boolean getCargoRelease() {
+	public boolean getCargoTransfer() {
 		return false;
 	}
+	public boolean getCargoPlace() {
+		return false;
+	}
+	public boolean getCargoEject() {
+		return false;
+	}
+	//Hatch Intake Controls
 	public boolean getGripperUp() {
 		return false;
 	}
@@ -83,9 +95,6 @@ public class HumanInput {
 	}
 	public boolean getSliderOut() {
 		return false;
-	}
-	public boolean getVision() {
-		return leftStick.getRawButton(1);
 	}
 	
 }
