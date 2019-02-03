@@ -4,20 +4,14 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Joystick;
 
 public class HumanInput {
-
-    private static HumanInput mInstance = new HumanInput();
 	
 	private final Joystick gamepad;
 	private final Joystick leftStick;
 	private final Joystick rightStick;
 	private final Joystick buttonBox;
 	private final Joystick autoSelector;
-	
-	public static HumanInput getInstance() {
-		return mInstance;
-	}
     
-	private HumanInput() {
+	public HumanInput() {
 		gamepad = new Joystick(0);
 		leftStick = new Joystick(1);
 		rightStick = new Joystick(2);
@@ -47,7 +41,7 @@ public class HumanInput {
 	public boolean getVision() {
 		return leftStick.getRawButton(1);
 	}
-	//TODO buttons for elevator and intakes
+	//TODO buttons
 	//Elevator Controls
 	public boolean getElevatorPickup() {
 		return false;
@@ -96,5 +90,9 @@ public class HumanInput {
 	public boolean getSliderOut() {
 		return false;
 	}
-	
+
+	//
+	public boolean getClearQueue() {
+		return buttonBox.getRawButton(16);
+	}
 }

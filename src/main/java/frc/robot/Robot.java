@@ -36,9 +36,17 @@ public class Robot extends TimedRobot {
   public static Elevator elevator = new Elevator(map.elevatorTransmission);
   public static Camera camera = new Camera();
   public static Superstructure superstructure = new Superstructure(map.compressor);
+  public static HumanInput HI = new HumanInput();
   public static IntakeStateMachine intakeStateMachine = new IntakeStateMachine();
 
-  public static HumanInput HI = HumanInput.getInstance();
+  public Runnable smartDashboardRunnable = new Runnable(){
+  
+    @Override
+    public void run() {
+      outputToSmartDashboard();
+    }
+  };
+  public Notifier smartDashboardNotifier = new Notifier(smartDashboardRunnable);
 
   /**
    * THIs function is run when the robot is first started up and should be used
@@ -46,7 +54,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    //smartDashboardNotifier.startPeriodic(.1);
+    smartDashboardNotifier.startPeriodic(.1);
   }
 
   @Override
@@ -56,6 +64,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    drive.resetSensors();
   }
 
   @Override
@@ -67,100 +76,104 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    drive.resetSensors();
   }
 
   @Override
   public void teleopPeriodic() {
 
     allPeriodic();
-    
-    // Drive Controls
-		if(HI.getGyrolock()) {
-      drive.setDriveMode(DriveMode.GYROLOCK);
-      drive.set(HI.getLeftThrottle(), HI.getLeftThrottle());
-    }
-    else if (HI.getVision()) {
-      drive.setDriveMode(DriveMode.VISION_CONTROL);
-    }
-    else if (HI.getVelocityControl()) {
-      drive.setDriveMode(DriveMode.VELOCITY);
-      drive.set(HI.getLeftThrottle(), HI.getRightThrottle());
-    }
-    else {  
-      drive.setDriveMode(DriveMode.OPEN_LOOP);
-      drive.set(HI.getLeftThrottle(), HI.getRightThrottle());
-    }
 
-		if(HI.getHighGear()) {
-			drive.setHighGear(true);
-		}
-		else if(HI.getLowGear()) {
-      drive.setHighGear(false);
+    if(HI.getClearQueue()) {
+      superstructure.clearQueue();
     }
-
-    drive.setElevatorUp(elevator.getPosition() >= Constants.kElevatorLowAccelerationThreshold);
-
-    /**
-     * ELEVATOR CONTROLS
-    */
-    if(HI.getAutoCargoIntake()) {
-      intakeStateMachine.setIntakeRequest(true);
-    }
-    else {
-      intakeStateMachine.setIntakeRequest(false);
-      if(HI.getElevatorManual()) { 
-        elevator.setElevatorState(ElevatorStateMachine.MANUAL);
-        elevator.set(HI.getElevatorSpeed());
+    if(superstructure.isQueueDone()) {
+      // Drive Controls
+      if(HI.getGyrolock()) {
+        drive.setDriveMode(DriveMode.GYROLOCK);
+        drive.set(HI.getLeftThrottle(), HI.getLeftThrottle());
       }
-      else {
-        elevator.setElevatorState(ElevatorStateMachine.MOTION_MAGIC);
-        if(HI.getElevatorLevel1()) {
-          elevator.set(Constants.kElevatorLevel1);
-        }
-        else if (HI.getElevatorLevel2()) {
-          elevator.set(Constants.kElevatorLevel2);
-        }
-        else if(HI.getElevatorLevel3()) {
-          elevator.set(Constants.kElevatorLevel3);
-        }
-        
+      else if (HI.getVision()) {
+        drive.setDriveMode(DriveMode.VISION_CONTROL);
       }
+      else if (HI.getVelocityControl()) {
+        drive.setDriveMode(DriveMode.VELOCITY);
+        drive.set(HI.getLeftThrottle(), HI.getRightThrottle());
+      }
+      else {  
+        drive.setDriveMode(DriveMode.OPEN_LOOP);
+        drive.set(HI.getLeftThrottle(), HI.getRightThrottle());
+      }
+
+      if(HI.getHighGear()) {
+        drive.setHighGear(true);
+      }
+      else if(HI.getLowGear()) {
+        drive.setHighGear(false);
+      }
+
+      drive.setElevatorUp(elevator.getPosition() >= Constants.kElevatorLowAccelerationThreshold);
 
       /**
-       * CARGO INTAKE CONTROLS
+       * ELEVATOR CONTROLS
       */
-      if (HI.getCargoIntake()) {
-        cargoIntake.setIntakeState(IntakeState.INTAKING);
-      }
-      else if (HI.getCargoPlace()) {
-        cargoIntake.setIntakeState(IntakeState.PLACE);
-      }
-      else if (HI.getCargoTransfer()) {
-        cargoIntake.setIntakeState(IntakeState.TRANSFERRING);
-      }
-      else if(HI.getCargoEject()) {
-        cargoIntake.setIntakeState(IntakeState.VOMIT);
+      if(HI.getAutoCargoIntake()) {
+        intakeStateMachine.setIntakeRequest(true);
       }
       else {
-        cargoIntake.setIntakeState(IntakeState.WAITING);
-      }
-    }
-    /**
-     * HATCH MECH CONTROLS
-    */
+        intakeStateMachine.setIntakeRequest(false);
+        if(HI.getElevatorManual()) { 
+          elevator.setElevatorState(ElevatorStateMachine.MANUAL);
+          elevator.set(HI.getElevatorSpeed());
+        }
+        else {
+          elevator.setElevatorState(ElevatorStateMachine.MOTION_MAGIC);
+          if(HI.getElevatorLevel1()) {
+            elevator.set(Constants.kElevatorLevel1);
+          }
+          else if (HI.getElevatorLevel2()) {
+            elevator.set(Constants.kElevatorLevel2);
+          }
+          else if(HI.getElevatorLevel3()) {
+            elevator.set(Constants.kElevatorLevel3);
+          }
+          
+        }
 
-    if (HI.getGripperDown()) {
-      hatch.setGripperDown(true);
-    }
-    else if (HI.getGripperUp()) {
-      hatch.setGripperDown(false);
-    }
-    if (HI.getSliderOut()) {
-      hatch.setSliderOut(true);
-    }
-    else if (HI.getSliderIn()) {
-      hatch.setSliderOut(false);
+        /**
+         * CARGO INTAKE CONTROLS
+        */
+        if (HI.getCargoIntake()) {
+          cargoIntake.setIntakeState(IntakeState.INTAKING);
+        }
+        else if (HI.getCargoPlace()) {
+          cargoIntake.setIntakeState(IntakeState.PLACE);
+        }
+        else if (HI.getCargoTransfer()) {
+          cargoIntake.setIntakeState(IntakeState.TRANSFERRING);
+        }
+        else if(HI.getCargoEject()) {
+          cargoIntake.setIntakeState(IntakeState.VOMIT);
+        }
+        else {
+          cargoIntake.setIntakeState(IntakeState.WAITING);
+        }
+      }
+      /**
+       * HATCH MECH CONTROLS
+      */
+
+      if (HI.getGripperDown()) {
+        hatch.setGripperDown(true);
+      }
+      else if (HI.getGripperUp()) {
+        hatch.setGripperDown(false);
+      }
+      if (HI.getSliderOut()) {
+        hatch.setSliderOut(true);
+      }
+      else if (HI.getSliderIn()) {
+        hatch.setSliderOut(false);
+      }
     }
   }
 
@@ -178,7 +191,8 @@ public class Robot extends TimedRobot {
     hatch.outputToSmartDashboard();
     elevator.outputToSmartDashboard();
 		camera.outputToSmartDashboard();
-		superstructure.outputToSmartDashboard();
+    superstructure.outputToSmartDashboard();
+    intakeStateMachine.outputToSmartDashboard();
   }
 
   public void allPeriodic() {
@@ -188,6 +202,7 @@ public class Robot extends TimedRobot {
     elevator.update();  
     superstructure.update();
     hatch.update();
+    intakeStateMachine.update();
 
   }
 

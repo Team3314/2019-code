@@ -18,7 +18,7 @@ public class IntakeStateMachine {
 
     CargoIntake intake;
     Elevator elevator;
-    HumanInput HI = Robot.HI;
+    HumanInput HI;
 
 
 
@@ -30,6 +30,7 @@ public class IntakeStateMachine {
     public IntakeStateMachine() {
         intake = Robot.cargoIntake;
         elevator = Robot.elevator;
+        HI = Robot.HI;
     }
 
     public void update() {

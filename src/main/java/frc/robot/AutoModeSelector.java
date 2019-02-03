@@ -3,7 +3,7 @@ package frc.robot;
 import frc.robot.autos.*;
 
 public class AutoModeSelector {
-	private HumanInput hi = HumanInput.getInstance();
+	private HumanInput hi = Robot.HI;
 	private String autoModeBinary, delayBinary;
 	private int autoModeDecimal, delayDecimal;
 	//private Autonomous autoMode;

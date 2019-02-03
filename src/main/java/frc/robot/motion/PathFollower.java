@@ -56,7 +56,7 @@ public class PathFollower {
 	private Notifier notifier = new Notifier(new PeriodicRunnable());
 	
 	public void followPath(Path path) {
-		drive.resetSensors();
+		drive.resetDriveEncoders();
 		switch(path.getMode()) {
 		case BACKWARD_HIGH:
 			left = new EncoderFollower(Pathfinder.readFromCSV(path.getRightPath()));

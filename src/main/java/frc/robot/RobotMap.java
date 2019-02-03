@@ -50,8 +50,10 @@ public class RobotMap {
 
     //Elevator
         WPI_TalonSRX mElevatorMaster;
+        WPI_TalonSRX mElevatorSlave;
 
         TalonSRX mElevatorMasterWrapper;
+        TalonSRX mElevatorSlaveWrapper;
 
         SmartSpeedController[] elevatorMotors;
 
@@ -153,16 +155,18 @@ public class RobotMap {
 
     //Elevator
         mElevatorMaster = new WPI_TalonSRX(7);
+        mElevatorSlave = new WPI_TalonSRX(8);
 
         mElevatorMasterWrapper = new TalonSRX(mElevatorMaster);
+        mElevatorSlaveWrapper = new TalonSRX(mElevatorSlave);
 
-        elevatorMotors = new SmartSpeedController[] {mElevatorMasterWrapper};
+        elevatorMotors = new SmartSpeedController[] {mElevatorMasterWrapper, mElevatorSlaveWrapper};
 
         elevatorTransmission = new EncoderTransmission(elevatorMotors, mElevatorMasterWrapper);
 
     //Cargo intake
-        mIntakeMaster = new WPI_TalonSRX(8);
-        mOuttakeMaster = new WPI_TalonSRX(9);
+        mIntakeMaster = new WPI_TalonSRX(9);
+        mOuttakeMaster = new WPI_TalonSRX(10);
 
         mIntakeMasterWrapper = new TalonSRX(mIntakeMaster);
         mOuttakeMasterWrapper = new TalonSRX(mOuttakeMaster);
