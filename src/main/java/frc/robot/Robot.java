@@ -61,6 +61,11 @@ public class Robot extends TimedRobot {
   }
 
   @Override
+  public void disabledInit() {
+    drive.resetDriveEncoders();
+  }
+
+  @Override
   public void disabledPeriodic() {
     
   }

@@ -134,6 +134,7 @@ public class Camera implements Subsystem {
 		SmartDashboard.putString("LED mode", getLEDMode());
 		SmartDashboard.putString("Camera mode", getCamMode());
 		SmartDashboard.putString("Snapshot mode", getSnapshot());
+		SmartDashboard.putNumber("Correction", correction);
 	}
 
 	@Override

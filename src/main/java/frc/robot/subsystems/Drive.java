@@ -102,7 +102,7 @@ public class Drive extends Drivetrain implements Subsystem {
             case OPEN_LOOP:
                 rawLeftSpeed = leftDemand * Math.abs(leftDemand);
                 rawRightSpeed = rightDemand * Math.abs(rightDemand);
-                setIdleMode(IdleMode.kCoast);
+                setIdleMode(IdleMode.kBrake);
                 controlMode = SpeedControllerMode.kDutyCycle;
                 break;
             case GYROLOCK:
@@ -254,6 +254,7 @@ public class Drive extends Drivetrain implements Subsystem {
         SmartDashboard.putNumber("Right Encoder Speed RPS", rightDriveSpeedTicks);
         SmartDashboard.putNumber("Left Encoder Speed Inches", leftDriveSpeedInches);
         SmartDashboard.putNumber("Right Encoder Speed Inches", rightDriveSpeedInches);
+        SmartDashboard.putNumber("Avg. Position", getAveragePosition());
     	SmartDashboard.putNumber("Left Master Current", leftDrive.getOutputCurrent(0));
     	SmartDashboard.putNumber("Left Slave 1 Current", leftDrive.getOutputCurrent(1));
     	SmartDashboard.putNumber("Left Slave 2 Current", leftDrive.getOutputCurrent(2));
@@ -266,10 +267,11 @@ public class Drive extends Drivetrain implements Subsystem {
     	SmartDashboard.putNumber("Raw Right Speed", rawRightSpeed);
     	SmartDashboard.putNumber("Desired Angle", desiredAngle);
     	SmartDashboard.putNumber("Current angle", getAngle());
-    	SmartDashboard.putNumber("Gyro adjustment", gyroPIDOutput.getOutput());
+        SmartDashboard.putNumber("Gyro adjustment", gyroPIDOutput.getOutput());
+        SmartDashboard.putBoolean("Gyro Turn Done", gyroInPosition());
     	SmartDashboard.putNumber("Left Voltage", leftDrive.getOutputVoltage());
         SmartDashboard.putNumber("Right Voltage", rightDrive.getOutputVoltage());
-        
+        SmartDashboard.putNumber("Accelerometer", getAcceleration());
     }
   
     public void resetDriveEncoders() {
@@ -290,6 +292,6 @@ public class Drive extends Drivetrain implements Subsystem {
     	return gyroControl.onTarget();
     }
     public boolean collision(){
-        return Math.round(100* navx.getWorldLinearAccelY()) > 20 ;
+        return Math.round(100* navx.getWorldLinearAccelY()) > 55 ;
     }
 }

@@ -16,95 +16,107 @@ import frc.robot.infrastructure.SparkMax;
 /**
  * Add your docs here.
  */
-/*Changes for final code 
--Encoder ticks to inches
--Placing hatch simulation replacement
-*/
-public class DoubleHatchAuto extends Autonomous{
+/*
+ * Changes for final code -Encoder ticks to inches -Placing hatch simulation
+ * replacement
+ */
+public class DoubleHatchAuto extends Autonomous {
 
   public enum states {
-    START,
-    START_FORWARD,                    // Go forward off the platform 48 inches
-    ROTATE1_TO_ROCKET1,               // Blind rotate to gyro heading of ~-30
-    ALIGN1,                           // Align robot to center of rocket target
-    FORWARD_TO_TARGET1,               // Go towards rocket while aligning. Stop when collision.
-    PLACE_HATCH1,                     // Simulate placing hatch wait for a second
-    BACKUP_AFTER_PLACING_HATCH,       // Go backwards 24-36 inches?
-    TURN_AROUND,                      // Turn to a heading of -180
-    DRIVE_TO_LOADING_STATION,         // Drive and align towards loading station until collision
-    RETREIVE_HATCH2,                  // Simulate picking up hatch panel and wait a second
-    BACK_FROM_LOADING_STATION,        // Drive backwards at a heading of -175 for ~23 feet
-    ROTATE2_TO_ROCKET,                // Blind rotate to gyro heading of -150
-    ALIGN2,                           // Align robot to center of target
-    FORWARD_TO_TARGET2,               // Go towards rocket while aligning until collision.
+    START, // Go forward off the platform 48 inches
+    START2,
+    START_FORWARD, 
+    ROTATE1_TO_ROCKET1, // Blind rotate to gyro heading of ~-30
+    ALIGN1, // Align robot to center of rocket target
+    FORWARD_TO_TARGET1, // Go towards rocket while aligning. Stop when collision.
+    PLACE_HATCH1, // Simulate placing hatch wait for a second
+    BACKUP_AFTER_PLACING_HATCH, // Go backwards 24-36 inches?
+    TURN_AROUND, // Turn to a heading of -180
+    DRIVE_TO_LOADING_STATION, // Drive and align towards loading station until collision
+    RETREIVE_HATCH2, // Simulate picking up hatch panel and wait a second
+    BACK_FROM_LOADING_STATION, // Drive backwards at a heading of -175 for ~21 feet
+    ROTATE2_TO_ROCKET, // Blind rotate to gyro heading of -150
+    ALIGN2, // Align robot to center of target
+    FORWARD_TO_TARGET2, // Go towards rocket while aligning until collision.
     STOP
   }
 
   states currentState;
-  WPI_TalonSRX leftMasterTalon, rightMasterTalon;
-  int cyclesInState;
-  double baseSpeed = 0.5; 
-  double inchesTraveledInState;
   String waitingFor = "";
 
   public DoubleHatchAuto() {
     currentState = states.START;
   }
-  
+
   @Override
   public void reset() {
     currentState = states.START;
   }
-  
+
   @Override
   public void update() {
     switch (currentState) {
-      case START:
+    case START:
       resetDriveEncoders();
-      currentState = states.START_FORWARD;
-      //currentState = states.ALIGN1;
-      //currentState = states.START_FORWARD;
+      currentState = states.START2;
+      startTimer();
+      // currentState = states.ALIGN1;
+      // currentState = states.START_FORWARD;
       break;
 
-      case START_FORWARD:
-        drivePower(0.5);
-        if(getAveragePosition() >= 1/*48*/){
-          currentState = states.ROTATE1_TO_ROCKET1;
-          resetDriveEncoders();
-          driveGyrolock(0, -30);
-        }
-        waitingFor = "Go forward 48 Inches";
+    case START2:
+      resetDriveEncoders();
+      if(getTime() >= 0.1){
+        currentState = states.START_FORWARD;
+        resetTimer();
+      }
       break;
 
-      case ROTATE1_TO_ROCKET1:
-        if(gyroTurnDone()){
-          currentState = states.ALIGN1;
-        }
-        waitingFor = "Put gyro heading to -30";
+    case START_FORWARD:
+      drivePower(0.5);
+      if (getAveragePosition() >= 48) {
+        currentState = states.ROTATE1_TO_ROCKET1;
+        resetDriveEncoders();
+        if(getStartPos().equals("StartR"))
+            driveGyrolock(0, -30);
+        else if(getStartPos().equals("StartL"))
+            driveGyrolock(0, 30);
+      }
+      waitingFor = "Go forward 48 Inches";
       break;
 
-      case ALIGN1:
-        drivePower(getCorrection(), -(getCorrection()));
-        if(Math.abs(getCorrection()) <= 0.07 && isTargetInView()){
-          currentState = states.ALIGN1;
-          //currentState = states.FORWARD_TO_TARGET1;
-
-        }
-        waitingFor = "Target to Center";
+    case ROTATE1_TO_ROCKET1:
+      if (gyroTurnDone()) {
+        currentState = states.ALIGN1;
+      }
+      if(getStartPos().equals("StartR"))
+          waitingFor = "Put gyro heading to -30";
+      else if(getStartPos().equals("StartL"))
+          waitingFor = "Put gyro heading to 30";
       break;
 
-    case FORWARD_TO_TARGET1:    
-        drivePower(0.5 - getCorrection(), 0.5 + getCorrection());
-        if(collision() == true){
-          currentState = states.PLACE_HATCH1;
-          startTimer();
-        }
-        waitingFor = "Collision";
+    case ALIGN1:
+      drivePower(getCorrection(), -(getCorrection()));
+      if (Math.abs(getCorrection()) <= 0.07 && isTargetInView()) {
+        //currentState = states.STOP;
+        currentState = states.FORWARD_TO_TARGET1;
+
+      }
+      waitingFor = "Target to Center";
+      break;
+
+    case FORWARD_TO_TARGET1:
+      drivePower(0.5 + getCorrection(), 0.5 - getCorrection());
+      if (collision()) {
+        currentState = states.PLACE_HATCH1;
+        startTimer();
+      }
+      waitingFor = "Collision";
       break;
 
     case PLACE_HATCH1:
       drivePower(0);
-      if(getTime() >= 1){
+      if (getTime() >= 1) {
         resetTimer();
         currentState = states.BACKUP_AFTER_PLACING_HATCH;
         resetDriveEncoders();
@@ -114,24 +126,30 @@ public class DoubleHatchAuto extends Autonomous{
 
     case BACKUP_AFTER_PLACING_HATCH:
       drivePower(-0.5);
-      if (getAveragePosition() <= -30){
+      if (getAveragePosition() <= -30) {
         currentState = states.TURN_AROUND;
-        driveGyrolock(0, -180);
-        //resetDriveEncoders();
+        if(getStartPos().equals("StartR"))
+            driveGyrolock(0, -180);
+        else if(getStartPos().equals("StartL"))
+            driveGyrolock(0, 180);
+        // resetDriveEncoders();
       }
       waitingFor = "Back up 30 inches";
       break;
 
     case TURN_AROUND:
-      if(gyroTurnDone()){
+      if (gyroTurnDone()) {
         currentState = states.DRIVE_TO_LOADING_STATION;
       }
-        waitingFor = "Put gyro heading to -180"; 
+      if(getStartPos().equals("StartR"))
+          waitingFor = "Put gyro heading to -180";
+      else if(getStartPos().equals("StartL"))
+          waitingFor = "Put gyro heading to 180";
       break;
 
     case DRIVE_TO_LOADING_STATION:
-      drivePower(0.5 - getCorrection(), 0.5 + getCorrection());
-      if(collision() == true){
+      drivePower(0.5 + getCorrection(), 0.5 - getCorrection());
+      if (collision()) {
         currentState = states.RETREIVE_HATCH2;
         startTimer();
       }
@@ -140,7 +158,7 @@ public class DoubleHatchAuto extends Autonomous{
 
     case RETREIVE_HATCH2:
       drivePower(0);
-      if(getTime() >= 1) {
+      if (getTime() >= 1) {
         resetTimer();
         currentState = states.BACK_FROM_LOADING_STATION;
         resetDriveEncoders();
@@ -149,25 +167,31 @@ public class DoubleHatchAuto extends Autonomous{
       break;
 
     case BACK_FROM_LOADING_STATION:
-     drivePower(-0.5);
-     if (getAveragePosition() <= -276){
+      drivePower(-0.5);
+      if (getAveragePosition() <= -255) {
         currentState = states.ROTATE2_TO_ROCKET;
         resetDriveEncoders();
-      driveGyrolock(0, -150);
-     }
-      waitingFor = "Go back 276 inches";
+        if(getStartPos().equals("StartR"))
+            driveGyrolock(0, -150);
+        else if(getStartPos().equals("StartL"))
+            driveGyrolock(0, 150);
+      }
+      waitingFor = "Go back 255 inches";
       break;
 
-    case ROTATE2_TO_ROCKET: 
-      if(gyroTurnDone()){
+    case ROTATE2_TO_ROCKET:
+      if (gyroTurnDone()) {
         currentState = states.ALIGN2;
       }
-      waitingFor = "Put gyro heading to -150";
+      if(getStartPos().equals("StartR"))
+          waitingFor = "Put gyro heading to -150";
+      else if(getStartPos().equals("StartL")) 
+          waitingFor = "Put gyro heading to 150";
       break;
 
     case ALIGN2:
       drivePower(getCorrection(), -getCorrection());
-      if(Math.abs(getCorrection()) <= 0.07 && targetInView()){
+      if (Math.abs(getCorrection()) <= 0.07 && targetInView()) {
         currentState = states.FORWARD_TO_TARGET2;
       }
       waitingFor = "Align to center of target";
@@ -175,7 +199,7 @@ public class DoubleHatchAuto extends Autonomous{
 
     case FORWARD_TO_TARGET2:
       drivePower(0.5 - getCorrection(), 0.5 + getCorrection());
-      if(collision()){
+      if (collision()) {
         currentState = states.STOP;
       }
       waitingFor = "Collision";
@@ -188,10 +212,7 @@ public class DoubleHatchAuto extends Autonomous{
     }
     SmartDashboard.putString("Waiting For", waitingFor);
     SmartDashboard.putString("State", currentState.toString());
-    SmartDashboard.putNumber("Avg. Position", getAveragePosition());
-    SmartDashboard.putBoolean("Gyro Turn Done", gyroTurnDone());
-    SmartDashboard.putNumber("Accelerometer", getAccelerometer());
     SmartDashboard.putBoolean("collision?", collision());
-    SmartDashboard.putNumber("Correction", getCorrection());
+    SmartDashboard.putString("Starting Postion", getStartPos().toString());
   }
 }

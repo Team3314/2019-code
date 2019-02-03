@@ -9,19 +9,21 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 public class Constants {
 
 
-//Conversions	
-		public static int kDriveEncoderCodesPerRev = 8192;
-		
+//Conversions
+		public static int kDriveEncoderCodesPerRev = 42;// AMT-102v = 8192;
+		public static int kNEODriveEncoderCodesPerRev = 42;
+
 		public static double kDegToTicksConvFactor = .038888888888888;
 		public static double kRevToInConvFactor = 1;
-		public static double kRevToInConvFactorLowGear = 1.28167; //XXX OLD 7.90274223082 High Gear;
-		public static double kRevToInConvFactorHighGear = 2.945;
+		public static double kRevToInConvFactorLowGear = 1.2245; //first stage (12/44) * second stage(14/60) * wheel circumference (6.125 * pi)
+		public static double kRevToInConvFactorHighGear = 3.578; //first stage (12/44) * second stage(30/44) * wheel circumference (6.125 * pi)
+		public static double kTicksToInHighGear = kRevToInConvFactorHighGear / kNEODriveEncoderCodesPerRev;
+		public static double kTicksToInLowGear = kRevToInConvFactorLowGear / kNEODriveEncoderCodesPerRev;
 		public static double kFeetToEncoderCodes = (12.0 *kDriveEncoderCodesPerRev) / kRevToInConvFactor;
 		public static double kDriveTicksToInches = kRevToInConvFactor / kDriveEncoderCodesPerRev;
 		public static double kFPSToTicksPer100ms = (kFeetToEncoderCodes / 10);
 		public static double kVoltageToNativeTalonUnits = 1023.0/12.0;
 		public static int kCANTimeout =0;
-
 //Drivetrain
 		public static int kTalonDriveContinuousCurrentLimit = 40;
 		public static int kTalonDrivePeakCurrentLimit = 40;
@@ -61,7 +63,7 @@ public class Constants {
 		public static final int kIntakeCurrentDuration = 0; //last year 100ms
 //PID Constants
 	//Gyrolock
-		public static double kGyroLock_kP = .015;
+		public static double kGyroLock_kP = .01;
 		public static double kGyroLock_kI = 0;
 		public static double kGyroLock_kD = 0;
 		public static double kGyroLock_kF = 0;

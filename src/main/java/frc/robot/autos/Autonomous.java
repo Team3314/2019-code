@@ -122,4 +122,8 @@ public abstract class Autonomous {
 	}
 	protected double getAccelerometer(){
 		return drive.getAcceleration();
-	}}
+	}
+	protected String getStartPos() {
+		return HI.getLeftRightCenter();
+	}
+}
