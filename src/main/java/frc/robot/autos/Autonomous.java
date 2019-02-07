@@ -64,9 +64,9 @@ public abstract class Autonomous {
 		return drive.getAngle();
 	}
 	
-	protected void driveGyrolock(double desiredSpeed, double desiredAngle, DriveMode mode) {
+	protected void driveGyrolock(double desiredSpeed, double desiredAngle) {
+		drive.setDriveMode(DriveMode.GYROLOCK);
 		setHighGear(true);
-		drive.setDriveMode(mode);
 		drive.set(desiredSpeed, desiredSpeed);
 		drive.setDesiredAngle(desiredAngle);
 	}
@@ -102,5 +102,28 @@ public abstract class Autonomous {
 	}
 	public double getTime() {
 		return timer.get();
+	}
+	//Double Hatch Auto
+
+	protected boolean collision(){
+		return drive.collision();
+	}
+	protected double getCorrection(){
+		return camera.getCorrection();
+	}
+	protected double getTargetHorizError(){
+		return camera.getTargetHorizError();
+	}
+	protected boolean isTargetInView(){
+		return camera.isTargetInView();
+	}
+	public double getAveragePosition(){
+		return drive.getAveragePosition();
+	}
+	protected double getAccelerometer(){
+		return drive.getAcceleration();
+	}
+	protected String getStartPos() {
+		return HI.getLeftRightCenter();
 	}
 }

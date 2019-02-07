@@ -8,7 +8,7 @@ import frc.robot.subsystems.CargoIntake;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.CargoIntake.IntakeState;
 
-public class IntakeStateMachine {
+public class CargoIntakeStateMachine {
     public enum States {
         WAITING,
         INTAKING,
@@ -27,7 +27,7 @@ public class IntakeStateMachine {
     private boolean intakeRequest, lastIntakeRequest;
 
 
-    public IntakeStateMachine() {
+    public CargoIntakeStateMachine() {
         intake = Robot.cargoIntake;
         elevator = Robot.elevator;
         HI = Robot.HI;

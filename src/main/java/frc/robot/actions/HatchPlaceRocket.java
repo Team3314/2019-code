@@ -11,19 +11,15 @@ public class HatchPlaceRocket extends Action {
         DONE
     }
 
-    public HatchPlaceRocket(int level, boolean far) {
-        placeLevel = level;
-        placeFar = far;
-    }
-
-    int placeLevel;
-    boolean placeFar;
+    private int placeLevel;
+    private boolean placeFar;
 
     private State currentState;
 
-    @Override
-    public void reset() {
-
+    public HatchPlaceRocket(int level, boolean far) {
+        currentState = State.TURN;
+        placeLevel = level;
+        placeFar = far;
     }
 
     @Override
@@ -47,6 +43,16 @@ public class HatchPlaceRocket extends Action {
     @Override
     public boolean isDone() {
         return currentState == State.DONE;
+    }
+
+    @Override
+    public Enum<State> getState() {
+        return currentState;
+    }
+
+    @Override
+    public void init() {
+
     }
 
 }

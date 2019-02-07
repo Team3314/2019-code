@@ -155,7 +155,26 @@ public class RobotMap {
 
     //Elevator
         mElevatorMaster = new WPI_TalonSRX(7);
+        mElevatorMaster.configContinuousCurrentLimit(Constants.kElevatorContinuousCurrentLimit, Constants.kCANTimeout);
+        mElevatorMaster.configPeakCurrentLimit(Constants.kElevatorPeakCurrentLimit, Constants.kCANTimeout);
+        mElevatorMaster.configPeakCurrentDuration(Constants.kElevatorPeakCurrentDuration, Constants.kCANTimeout);
+        mElevatorMaster.enableCurrentLimit(true);
+        mElevatorMaster.config_kP(Constants.kElevatorSlot, Constants.kElevator_kP, Constants.kCANTimeout);
+        mElevatorMaster.config_kI(Constants.kElevatorSlot, Constants.kElevator_kI, Constants.kCANTimeout);
+        mElevatorMaster.config_kD(Constants.kElevatorSlot, Constants.kElevator_kD, Constants.kCANTimeout);
+        mElevatorMaster.config_kF(Constants.kElevatorSlot, Constants.kElevator_kF, Constants.kCANTimeout);
+        mElevatorMaster.config_IntegralZone(Constants.kElevatorSlot, Constants.kElevator_kIZone, Constants.kCANTimeout);
+
+        mElevatorMaster.configClosedloopRamp(Constants.kElevatorRampTime, Constants.kCANTimeout);
+        mElevatorMaster.configOpenloopRamp(Constants.kElevatorRampTime, Constants.kCANTimeout);
+
+        mElevatorMaster.enableVoltageCompensation(true);
+        mElevatorMaster.setSensorPhase(true);
+        
         mElevatorSlave = new WPI_TalonSRX(8);
+        mElevatorSlave.follow(mElevatorMaster);
+        mElevatorSlave.setInverted(false);
+
 
         mElevatorMasterWrapper = new TalonSRX(mElevatorMaster);
         mElevatorSlaveWrapper = new TalonSRX(mElevatorSlave);

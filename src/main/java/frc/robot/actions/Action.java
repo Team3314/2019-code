@@ -18,12 +18,20 @@ public abstract class Action {
 	
 	private PathFollower pathFollower = new PathFollower();
 	private Timer timer = new Timer();
-	
-	public abstract void reset();
 
-    public abstract void update();
+	protected boolean isDone;
+
+	protected Object currentState;
+
+	public abstract void update();
+	
+	public abstract Enum<?> getState();
+
+	public abstract void init();
     
-    public abstract boolean isDone();
+    public boolean isDone() {
+		return isDone;
+	}
 	
 	protected void resetSensors() {
 		drive.resetSensors();
@@ -49,17 +57,8 @@ public abstract class Action {
 		drive.set(leftSpeed, rightSpeed);
 	}
 	
-	protected void turnMotionMagic(double desiredAngle) {
-		setHighGear(false);
-		drive.setDesiredAngle(desiredAngle);
-	}
-	
 	protected double getDesiredAngle() {
 		return drive.getDesiredAngle();
-	}
-	
-	protected boolean isTurnDone() {
-		return getAngle() <= getDesiredAngle() + 5 && getAngle() >= getDesiredAngle() - 5;
 	}
 	
 	protected double getAngle() {
@@ -73,11 +72,22 @@ public abstract class Action {
 		drive.setDesiredAngle(desiredAngle);
 	}
 	
+	protected void drivePosition(double position) {
+		drive.setDriveMode(DriveMode.POSITION);
+		drive.set(position, position);
+	}
+
 	protected boolean gyroTurnDone() {
 		return drive.gyroInPosition();
 	}
+	protected boolean driveInPosition() {
+		return drive.driveInPosition();
+	}
 	protected boolean targetInView() {
 		return camera.isTargetInView();
+	}
+	protected boolean isAligned() {
+		return (camera.getCorrection() < .07);
 	}
 	//motion profiling
 	protected void startPathFollower(Path path) {
@@ -104,6 +114,31 @@ public abstract class Action {
 	}
 	public double getTime() {
 		return timer.get();
+	}
+
+	protected boolean collision(){
+		return drive.collision();
+	}
+	protected double getCorrection(){
+		return camera.getCorrection();
+	}
+	protected double getTargetHorizError(){
+		return camera.getTargetHorizError();
+	}
+	protected boolean isTargetInView(){
+		return camera.isTargetInView();
+	}
+	public double getAveragePosition(){
+		return drive.getAveragePosition();
+	}
+	protected double getAccelerometer(){
+		return drive.getAcceleration();
+	}
+	protected String getStartPos() {
+		return HI.getLeftRightCenter();
+	}
+	protected boolean hasHatch() {
+		return false;
 	}
 
 }

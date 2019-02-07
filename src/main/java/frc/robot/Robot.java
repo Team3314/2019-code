@@ -10,7 +10,9 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.robot.subsystems.Drive;
-import frc.robot.statemachines.IntakeStateMachine;
+import frc.robot.statemachines.CargoIntakeStateMachine;
+import frc.robot.statemachines.HatchIntakeStateMachine;
+import frc.robot.autos.DoubleHatchAuto;
 import frc.robot.subsystems.Camera;
 import frc.robot.subsystems.CargoIntake;
 import frc.robot.subsystems.Elevator;
@@ -28,7 +30,7 @@ import frc.robot.subsystems.Drive.DriveMode;
  * project.
  */
 public class Robot extends TimedRobot {
-
+  
   public static RobotMap map = new RobotMap();
   public static Drive drive = new Drive(map.leftDrive, map.rightDrive, map.navx, map.shifter);
   public static CargoIntake cargoIntake = new CargoIntake(map.intakeTransmission, map.outtakeTransmission, map.pivotPiston);
@@ -37,8 +39,10 @@ public class Robot extends TimedRobot {
   public static Camera camera = new Camera();
   public static Superstructure superstructure = new Superstructure(map.compressor);
   public static HumanInput HI = new HumanInput();
-  public static IntakeStateMachine intakeStateMachine = new IntakeStateMachine();
+  public static CargoIntakeStateMachine cargoIntakeStateMachine = new CargoIntakeStateMachine();
+  public static HatchIntakeStateMachine hatchIntakeStateMachine = new HatchIntakeStateMachine();
 
+  DoubleHatchAuto auto1 = new DoubleHatchAuto();
   public Runnable smartDashboardRunnable = new Runnable(){
   
     @Override
@@ -55,38 +59,54 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     smartDashboardNotifier.startPeriodic(.1);
+    drive.resetSensors();
+    auto1.reset();
+  }
+
+  @Override
+  public void disabledInit() {
+    drive.resetDriveEncoders();
   }
 
   @Override
   public void disabledPeriodic() {
-    outputToSmartDashboard();
+    
   }
-
+  @Override
+  public void robotPeriodic() {
+    outputToSmartDashboard();
+}
   @Override
   public void autonomousInit() {
     drive.resetSensors();
+    superstructure.stopCompressor();
+    auto1.reset();
   }
 
   @Override
   public void autonomousPeriodic() { 
-
+    auto1.update();
     allPeriodic();
     
   }
 
   @Override
   public void teleopInit() {
+    superstructure.startCompressor();
   }
 
   @Override
   public void teleopPeriodic() {
 
     allPeriodic();
-
+    //Switches between control of robot between state machines and manual 
     if(HI.getClearQueue()) {
       superstructure.clearQueue();
     }
     if(superstructure.isQueueDone()) {
+      if(HI.getAutoGamePiece()) {
+        superstructure.setAutoGamePiece(HI.getElevatorPlaceLevel());
+      }
       // Drive Controls
       if(HI.getGyrolock()) {
         drive.setDriveMode(DriveMode.GYROLOCK);
@@ -117,10 +137,10 @@ public class Robot extends TimedRobot {
        * ELEVATOR CONTROLS
       */
       if(HI.getAutoCargoIntake()) {
-        intakeStateMachine.setIntakeRequest(true);
+        cargoIntakeStateMachine.setIntakeRequest(true);
       }
       else {
-        intakeStateMachine.setIntakeRequest(false);
+        cargoIntakeStateMachine.setIntakeRequest(false);
         if(HI.getElevatorManual()) { 
           elevator.setElevatorState(ElevatorStateMachine.MANUAL);
           elevator.set(HI.getElevatorSpeed());
@@ -179,6 +199,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testInit() {
+    superstructure.startCompressor();
   }
 
   @Override
@@ -192,7 +213,7 @@ public class Robot extends TimedRobot {
     elevator.outputToSmartDashboard();
 		camera.outputToSmartDashboard();
     superstructure.outputToSmartDashboard();
-    intakeStateMachine.outputToSmartDashboard();
+    cargoIntakeStateMachine.outputToSmartDashboard();
   }
 
   public void allPeriodic() {
@@ -202,7 +223,7 @@ public class Robot extends TimedRobot {
     elevator.update();  
     superstructure.update();
     hatch.update();
-    intakeStateMachine.update();
+    cargoIntakeStateMachine.update();
 
   }
 

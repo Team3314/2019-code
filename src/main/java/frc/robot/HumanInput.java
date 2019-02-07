@@ -18,7 +18,11 @@ public class HumanInput {
 		buttonBox = new Joystick(3);
 		autoSelector = new Joystick(4);
 
-    }
+	}
+//Actions
+	public boolean getAutoGamePiece() {
+		return rightStick.getRawButton(4);
+	}
 //Drive Controls
     public double getLeftThrottle() {
 		return -leftStick.getRawAxis(1);
@@ -94,5 +98,28 @@ public class HumanInput {
 	//
 	public boolean getClearQueue() {
 		return buttonBox.getRawButton(16);
+	}
+	//Double Hatch Auto 
+	public String getLeftRightCenter() {
+		if(autoSelector.getRawButton(13)) {
+			return "StartL"; // Start Left
+		} else if(autoSelector.getRawButton(14)) 
+			return "StartR";
+		return "StartC"; // Start Right
+	}
+	public int getBinaryOne() {
+		if(autoSelector.getRawButton(1))
+			return 1;
+		return 0;
+	}
+	public int getBinaryTwo() {
+		if(autoSelector.getRawButton(2))
+			return 1;
+		return 0;
+	}
+	public int getBinaryFour() {
+		if(autoSelector.getRawButton(3))
+			return 1;
+		return 0;
 	}
 }

@@ -11,49 +11,53 @@ public class HatchPickup extends Action {
         DONE
     }
 
-    private State currentState;
-
     public HatchPickup() {
         currentState = State.TURN;
     }
 
     @Override
-    public void reset() {
-
-    }
-
-    @Override
-    public void update() {
-        switch(currentState) {
-            case TURN:
-                driveGyrolock(0, 30);
-                if(gyroTurnDone()) 
-                    currentState = State.ALIGN;
-                break;
-            case ALIGN:
-                if()
-                    currentState = State.Drive;
-                break;
-            case DRIVE:
-                if()
-                    currentState = State.PICKUP;
-                break;
-            case PICKUP:
-                if()
-                    currentState = State.BACKUP;
-                break;
-            case BACKUP:
-                if()
-                    currentState = State.DONE;
-                break;
-            case DONE:
-                break;
+    public void init() {
+        if(Math.abs(getAngle()) <= 5 && isTargetInView()) {
+            currentState = State.ALIGN;
         }
     }
 
     @Override
-    public boolean isDone() {
-        return currentState == State.DONE;
+    public void update() {
+        switch((State)currentState) {
+            case TURN:
+                driveGyrolock(0, 180);
+                if(gyroTurnDone()) 
+                    currentState = State.ALIGN;
+                break;
+            case ALIGN:
+                if(isAligned())
+                    currentState = State.DRIVE;
+                break;
+            case DRIVE:
+                if(collision()) {
+                    currentState = State.PICKUP;
+                }
+                break;
+            case PICKUP:
+                if(hasHatch()) {
+                    currentState = State.BACKUP;
+                    drivePosition(0);
+                }
+                break;
+            case BACKUP:
+                if(driveInPosition()) {
+                    currentState = State.DONE;
+                }
+                break;
+            case DONE:
+                isDone = true;
+                break;
+        }
+    }
+    @Override
+    public Enum<State> getState() {
+        return currentState;
     }
 
 }

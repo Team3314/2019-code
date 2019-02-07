@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 public class Constants {
 
+	public static boolean practiceBot = false;
+
 
 //Conversions	
 		public static int kDriveEncoderCodesPerRev = 42;// AMT-102v = 8192;
@@ -27,7 +29,6 @@ public class Constants {
 		public static double kElevatorTicksToInches = 0;
 
 		public static int kCANTimeout =0;
-
 //Drivetrain
 		public static int kTalonDriveContinuousCurrentLimit = 40;
 		public static int kTalonDrivePeakCurrentLimit = 40;
@@ -49,13 +50,13 @@ public class Constants {
 //Elevator
 		public static int kElevatorCruiseVelocity = 0;
 		public static int kElevatorAcceleration = 0;
-		public static double kElevatorVoltageScale = 0;
+		public static double kElevatorVoltageScale = 12.0;
 		public static final double kElevatorOpenLoopRampRate = 0;
-		public static final int kElevatorContinuousCurrentLimit = 0;
+		public static final double kElevatorRampTime = .1;
+		public static final int kElevatorContinuousCurrentLimit = 20;
+		public static final int kElevatorPeakCurrentLimit = 35;
+		public static final int kElevatorPeakCurrentDuration = 200;
 		public static final double kElevatorDeadband = 0;
-		public static final int kElevatorPeakCurrentLimit = 0;
-		public static final int kElevatorCurrentDuration = 0;
-		public static final double kElevatorClosedLoopRampTime = 0;
 		public static final int kMaxElevatorPosition = 0;
 		public static final int kMinElevatorPosition = 0;
 
@@ -64,6 +65,7 @@ public class Constants {
 		public static final int kElevatorLowAccelerationThreshold = 1;
 
 		public static final int kElevatorPickup = 0;
+		public static final int kElevatorRaisedPickup = 0;
 		public static final int kElevatorLevel1 = 0;
 		public static final int kElevatorLevel2 = 0;
 		public static final int kElevatorLevel3 = 0;
@@ -74,7 +76,7 @@ public class Constants {
 		public static final int kIntakeCurrentDuration = 0; //last year 100ms
 //PID Constants
 	//Gyrolock
-		public static double kGyroLock_kP = .015;
+		public static double kGyroLock_kP = .01;
 		public static double kGyroLock_kI = 0;
 		public static double kGyroLock_kD = 0;
 		public static double kGyroLock_kF = 0;
@@ -87,7 +89,7 @@ public class Constants {
 		public static double kVelocity_MaxOutput = 1;
 		public static int kVelocitySlot = 1;
 	//Vision
-		public static double kVisionCtrl_kP = .01;
+		public static double kVisionCtrl_kP = .015;
 		public static double kVisionCtrl_kI = 0;
 		public static double kVisionCtrl_kD = 0;
 		public static double kVisionCtrl_kF = 0;
@@ -116,6 +118,7 @@ public class Constants {
 		public static double kElevator_kI = 0;
 		public static double kElevator_kD = 0;
 		public static double kElevator_kF = 0;
+		public static final int kElevator_kIZone = 0;
 		public static int kElevatorSlot = 0;
 		
 //Drive Motion Profile
@@ -189,5 +192,6 @@ public class Constants {
 	//Cargo Intake	
 		public static final Value kIntakeDown = Value.kForward;
 		public static final Value kIntakeUp = Value.kReverse;
+
 
 }
