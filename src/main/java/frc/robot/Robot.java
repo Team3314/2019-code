@@ -139,6 +139,9 @@ public class Robot extends TimedRobot {
       if(HI.getAutoCargoIntake()) {
         cargoIntakeStateMachine.setIntakeRequest(true);
       }
+      else if(HI.getAutoHatchIntake()) {
+        hatchIntakeStateMachine.setIntakeRequest(true);
+      }
       else {
         cargoIntakeStateMachine.setIntakeRequest(false);
         if(HI.getElevatorManual()) { 
@@ -159,9 +162,9 @@ public class Robot extends TimedRobot {
           
         }
 
-        /**
-         * CARGO INTAKE CONTROLS
-        */
+      /**
+       * CARGO INTAKE CONTROLS
+      */
         if (HI.getCargoIntake()) {
           cargoIntake.setIntakeState(IntakeState.INTAKING);
         }
@@ -177,22 +180,22 @@ public class Robot extends TimedRobot {
         else {
           cargoIntake.setIntakeState(IntakeState.WAITING);
         }
-      }
-      /**
-       * HATCH MECH CONTROLS
-      */
-
-      if (HI.getGripperDown()) {
-        hatch.setGripperDown(true);
-      }
-      else if (HI.getGripperUp()) {
-        hatch.setGripperDown(false);
-      }
-      if (HI.getSliderOut()) {
-        hatch.setSliderOut(true);
-      }
-      else if (HI.getSliderIn()) {
-        hatch.setSliderOut(false);
+        /**
+         * HATCH MECH CONTROLS
+        */
+  
+        if (HI.getGripperDown()) {
+          hatch.setGripperDown(true);
+        }
+        else if (HI.getGripperUp()) {
+          hatch.setGripperDown(false);
+        }
+        if (HI.getSliderOut()) {
+          hatch.setSliderOut(true);
+        }
+        else if (HI.getSliderIn()) {
+          hatch.setSliderOut(false);
+        }
       }
     }
   }
@@ -224,6 +227,7 @@ public class Robot extends TimedRobot {
     superstructure.update();
     hatch.update();
     cargoIntakeStateMachine.update();
+    hatchIntakeStateMachine.update();
 
   }
 

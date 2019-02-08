@@ -11,6 +11,8 @@ public class HatchPickup extends Action {
         DONE
     }
 
+    private State currentState;
+
     public HatchPickup() {
         currentState = State.TURN;
     }
@@ -24,7 +26,7 @@ public class HatchPickup extends Action {
 
     @Override
     public void update() {
-        switch((State)currentState) {
+        switch(currentState) {
             case TURN:
                 driveGyrolock(0, 180);
                 if(gyroTurnDone()) 

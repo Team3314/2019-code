@@ -23,6 +23,9 @@ public class HumanInput {
 	public boolean getAutoGamePiece() {
 		return rightStick.getRawButton(4);
 	}
+	public int getElevatorPlaceLevel() {
+		return 0;
+	}
 //Drive Controls
     public double getLeftThrottle() {
 		return -leftStick.getRawAxis(1);
@@ -82,6 +85,9 @@ public class HumanInput {
 		return false;
 	}
 	//Hatch Intake Controls
+	public boolean getAutoHatchIntake() {
+		return false;
+	}
 	public boolean getGripperUp() {
 		return false;
 	}

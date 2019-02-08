@@ -3,9 +3,10 @@ package frc.robot.actions;
 public class HatchPlaceRocket extends Action {
 
     public enum State {
-        TURN,
+        DRIVE_BACK,
+        TURN_TO_ROCKET,
         ALIGN,
-        DRIVE,
+        DRIVE_AT_TARGET,
         PLACE,
         BACKUP,
         DONE
@@ -17,19 +18,24 @@ public class HatchPlaceRocket extends Action {
     private State currentState;
 
     public HatchPlaceRocket(int level, boolean far) {
-        currentState = State.TURN;
+        currentState = State.TURN_TO_ROCKET;
         placeLevel = level;
         placeFar = far;
+    }
+
+    public HatchPlaceRocket(int level) {
+        placeLevel = level;
+        currentState = State.ALIGN;
     }
 
     @Override
     public void update() {
         switch(currentState) {
-            case TURN:
+            case TURN_TO_ROCKET:
                 break;
             case ALIGN:
                 break;
-            case DRIVE:
+            case DRIVE_AT_TARGET:
                 break;
             case PLACE:
                 break;

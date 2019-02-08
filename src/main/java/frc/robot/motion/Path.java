@@ -12,8 +12,8 @@ public class Path {
 	}
 	
 	public Path(String name, Mode mode) {
-		leftPath = new File("/home/lvuser/paths/" + name + "_left_detailed.csv");
-		rightPath = new File("/home/lvuser/paths/" + name + "_right_detailed.csv");
+		leftPath = new File("/home/deploy/output/" + name + ".left.pf1.csv");
+		rightPath = new File("/home/deploy/output/" + name + ".right.pf1.rcsv");
 		this.mode = mode;
 	}
 	

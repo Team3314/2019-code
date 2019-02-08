@@ -60,7 +60,7 @@ public class HatchMechanism implements Subsystem {
 
     }
 
-    public boolean hasHatch() {
+    public boolean getHasHatch() {
         return false;
     }
 

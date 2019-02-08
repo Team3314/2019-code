@@ -29,8 +29,13 @@ public class HatchIntakeStateMachine {
     }
 
     public void update() {
+        if(!intakeRequest) {
+            currentState = State.WAITING;
+        }
         switch(currentState) {
             case WAITING:
+                hatch.setGripperDown(false);
+                hatch.setSliderOut(false);
                 if(intakeRequest && !lastIntakeRequest) {
                     currentState = State.LOWER;
                 }
@@ -54,7 +59,7 @@ public class HatchIntakeStateMachine {
                 break;
             case GRAB:
                 hatch.setGripperDown(false);
-                if(hatch.hasHatch()) {    
+                if(hatch.getHasHatch()) {    
                     currentState = State.PULL;
                 }
                 break;

@@ -75,7 +75,7 @@ public class Superstructure implements Subsystem {
     }
     public void setAutoGamePiece(int level) {
         if(cargoIntake.getHasCargo()) {
-            actions.add(new CargoPlaceRocket());
+            actions.add(new CargoPlaceRocket(level));
         }
         else if(hatch.getHasHatch()) {
             actions.add(new HatchPlaceRocket(level));

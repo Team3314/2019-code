@@ -6,22 +6,30 @@ import frc.robot.Robot;
 import frc.robot.motion.Path;
 import frc.robot.motion.PathFollower;
 import frc.robot.motion.PathList;
+import frc.robot.statemachines.CargoIntakeStateMachine;
+import frc.robot.statemachines.HatchIntakeStateMachine;
 import frc.robot.subsystems.Camera;
+import frc.robot.subsystems.CargoIntake;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.HatchMechanism;
 import frc.robot.subsystems.Drive.DriveMode;
 
 public abstract class Action {
 
-    private Drive drive = Robot.drive;
+	private Drive drive = Robot.drive;
+	private CargoIntake cargo = Robot.cargoIntake;
+	private HatchMechanism hatch = Robot.hatch;
 	private HumanInput HI = Robot.HI;
 	private Camera camera = Robot.camera;
+	private HatchIntakeStateMachine hatchIntakeStateMachine = Robot.hatchIntakeStateMachine;
+	private CargoIntakeStateMachine cargoIntakeStateMachine = Robot.cargoIntakeStateMachine;
 	
 	private PathFollower pathFollower = new PathFollower();
 	private Timer timer = new Timer();
 
 	protected boolean isDone;
 
-	protected Object currentState;
+	protected Enum<?> currentState;
 
 	public abstract void update();
 	
@@ -138,7 +146,16 @@ public abstract class Action {
 		return HI.getLeftRightCenter();
 	}
 	protected boolean hasHatch() {
-		return false;
+		return hatch.getHasHatch();
+	}
+	protected boolean hasCargo() {
+		return cargo.getHasCargo(); 
+	}
+	protected void setHatchIntakeRequest(boolean intakeRequest) {
+		hatchIntakeStateMachine.setIntakeRequest(intakeRequest);
+	}
+	protected void setCargoIntakeRequest(boolean intakeRequest) {
+		cargoIntakeStateMachine.setIntakeRequest(intakeRequest);
 	}
 
 }
