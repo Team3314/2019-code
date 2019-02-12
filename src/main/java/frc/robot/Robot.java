@@ -12,6 +12,7 @@ import javax.swing.text.StyledEditorKit.AlignmentAction;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.robot.subsystems.Drive;
+import frc.robot.autos.Autonomous;
 import frc.robot.autos.DoubleHatchAuto;
 import frc.robot.subsystems.Camera;
 import frc.robot.subsystems.CargoIntake;
@@ -42,7 +43,9 @@ public class Robot extends TimedRobot {
   DoubleHatchAuto auto1 = new DoubleHatchAuto();
   AlignmentStateMachine aligning = new AlignmentStateMachine();
   public Runnable smartDashboardRunnable = new Runnable(){
-  
+  Autonomous selectedAutoMode = null;
+
+
     @Override
     public void run() {
       outputToSmartDashboard();
@@ -81,6 +84,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     drive.resetSensors();
     auto1.reset();
+    selectedAutoMode = selector.getSelectedAutoMode();
   }
 
   @Override

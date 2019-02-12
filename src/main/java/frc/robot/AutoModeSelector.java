@@ -11,6 +11,7 @@ public class AutoModeSelector {
 						auto1 = new AutoHatchToSideCargo1();
 
 	private Autonomous[] autos = {auto0, auto1}; 
+	
 public Autonomous getSelectedAutoMode() {
 	autoModeDecimal = Integer.parseInt(autoModeBinary, 2);
 		System.out.println(autoModeDecimal);
