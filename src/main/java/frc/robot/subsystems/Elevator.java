@@ -72,7 +72,6 @@ public class Elevator extends Lift implements Subsystem {
             }
             currentElevatorMode = mode;
         }
-
     }
     public ElevatorControlMode getElevatorState() {
 		return currentElevatorMode;

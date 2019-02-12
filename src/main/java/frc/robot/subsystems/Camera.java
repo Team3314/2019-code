@@ -17,6 +17,8 @@ public class Camera implements Subsystem {
 	private String ledString, camString, snapshotString;
 
 	private double correction;
+
+	private double turnAngle;
     
     private double rawDistance;
     private double targetHeight = 0; //31.40 or 39.25 inches off the carpet
@@ -105,6 +107,10 @@ public class Camera implements Subsystem {
 	 */
 	public double getCorrection() {
 		return correction;
+	}
+
+	public double getTurnAngle() {
+		return turnAngle;
 	}
 
 	/**

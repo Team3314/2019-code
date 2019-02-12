@@ -7,6 +7,7 @@ import frc.robot.Robot;
 import frc.robot.subsystems.CargoIntake;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.CargoIntake.IntakeState;
+import frc.robot.subsystems.Elevator.ElevatorControlMode;
 
 public class CargoIntakeStateMachine {
     public enum States {

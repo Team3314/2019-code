@@ -1,4 +1,8 @@
-
+/**
+ * CONTROLS
+ * 
+ * 
+ */
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -19,6 +23,7 @@ public class HumanInput {
 		autoSelector = new Joystick(4);
 
 	}
+
 //Actions
 	public boolean getAutoGamePiece() {
 		return rightStick.getRawButton(4);
@@ -63,10 +68,10 @@ public class HumanInput {
 		return leftStick.getRawButton(7);
 	}
 	public boolean getElevatorManual() {
-		return false;
+		return buttonBox.getRawButton(1);
 	}
 	public double getElevatorSpeed() {
-		return 0;
+		return gamepad.getRawAxis(0);
 	}
 	//Cargo Intake Controls
 	public boolean getAutoCargoIntake() {
