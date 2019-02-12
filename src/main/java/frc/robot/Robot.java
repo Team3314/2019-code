@@ -16,7 +16,7 @@ import frc.robot.autos.DoubleHatchAuto;
 import frc.robot.subsystems.Camera;
 import frc.robot.subsystems.CargoIntake;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.Elevator.ElevatorStateMachine;
+import frc.robot.subsystems.Elevator.ElevatorControlMode;
 import frc.robot.subsystems.HatchMechanism;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.CargoIntake.IntakeState;
@@ -74,8 +74,8 @@ public class Robot extends TimedRobot {
   }
   @Override
   public void robotPeriodic() {
-    outputToSmartDashboard();
-}
+    //outputToSmartDashboard();
+  }
   @Override
   public void autonomousInit() {
     drive.resetSensors();
@@ -99,7 +99,7 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
 
     allPeriodic();
-    //Switches between control of robot between state machines and manual 
+    //Switches between control of robot between action queue and manual 
     if(HI.getClearQueue()) {
       superstructure.clearQueue();
     }
@@ -136,20 +136,20 @@ public class Robot extends TimedRobot {
       /**
        * ELEVATOR CONTROLS
       */
-      if(HI.getAutoCargoIntake()) {
+      if(HI.getAutoCargoIntake() && !HI.getElevatorManual()) {
         cargoIntakeStateMachine.setIntakeRequest(true);
       }
-      else if(HI.getAutoHatchIntake()) {
+      else if(HI.getAutoHatchIntake() && !HI.getElevatorManual()) {
         hatchIntakeStateMachine.setIntakeRequest(true);
       }
       else {
         cargoIntakeStateMachine.setIntakeRequest(false);
         if(HI.getElevatorManual()) { 
-          elevator.setElevatorState(ElevatorStateMachine.MANUAL);
+          elevator.setElevatorState(ElevatorControlMode.MANUAL);
           elevator.set(HI.getElevatorSpeed());
         }
         else {
-          elevator.setElevatorState(ElevatorStateMachine.MOTION_MAGIC);
+          elevator.setElevatorState(ElevatorControlMode.MOTION_MAGIC);
           if(HI.getElevatorLevel1()) {
             elevator.set(Constants.kElevatorLevel1);
           }
@@ -217,6 +217,7 @@ public class Robot extends TimedRobot {
 		camera.outputToSmartDashboard();
     superstructure.outputToSmartDashboard();
     cargoIntakeStateMachine.outputToSmartDashboard();
+    hatchIntakeStateMachine.outputToSmartDashboard();
   }
 
   public void allPeriodic() {

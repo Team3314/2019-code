@@ -12,13 +12,13 @@ public class Constants {
 
 
 //Conversions	
-		public static int kDriveEncoderCodesPerRev = 42;// AMT-102v = 8192;
+		public static int kDriveEncoderCodesPerRev = 8192;// AMT-102v = 8192;
 		public static int kNEODriveEncoderCodesPerRev = 42;
 		
 		public static double kDegToTicksConvFactor = .038888888888888;
 		public static double kRevToInConvFactor = 1;
 		public static double kRevToInConvFactorLowGear = 1.2245; //first stage (12/44) * second stage(14/60) * wheel circumference (6.125 * pi)
-		public static double kRevToInConvFactorHighGear = 3.578; //first stage (12/44) * second stage(30/44) * wheel circumference (6.125 * pi)
+		public static double kRevToInConvFactorHighGear = 3.5781; //first stage (12/44) * second stage(30/44) * wheel circumference (6.125 * pi)
 		public static double kTicksToInHighGear = kRevToInConvFactorHighGear / kNEODriveEncoderCodesPerRev;
 		public static double kTicksToInLowGear = kRevToInConvFactorLowGear / kNEODriveEncoderCodesPerRev;
 		public static double kFeetToEncoderCodes = (12.0 *kDriveEncoderCodesPerRev) / kRevToInConvFactor;

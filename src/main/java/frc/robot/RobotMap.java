@@ -16,14 +16,6 @@ import frc.robot.infrastructure.SparkMax;
 import frc.robot.infrastructure.TalonSRX;
 import frc.robot.infrastructure.Transmission;
 
-
-
-
-
-
-
-
-
 public class RobotMap {
     // Drivetrain
         DoubleSolenoid shifter;
@@ -178,6 +170,7 @@ public class RobotMap {
 
         mElevatorMaster.enableVoltageCompensation(true);
         mElevatorMaster.setSensorPhase(true);
+        mElevatorMaster.setInverted(false);
         
         mElevatorSlave = new WPI_TalonSRX(8);
         mElevatorSlave.follow(mElevatorMaster);

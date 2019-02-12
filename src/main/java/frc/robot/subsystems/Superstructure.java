@@ -24,8 +24,6 @@ public class Superstructure implements Subsystem {
     
     private Deque<Action> actions = new ArrayDeque<Action>();
 
-    boolean autoGamePiece = false;
-
     public Superstructure(Compressor compressor) {
         this.compressor = compressor;
         elevator = Robot.elevator;
@@ -75,13 +73,13 @@ public class Superstructure implements Subsystem {
     }
     public void setAutoGamePiece(int level) {
         if(cargoIntake.getHasCargo()) {
-            actions.add(new CargoPlaceRocket(level));
+            addAction(new CargoPlaceRocket(level));
         }
         else if(hatch.getHasHatch()) {
-            actions.add(new HatchPlaceRocket(level));
+            addAction(new HatchPlaceRocket(level));
         }
         else {
-            actions.add(new HatchPickup());
+            addAction(new HatchPickup());
         }
     }
 

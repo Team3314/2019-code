@@ -1,5 +1,6 @@
 package frc.robot.statemachines;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.subsystems.Elevator;
@@ -75,4 +76,7 @@ public class HatchIntakeStateMachine {
         intakeRequest = request;
     }
 
+    public void outputToSmartDashboard() {
+        SmartDashboard.putString("Hatch Intake State Machine State", currentState.toString());
+    }
 }

@@ -9,12 +9,12 @@ import frc.robot.infrastructure.SpeedControllerMode;
 
 public class Elevator extends Lift implements Subsystem {
 
-    public enum ElevatorStateMachine {
+    public enum ElevatorControlMode {
         MOTION_MAGIC,
         MANUAL
     }
 
-    private ElevatorStateMachine currentElevatorMode = ElevatorStateMachine.MOTION_MAGIC;
+    private ElevatorControlMode currentElevatorMode = ElevatorControlMode.MOTION_MAGIC;
     private SpeedControllerMode controlMode;
 
     public void update(){
@@ -61,10 +61,20 @@ public class Elevator extends Lift implements Subsystem {
         return getPosition() * Constants.kElevatorTicksToInches;
     }
 
-    public void setElevatorState(ElevatorStateMachine mode) {
-        currentElevatorMode = mode;
+    public void setElevatorState(ElevatorControlMode mode) {
+        if(currentElevatorMode != mode) {
+            switch(mode) {
+                case MOTION_MAGIC:
+                    set(getPosition());
+                    break;
+                case MANUAL:
+                    break;
+            }
+            currentElevatorMode = mode;
+        }
+
     }
-    public ElevatorStateMachine getElevatorState() {
+    public ElevatorControlMode getElevatorState() {
 		return currentElevatorMode;
     }
     public boolean inPosition() {

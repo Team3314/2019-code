@@ -19,7 +19,7 @@ public class HatchPickup extends Action {
 
     @Override
     public void init() {
-        if(Math.abs(getAngle()) <= 5 && isTargetInView()) {
+        if(Math.abs(getAngle() - 180) <= 20 && isTargetInView()) {
             currentState = State.ALIGN;
         }
     }

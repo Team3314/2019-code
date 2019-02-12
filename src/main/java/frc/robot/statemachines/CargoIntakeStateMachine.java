@@ -72,6 +72,6 @@ public class CargoIntakeStateMachine {
     }
 
     public void outputToSmartDashboard() {
-        SmartDashboard.putString("Intake State Machine State", currentState.toString());
+        SmartDashboard.putString("Cargo Intake State Machine State", currentState.toString());
     }
 }
