@@ -41,9 +41,12 @@ public class HumanInput {
 	public boolean getGyrolock() {
 		return rightStick.getRawButton(1);
 	}
+
+	
 	public boolean getVelocityControl() {
 		return rightStick.getRawButton(2);
 	}
+
 	//TODO buttons for elevator and intakes
 	public boolean getElevatorPickup() {
 		return false;
@@ -92,19 +95,20 @@ public class HumanInput {
 			return "StartR";
 		return "StartC"; // Start Right
 	}
-	public int getBinaryOne() {
-		if(autoSelector.getRawButton(1))
+	public int getLLBinaryOne() {
+		if(autoSelector.getRawButton(10))
 			return 1;
 		return 0;
 	}
-	public int getBinaryTwo() {
-		if(autoSelector.getRawButton(2))
+	public int getLLBinaryTwo() {
+		if(autoSelector.getRawButton(11))
 			return 1;
 		return 0;
 	}
-	public int getBinaryFour() {
-		if(autoSelector.getRawButton(3))
+	public int getLLBinaryFour() {
+		if(autoSelector.getRawButton(12))
 			return 1;
 		return 0;
 	}
+	
 }

@@ -10,9 +10,11 @@ public class AutoModeSelector {
 	private Autonomous auto0 = new DoubleHatchAuto(),
 						auto1 = new AutoHatchToSideCargo1();
 
-	private Autonomous[] autos = {auto0, auto1};
+	private Autonomous[] autos = {auto0, auto1}; 
 public Autonomous getSelectedAutoMode() {
-		autoModeDecimal = Integer.parseInt(autoModeBinary, 2);
+	autoModeDecimal = Integer.parseInt(autoModeBinary, 2);
+		System.out.println(autoModeDecimal);
+		autoMode = autos[autoModeDecimal];
 		autoMode.reset();
  		return autoMode;
 	}

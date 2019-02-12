@@ -139,9 +139,9 @@ public class RobotMap {
         leftDriveMotors = new SmartSpeedController[] {mLeftMasterWrapper, mLeftSlave1Wrapper, mLeftSlave2Wrapper};
         rightDriveMotors = new SmartSpeedController[] {mRightMasterWrapper, mRightSlave1Wrapper, mRightSlave2Wrapper};
 
-        leftDrive = new EncoderTransmission(leftDriveMotors, mLeftMasterWrapper);//, Constants.kDrivePIDPeriod);
+        leftDrive = new EncoderTransmission(leftDriveMotors, leftDriveEncoder);//, Constants.kDrivePIDPeriod);
         leftDrive.setInverted(false);
-        rightDrive = new EncoderTransmission(rightDriveMotors, mRightMasterWrapper);//, Constants.kDrivePIDPeriod);
+        rightDrive = new EncoderTransmission(rightDriveMotors, rightDriveEncoder);//, Constants.kDrivePIDPeriod);
         rightDrive.setInverted(true);
 
     //Elevator

@@ -7,6 +7,8 @@
 
 package frc.robot;
 
+import javax.swing.text.StyledEditorKit.AlignmentAction;
+
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.robot.subsystems.Drive;
@@ -19,6 +21,7 @@ import frc.robot.subsystems.HatchMechanism;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.CargoIntake.IntakeStateMachine;
 import frc.robot.subsystems.Drive.DriveMode;
+import frc.robot.AlignmentStateMachine;
 
 /**
  * The VM is configured to automatically run tHIs class, and to call the
@@ -30,13 +33,14 @@ import frc.robot.subsystems.Drive.DriveMode;
 public class Robot extends TimedRobot {
   
   public static RobotMap map = new RobotMap();
+  public static Camera camera = new Camera();
   public static Drive drive = new Drive(map.leftDrive, map.rightDrive, map.navx, map.shifter);
   public static CargoIntake cargoIntake = new CargoIntake(map.intakeTransmission);
   public static HatchMechanism hatch = new HatchMechanism(map.gripperPiston, map.sliderPiston);
   public static Elevator elevator = new Elevator(map.elevatorTransmission);
-  public static Camera camera = new Camera();
   public static Superstructure superstructure = new Superstructure(map.compressor);
   DoubleHatchAuto auto1 = new DoubleHatchAuto();
+  AlignmentStateMachine aligning = new AlignmentStateMachine();
   public Runnable smartDashboardRunnable = new Runnable(){
   
     @Override
@@ -55,7 +59,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    //smartDashboardNotifier.startPeriodic(.1);
+    smartDashboardNotifier.startPeriodic(.1);
     drive.resetSensors();
     auto1.reset();
   }
@@ -83,12 +87,12 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() { 
     auto1.update();
     allPeriodic();
-    
   }
 
   @Override
   public void teleopInit() {
     drive.resetSensors();
+    aligning.reset();
   }
 
   @Override
@@ -158,6 +162,15 @@ public class Robot extends TimedRobot {
     else if (HI.getSliderIn()) {
       hatch.setSliderOut(false);
     }
+
+    /**
+     * TRIGGER ALIGNMENT
+    */
+    if (HI.getVision()) { 
+      aligning.update();
+    }
+
+
   }
 
   @Override
