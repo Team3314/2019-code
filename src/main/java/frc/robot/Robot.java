@@ -32,7 +32,7 @@ import frc.robot.subsystems.Drive.DriveMode;
 public class Robot extends TimedRobot {
   
   public static RobotMap map = new RobotMap();
-  public static Drive drive = new Drive(map.leftDrive, map.rightDrive, map.navx, map.shifter);
+  public static Drive drive = new Drive(map.leftDrive, map.rightDrive, map.navx, map.shifter, map.leftDriveEncoder, map.rightDriveEncoder);
   public static CargoIntake cargoIntake = new CargoIntake(map.intakeTransmission, map.outtakeTransmission, map.pivotPiston);
   public static HatchMechanism hatch = new HatchMechanism(map.gripperPiston, map.sliderPiston);
   public static Elevator elevator = new Elevator(map.elevatorTransmission);
@@ -70,7 +70,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    
+    cargoIntake.outputToSmartDashboard();
   }
   @Override
   public void robotPeriodic() {

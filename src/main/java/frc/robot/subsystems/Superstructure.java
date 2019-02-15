@@ -44,7 +44,8 @@ public class Superstructure implements Subsystem {
 
     public void outputToSmartDashboard(){
         SmartDashboard.putBoolean("isEmpty", isQueueDone());
-        SmartDashboard.putString("Action state", actions.getFirst().getState().toString());
+        if(!actions.isEmpty())
+            SmartDashboard.putString("Action state", actions.getFirst().getState().toString());
     }   
 
     public void resetSensors(){
@@ -72,7 +73,7 @@ public class Superstructure implements Subsystem {
         compressor.setClosedLoopControl(false);
     }
     public void setAutoGamePiece(int level) {
-        if(cargoIntake.getHasCargo()) {
+        if(cargoIntake.getCargoInIntake()) {
             addAction(new CargoPlaceRocket(level));
         }
         else if(hatch.getHasHatch()) {

@@ -97,6 +97,9 @@ public abstract class Action {
 	protected boolean isAligned() {
 		return (camera.getCorrection() < .07);
 	}
+	protected void turnToTarget() {
+		driveGyrolock(0, getAngle() + camera.getTurnAngle());
+	}
 	//motion profiling
 	protected void startPathFollower(Path path) {
 		pathFollower.followPath(path);
@@ -137,7 +140,7 @@ public abstract class Action {
 		return camera.isTargetInView();
 	}
 	public double getAveragePosition(){
-		return drive.getAveragePosition();
+		return drive.getAverageNeoPosition();
 	}
 	protected double getAccelerometer(){
 		return drive.getAcceleration();
@@ -149,7 +152,7 @@ public abstract class Action {
 		return hatch.getHasHatch();
 	}
 	protected boolean hasCargo() {
-		return cargo.getHasCargo(); 
+		return cargo.getCargoInIntake(); 
 	}
 	protected void setHatchIntakeRequest(boolean intakeRequest) {
 		hatchIntakeStateMachine.setIntakeRequest(intakeRequest);

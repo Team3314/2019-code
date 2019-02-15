@@ -9,7 +9,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Camera implements Subsystem {
 
-    private NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+	private NetworkTable table = NetworkTableInstance.getDefault().getTable("jetson");
+	private NetworkTableEntry expectedTargetAngle = new NetworkTableEntry(NetworkTableInstance.getDefault(), 420);
 
     private double targetInView, targetHorizError, targetVertError, targetArea, targetSkew, targetLatency;
 	
@@ -126,6 +127,10 @@ public class Camera implements Subsystem {
 	
 	public void setSnapshot(int snapshot) {
 	 table.getEntry("snapshot").setDouble(snapshot);
+	}
+
+	public void setHint(double[] expectedAngleRange) {
+		expectedTargetAngle.setDoubleArray(expectedAngleRange);
 	}
 	
 	@Override

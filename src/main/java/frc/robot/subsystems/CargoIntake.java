@@ -1,6 +1,6 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.DigitalOutput;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -25,11 +25,11 @@ public class CargoIntake implements Subsystem {
 
     private double intakeSpeed, outtakeSpeed;
 
-    private boolean cargoInCarriage;
+    private boolean cargoInIntake, cargoInCarriage, lastCargoInIntake;
 
     private Value pivotState = Constants.kIntakeUp;
 
-    private DigitalOutput cargoSensor;
+    private AnalogInput cargoSensor = new AnalogInput(0);
     private IntakeState currentIntakeState = IntakeState.WAITING;
     SpeedControllerMode intakeControlMode = SpeedControllerMode.kDutyCycle;
     SpeedControllerMode outtakeControlMode = SpeedControllerMode.kDutyCycle;
@@ -42,6 +42,8 @@ public class CargoIntake implements Subsystem {
 
     @Override
     public void update() {
+        cargoInIntake = cargoSensor.getVoltage() < Constants.kVoltageThreshold;
+        cargoInCarriage = lastCargoInIntake && cargoInIntake;
         switch (currentIntakeState) {
             case WAITING:
                 setIntakeDown(false);
@@ -73,7 +75,7 @@ public class CargoIntake implements Subsystem {
         pivot.set(pivotState);
         intake.set(intakeSpeed, intakeControlMode);
         outtake.set(outtakeSpeed, outtakeControlMode);
-
+        lastCargoInIntake = cargoInIntake;
     }
 
     /**
@@ -114,6 +116,7 @@ public class CargoIntake implements Subsystem {
         SmartDashboard.putNumber("Intake current", intake.getOutputCurrent(0));
         SmartDashboard.putNumber("Intake speed", intakeSpeed);
         SmartDashboard.putString("Intake state", getIntakeState().toString());
+        SmartDashboard.putNumber("intake sensor voltage", cargoSensor.getVoltage());
     }
 
     @Override
@@ -121,8 +124,8 @@ public class CargoIntake implements Subsystem {
         setIntakeState(IntakeState.WAITING);
     }
 
-    public boolean getHasCargo() {
-        return cargoSensor.get();
+    public boolean getCargoInIntake() {
+        return cargoInIntake;
     }
 
     public boolean getCargoInCarriage() {

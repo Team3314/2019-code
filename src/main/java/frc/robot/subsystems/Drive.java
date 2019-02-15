@@ -11,6 +11,7 @@ import frc.robot.Constants;
 import frc.robot.CustomPIDOutput;
 import frc.robot.Robot;
 import frc.robot.infrastructure.Drivetrain;
+import frc.robot.infrastructure.EncoderAdapter;
 import frc.robot.infrastructure.IdleMode;
 import frc.robot.infrastructure.EncoderTransmission;
 import frc.robot.infrastructure.SpeedControllerMode;
@@ -45,25 +46,26 @@ public class Drive extends Drivetrain implements Subsystem {
     //Hardware states
     private boolean mIsHighGear, elevatorUp, integratedEncoder;
     private IdleMode idleMode;
-    private double rawLeftSpeed, rawRightSpeed, desiredAngle, tickToInConversion, speedCap, offsetL, offsetR;
+    private double rawLeftSpeed, rawRightSpeed, desiredAngle, tickToInConversion, speedCap, neoOffsetL, neoOffsetR, rioOffsetL, rioOffsetR;
     
-    private double leftDrivePositionInches, rightDrivePositionInches, leftDrivePositionTicks, rightDrivePositionTicks, leftDriveSpeedTicks, rightDriveSpeedTicks, 
-        leftDriveSpeedInches, rightDriveSpeedInches, ticksLeftHighGear, ticksLeftLowGear, ticksRightHighGear, ticksRightLowGear, ticksPerRev, inchesPerRev;
+    private double leftRioDrivePositionInches, rightRioDrivePositionInches, leftRioDrivePositionTicks, rightRioDrivePositionTicks, leftRioDriveSpeedTicks, rightRioDriveSpeedTicks, 
+        leftRioDriveSpeedInches, rightRioDriveSpeedInches, rioTicksPerRev, rioInchesPerRev;
+
+    private double leftNeoDrivePositionInches, rightNeoDrivePositionInches, leftNeoDrivePositionTicks, rightNeoDrivePositionTicks, leftNeoDriveSpeedTicks, rightNeoDriveSpeedTicks, 
+    leftNeoDriveSpeedInches, rightNeoDriveSpeedInches, ticksLeftNeoHighGear, ticksLeftNeoLowGear, ticksRightNeoHighGear, ticksRightNeoLowGear, neoInchesPerRev;
     private PIDController gyroControl;
     private CustomPIDOutput gyroPIDOutput;
 
-    private Camera camera;
+    private EncoderAdapter leftRioEncoder, rightRioEncoder;
 
-    public Drive(EncoderTransmission left, EncoderTransmission right, AHRS gyro, DoubleSolenoid shifter){
+    private Camera camera;
+    public Drive(EncoderTransmission left, EncoderTransmission right, AHRS gyro, DoubleSolenoid shifter, EncoderAdapter leftEnc, EncoderAdapter rightEnc){
         super(left, right);
         camera = Robot.camera;
+        leftRioEncoder = leftEnc;
+        rightRioEncoder = rightEnc;
         integratedEncoder = left.encoderIsSparkMax();
-        if(integratedEncoder)
-            ticksPerRev = Constants.kNEODriveEncoderCodesPerRev;
-        else {
-            ticksPerRev = Constants.kDriveEncoderCodesPerRev;
-            inchesPerRev = Constants.kRevToInConvFactor;
-        }
+        
 
     	
 		//Hardware
@@ -85,24 +87,19 @@ public class Drive extends Drivetrain implements Subsystem {
     public void update(){
         if(mIsHighGear) {
             shifter.set(Constants.kHighGear);
-            ticksLeftHighGear =  getLeftPositionTicks() - ticksLeftLowGear;
-            ticksRightHighGear = getRightPositionTicks() - ticksRightLowGear;
+            ticksLeftNeoHighGear =  getLeftNeoPositionTicks() - ticksLeftNeoLowGear;
+            ticksRightNeoHighGear = getRightNeoPositionTicks() - ticksRightNeoLowGear;
             speedCap = Constants.kRaisedElevatorDriveSpeedCap / Constants.kMaxSpeedHighGear;
-            if(integratedEncoder) {
-                inchesPerRev = Constants.kRevToInConvFactorHighGear;
-                tickToInConversion = inchesPerRev / ticksPerRev;
-            }   
+            neoInchesPerRev = Constants.kRevToInConvFactorHighGear;
     	}
     	else {
             shifter.set(Constants.kLowGear);
-            ticksLeftLowGear =  getLeftPositionTicks() - ticksLeftHighGear;
-            ticksRightLowGear = getRightPositionTicks() - ticksRightHighGear;
+            ticksLeftNeoLowGear =  getLeftNeoPositionTicks() - ticksLeftNeoHighGear;
+            ticksRightNeoLowGear = getRightNeoPositionTicks() - ticksRightNeoHighGear;
             speedCap = Constants.kRaisedElevatorDriveSpeedCap / Constants.kMaxSpeedLowGear;
-            if(integratedEncoder) {
-                inchesPerRev = Constants.kRevToInConvFactorLowGear;
-                tickToInConversion = inchesPerRev / ticksPerRev;
-            }
+            neoInchesPerRev = Constants.kRevToInConvFactorLowGear;
         }
+        tickToInConversion = neoInchesPerRev / Constants.kNEODriveEncoderCodesPerRev;
         updateSpeedAndPosition();
         switch(currentDriveMode) {
             case IDLE:
@@ -198,24 +195,44 @@ public class Drive extends Drivetrain implements Subsystem {
         return Math.round(100* navx.getWorldLinearAccelY());
     }
 
-    public double getLeftPositionTicks() {
-        return leftDrive.getPosition() - offsetL;
+    public double getLeftNeoPositionTicks() {
+        return leftDrive.getPosition() - neoOffsetL;
     }
 
-    public double getRightPositionTicks() {
-        return rightDrive.getPosition() - offsetR;
+    public double getRightNeoPositionTicks() {
+        return rightDrive.getPosition() - neoOffsetR;
     }
     
-    public double getLeftPosition() {
-    	return leftDrivePositionInches;
+    public double getLeftNeoPosition() {
+    	return leftNeoDrivePositionInches;
     }
     
-    public double getRightPosition() {
-    	return -rightDrivePositionInches;
+    public double getRightNeoPosition() {
+    	return -rightNeoDrivePositionInches;
     }
     
-    public double getAveragePosition() {
-    	return (leftDrivePositionInches-rightDrivePositionInches)/2;
+    public double getAverageNeoPosition() {
+    	return (leftNeoDrivePositionInches-rightNeoDrivePositionInches)/2;
+    }
+
+    public double getLeftRioPositionTicks() {
+        return leftRioEncoder.getEncoderCounts() - rioOffsetL;
+    }
+
+    public double getRightRioPositionTicks() {
+        return rightRioEncoder.getEncoderCounts() - rioOffsetR;
+    }
+    
+    public double getLeftRioPosition() {
+    	return leftRioDrivePositionInches;
+    }
+    
+    public double getRightRioPosition() {
+    	return -rightRioDrivePositionInches;
+    }
+    
+    public double getAverageRioPosition() {
+    	return (leftRioDrivePositionInches-rightRioDrivePositionInches)/2;
     }
     
     public void setDriveMode(DriveMode mode) {
@@ -252,14 +269,22 @@ public class Drive extends Drivetrain implements Subsystem {
     }
 
     public void updateSpeedAndPosition() {
-        leftDrivePositionTicks = leftDrive.getPosition() - offsetL;
-        rightDrivePositionTicks = rightDrive.getPosition() - offsetR;
-        leftDrivePositionInches = ticksLeftHighGear * Constants.kRevToInConvFactorHighGear + ticksLeftLowGear * Constants.kRevToInConvFactorLowGear;
-        rightDrivePositionInches = ticksRightHighGear * Constants.kRevToInConvFactorHighGear + ticksRightLowGear * Constants.kRevToInConvFactorLowGear;
-        leftDriveSpeedTicks = leftDrive.getVelocity();
-        rightDriveSpeedTicks = rightDrive.getVelocity();
-        leftDriveSpeedInches = leftDriveSpeedTicks * tickToInConversion;
-        rightDriveSpeedInches = rightDriveSpeedTicks * tickToInConversion;
+        leftNeoDrivePositionTicks = getLeftNeoPositionTicks();
+        rightNeoDrivePositionTicks = getRightNeoPositionTicks();
+        leftNeoDrivePositionInches = ticksLeftNeoHighGear * Constants.kRevToInConvFactorHighGear + ticksLeftNeoLowGear * Constants.kRevToInConvFactorLowGear;
+        rightNeoDrivePositionInches = ticksRightNeoHighGear * Constants.kRevToInConvFactorHighGear + ticksRightNeoLowGear * Constants.kRevToInConvFactorLowGear;
+        leftNeoDriveSpeedTicks = leftDrive.getVelocity();
+        rightNeoDriveSpeedTicks = rightDrive.getVelocity();
+        leftNeoDriveSpeedInches = leftNeoDriveSpeedTicks * tickToInConversion;
+        rightNeoDriveSpeedInches = rightNeoDriveSpeedTicks * tickToInConversion;
+        leftRioDrivePositionTicks = getLeftRioPositionTicks();
+        rightRioDrivePositionTicks = getRightRioPositionTicks();
+        leftRioDrivePositionInches = leftRioDrivePositionTicks * Constants.kDriveTicksToInches;
+        rightRioDrivePositionInches = rightRioDrivePositionTicks * Constants.kDriveTicksToInches;
+        leftRioDriveSpeedTicks = leftDrive.getVelocity();
+        rightRioDriveSpeedTicks = rightDrive.getVelocity();
+        leftRioDriveSpeedInches = leftRioDriveSpeedTicks * tickToInConversion;
+        rightRioDriveSpeedInches = rightRioDriveSpeedTicks * tickToInConversion;
 
     }
     
@@ -268,15 +293,24 @@ public class Drive extends Drivetrain implements Subsystem {
     }
     
     public void outputToSmartDashboard() {
-    	SmartDashboard.putNumber("Left Encoder Position Ticks", leftDrivePositionTicks);
-    	SmartDashboard.putNumber("Right Encoder Position Ticks", rightDrivePositionTicks);
-    	SmartDashboard.putNumber("Left Encoder Inches", leftDrivePositionInches);
-    	SmartDashboard.putNumber("Right Encoder Inches", -rightDrivePositionInches);
-    	SmartDashboard.putNumber("Left Encoder Speed RPS", leftDriveSpeedTicks);
-        SmartDashboard.putNumber("Right Encoder Speed RPS", rightDriveSpeedTicks);
-        SmartDashboard.putNumber("Left Encoder Speed Inches", leftDriveSpeedInches);
-        SmartDashboard.putNumber("Right Encoder Speed Inches", rightDriveSpeedInches);
-        SmartDashboard.putNumber("Avg. Position", getAveragePosition());
+    	SmartDashboard.putNumber("Left NEO Encoder Position Ticks", leftNeoDrivePositionTicks);
+    	SmartDashboard.putNumber("Right NEO Encoder Position Ticks", rightNeoDrivePositionTicks);
+    	SmartDashboard.putNumber("Left NEO Encoder Inches", getLeftNeoPosition());
+    	SmartDashboard.putNumber("Right NEO Encoder Inches", getRightNeoPosition());
+    	SmartDashboard.putNumber("Left EO Encoder Speed RPS", leftNeoDriveSpeedTicks);
+        SmartDashboard.putNumber("Right NEO Encoder Speed RPS", rightNeoDriveSpeedTicks);
+        SmartDashboard.putNumber("Left NEO Encoder Speed Inches", leftNeoDriveSpeedInches);
+        SmartDashboard.putNumber("Right NEO Encoder Speed Inches", rightNeoDriveSpeedInches);
+        SmartDashboard.putNumber("Avg. NEO Position", getAverageNeoPosition());
+    	SmartDashboard.putNumber("Left Rio Encoder Position Ticks", leftRioDrivePositionTicks);
+    	SmartDashboard.putNumber("Right Rio Encoder Position Ticks", rightRioDrivePositionTicks);
+    	SmartDashboard.putNumber("Left Rio Encoder Inches", getLeftRioPosition());
+    	SmartDashboard.putNumber("Right Rio Encoder Inches", getRightRioPosition());
+    	SmartDashboard.putNumber("Left EO Encoder Speed RPS", leftRioDriveSpeedTicks);
+        SmartDashboard.putNumber("Right Rio Encoder Speed RPS", rightRioDriveSpeedTicks);
+        SmartDashboard.putNumber("Left Rio Encoder Speed Inches", leftRioDriveSpeedInches);
+        SmartDashboard.putNumber("Right Rio Encoder Speed Inches", rightRioDriveSpeedInches);
+        SmartDashboard.putNumber("Avg. Rio Position", getAverageRioPosition());
     	SmartDashboard.putNumber("Left Master Current", leftDrive.getOutputCurrent(0));
     	SmartDashboard.putNumber("Left Slave 1 Current", leftDrive.getOutputCurrent(1));
     	SmartDashboard.putNumber("Left Slave 2 Current", leftDrive.getOutputCurrent(2));
@@ -297,12 +331,14 @@ public class Drive extends Drivetrain implements Subsystem {
     }
   
     public void resetDriveEncoders() {
-        offsetL = leftDrive.getPosition();
-        offsetR = rightDrive.getPosition();
-        ticksLeftHighGear = 0;
-        ticksLeftLowGear = 0;
-        ticksRightHighGear = 0;
-        ticksRightLowGear = 0;
+        neoOffsetL = leftDrive.getPosition();
+        neoOffsetR = rightDrive.getPosition();
+        rioOffsetL = leftRioEncoder.getEncoderCounts();
+        rioOffsetR = rightRioEncoder.getEncoderCounts();
+        ticksLeftNeoHighGear = 0;
+        ticksLeftNeoLowGear = 0;
+        ticksRightNeoHighGear = 0;
+        ticksRightNeoLowGear = 0;
     }
     
     public void resetSensors() {

@@ -16,13 +16,13 @@ public class Constants {
 		public static int kNEODriveEncoderCodesPerRev = 42;
 		
 		public static double kDegToTicksConvFactor = .038888888888888;
-		public static double kRevToInConvFactor = 1;
+		public static double kRioEncoderRevToInConvFactor = 1;
 		public static double kRevToInConvFactorLowGear = 1.2245; //first stage (12/44) * second stage(14/60) * wheel circumference (6.125 * pi)
 		public static double kRevToInConvFactorHighGear = 3.5781; //first stage (12/44) * second stage(30/44) * wheel circumference (6.125 * pi)
-		public static double kTicksToInHighGear = kRevToInConvFactorHighGear / kNEODriveEncoderCodesPerRev;
-		public static double kTicksToInLowGear = kRevToInConvFactorLowGear / kNEODriveEncoderCodesPerRev;
-		public static double kFeetToEncoderCodes = (12.0 *kDriveEncoderCodesPerRev) / kRevToInConvFactor;
-		public static double kDriveTicksToInches = kRevToInConvFactor / kDriveEncoderCodesPerRev;
+		public static double kNeoTicksToInHighGear = kRevToInConvFactorHighGear / kNEODriveEncoderCodesPerRev;
+		public static double kNeoTicksToInLowGear = kRevToInConvFactorLowGear / kNEODriveEncoderCodesPerRev;
+		public static double kFeetToEncoderCodes = (12.0 *kDriveEncoderCodesPerRev) / kRioEncoderRevToInConvFactor;
+		public static double kDriveTicksToInches = kRioEncoderRevToInConvFactor / kDriveEncoderCodesPerRev;
 		public static double kFPSToTicksPer100ms = (kFeetToEncoderCodes / 10);
 		public static double kVoltageToNativeTalonUnits = 1023.0/12.0;
 
@@ -126,7 +126,10 @@ public class Constants {
 		public static int kDriveMotionControlTrajectoryPeriod = 10; //ms
 		public static int kDrivetrainAcceleration = (int)(12 * Constants.kFPSToTicksPer100ms);
 		public static int kDrivetrainCruiseVelocity = 0;
-		public static int kPulleyDiameter = 0;
+		public static double kWheelDiameter = 6.125;
+		public static boolean kNEOEncoders = false;
+
+
 
 	//Backward High
 		public static final int kMotionProfileLeftBackHigh_kV = 0;
@@ -191,7 +194,8 @@ public class Constants {
 
 	//Cargo Intake	
 		public static final Value kIntakeDown = Value.kForward;
-		public static final Value kIntakeUp = Value.kReverse;
+		public static final Value kIntakeUp = Value.kReverse; 
+		public static final double kVoltageThreshold = 3;
 
 
 }

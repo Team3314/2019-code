@@ -1,5 +1,7 @@
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.RemoteLimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
@@ -164,6 +166,8 @@ public class RobotMap {
         mElevatorMaster.config_kD(Constants.kElevatorSlot, Constants.kElevator_kD, Constants.kCANTimeout);
         mElevatorMaster.config_kF(Constants.kElevatorSlot, Constants.kElevator_kF, Constants.kCANTimeout);
         mElevatorMaster.config_IntegralZone(Constants.kElevatorSlot, Constants.kElevator_kIZone, Constants.kCANTimeout);
+        mElevatorMaster.configReverseLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX, LimitSwitchNormal.NormallyOpen, 8, Constants.kCANTimeout);
+        mElevatorMaster.configClearPositionOnLimitR(true, Constants.kCANTimeout);
 
         mElevatorMaster.configClosedloopRamp(Constants.kElevatorRampTime, Constants.kCANTimeout);
         mElevatorMaster.configOpenloopRamp(Constants.kElevatorRampTime, Constants.kCANTimeout);

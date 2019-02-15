@@ -118,7 +118,7 @@ public abstract class Autonomous {
 		return camera.isTargetInView();
 	}
 	public double getAveragePosition(){
-		return drive.getAveragePosition();
+		return drive.getAverageNeoPosition();
 	}
 	protected double getAccelerometer(){
 		return drive.getAcceleration();

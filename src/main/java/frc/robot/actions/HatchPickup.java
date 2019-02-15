@@ -29,12 +29,16 @@ public class HatchPickup extends Action {
         switch(currentState) {
             case TURN:
                 driveGyrolock(0, 180);
-                if(gyroTurnDone()) 
+                if(gyroTurnDone()) {
+                    turnToTarget();
                     currentState = State.ALIGN;
+                }
                 break;
             case ALIGN:
-                if(isAligned())
+                if(isAligned()) {
+                    driveGyrolock(.5, getDesiredAngle());
                     currentState = State.DRIVE;
+                }
                 break;
             case DRIVE:
                 if(collision()) {
