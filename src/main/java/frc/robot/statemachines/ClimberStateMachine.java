@@ -35,7 +35,7 @@ public class ClimberStateMachine {
                 if(HI.getClimb()) {
                     currentState = States.RAISE_BACK;
                     cargoIntake.setIntakeState(IntakeState.STOP_DOWN);
-                    elevator.set(Constants.kElevatorLevel1);
+                    elevator.set(Constants.kElevatorBallLevel1);
                 }
                 break;
             case RAISE_BACK:

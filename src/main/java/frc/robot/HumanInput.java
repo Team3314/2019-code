@@ -52,7 +52,10 @@ public class HumanInput {
 		return rightStick.getRawButton(2);
 	}
 	public boolean getVision() {
-		return leftStick.getRawButton(1);
+		return false;//leftStick.getRawButton(1);
+	}
+	public boolean getLightRingToggle() {
+		return leftStick.getRawButton(9);
 	}
 	//TODO buttons
 	//Elevator Controls
@@ -96,7 +99,7 @@ public class HumanInput {
 	}
 	//Hatch Intake Controls
 	public boolean getAutoHatchIntake() {
-		return false;
+		return gamepad.getRawAxis(3) > .75;
 	}
 	public boolean getGripperUp() {
 		return gamepad.getRawButton(7); //start

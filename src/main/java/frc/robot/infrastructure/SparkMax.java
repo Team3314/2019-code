@@ -103,8 +103,8 @@ public class SparkMax extends SmartSpeedController {
     }
 
     @Override
-    public void setRampRate(double rate) {
-        ((CANSparkMax)controller).setRampRate(rate);
+    public void setOpenLoopRampRate(double rate) {
+        ((CANSparkMax)controller).setOpenLoopRampRate(rate);
     }
 
     @Override

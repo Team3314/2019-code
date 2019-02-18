@@ -32,7 +32,7 @@ public class EncoderTransmission extends Transmission {
     }
 
     public void setRampRate(double rate) {
-        motors[0].setRampRate(rate);
+        motors[0].setOpenLoopRampRate(rate);
     }
     
     public void reset() {

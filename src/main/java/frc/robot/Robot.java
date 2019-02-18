@@ -39,7 +39,7 @@ public class Robot extends TimedRobot {
   public static CargoIntake cargoIntake = new CargoIntake(map.intakeTransmission, map.outtakeTransmission, map.pivotPiston, map.rightStop, map.leftStop, map.highPressure);
   public static HatchMechanism hatch = new HatchMechanism(map.gripperPiston, map.sliderPiston);
   public static Elevator elevator = new Elevator(map.elevatorTransmission);
-  public static Camera camera = new Camera();
+  public static Camera camera = new Camera(map.leftLightRing, map.rightLightRing);
   public static Superstructure superstructure = new Superstructure(map.compressor);
   public static Climber climber = new Climber(map.climberPiston);
   public static CargoIntakeStateMachine cargoIntakeStateMachine = new CargoIntakeStateMachine();
@@ -80,6 +80,7 @@ public class Robot extends TimedRobot {
   }
   @Override
   public void autonomousInit() {
+    camera.setLightRings(true);
     drive.resetSensors();
     superstructure.stopCompressor();
     auto1.reset();
@@ -94,10 +95,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    superstructure.startCompressor();/*
-    elevator.setElevatorState(ElevatorControlMode.MANUAL);
-    elevator.set(.001);
-    */
+    superstructure.startCompressor();
+    elevator.set(elevator.getPosition());
   }
 
   @Override
@@ -141,6 +140,8 @@ public class Robot extends TimedRobot {
       else if(HI.getLowGear()) {
         drive.setHighGear(false);
       }
+      if(HI.getLightRingToggle())
+        camera.setLightRings(!camera.getLightRingsOn());
 
       drive.setElevatorUp(elevator.getPosition() >= Constants.kElevatorLowAccelerationThreshold);
 
@@ -162,13 +163,22 @@ public class Robot extends TimedRobot {
         else {
           elevator.setElevatorState(ElevatorControlMode.MOTION_MAGIC);
           if(HI.getElevatorLevel1()) {
-            elevator.set(Constants.kElevatorLevel1);
+            if(cargoIntake.getCargoInCarriage())
+              elevator.set(Constants.kElevatorBallLevel1);
+            else
+              elevator.set(Constants.kElevatorHatchLevel1);
           }
           else if (HI.getElevatorLevel2()) {
-            elevator.set(Constants.kElevatorLevel2);
+            if(cargoIntake.getCargoInCarriage())
+              elevator.set(Constants.kElevatorBallLevel2);
+            else
+              elevator.set(Constants.kElevatorHatchLevel2);
           }
           else if(HI.getElevatorLevel3()) {
-            elevator.set(Constants.kElevatorLevel3);
+            if(cargoIntake.getCargoInCarriage())
+              elevator.set(Constants.kElevatorBallLevel3);
+            else
+              elevator.set(Constants.kElevatorHatchLevel3);
           }
           
         }

@@ -154,6 +154,12 @@ public abstract class Action {
 	protected boolean hasCargo() {
 		return cargo.getCargoInIntake(); 
 	}
+	protected void setGripperDown(boolean down) {
+		hatch.setGripperDown(down);
+	}
+	protected void setSliderOut(boolean slide) {
+		hatch.setSliderOut(slide);
+	}
 	protected void setHatchIntakeRequest(boolean intakeRequest) {
 		hatchIntakeStateMachine.setIntakeRequest(intakeRequest);
 	}

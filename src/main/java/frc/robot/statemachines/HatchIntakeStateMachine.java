@@ -21,8 +21,6 @@ public class HatchIntakeStateMachine {
 
     private Elevator elevator;
     private HatchMechanism hatch;
-    private Drive drive;
-    private HumanInput HI;
 
     private State currentState = State.WAITING;
 
@@ -31,8 +29,6 @@ public class HatchIntakeStateMachine {
     public HatchIntakeStateMachine() {
         elevator = Robot.elevator;
         hatch = Robot.hatch;
-        drive = Robot.drive;
-        HI = Robot.HI;
         
     }
 
@@ -45,12 +41,12 @@ public class HatchIntakeStateMachine {
                 if(intakeRequest && !lastIntakeRequest) {
                     hatch.setGripperDown(true);
                     hatch.setSliderOut(false);
-                    elevator.set(Constants.kElevatorPickup);
-                    currentState = State.DRIVE;
+                    elevator.set(Constants.kElevatorHatchPickup);
+                    currentState = State.RAISE;
                 }
                 break;
             case RAISE:
-                elevator.set(Constants.kElevatorRaisedPickup);
+                elevator.set(Constants.kElevatorRaisedHatchPickup);
                 if(elevator.inPosition()) {
                     currentState = State.GRAB;
                 }

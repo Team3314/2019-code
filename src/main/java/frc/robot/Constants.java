@@ -13,11 +13,11 @@ public class Constants {
 
 
 //Conversions	
-		public static int kDriveEncoderCodesPerRev = 8192;// AMT-102v = 8192;
+		public static int kDriveEncoderCodesPerRev = 2048;// AMT-102v = 2048;
 		public static int kNEODriveEncoderCodesPerRev = 42;
 		
 		public static double kDegToTicksConvFactor = .038888888888888;
-		public static double kRioEncoderRevToInConvFactor = 1;
+		public static double kRioEncoderRevToInConvFactor = 11.211678832116788321167883211679;
 		public static double kRevToInConvFactorLowGear = 1.2245; //first stage (12/44) * second stage(14/60) * wheel circumference (6.125 * pi)
 		public static double kRevToInConvFactorHighGear = 3.5781; //first stage (12/44) * second stage(30/44) * wheel circumference (6.125 * pi)
 		public static double kNeoTicksToInHighGear = kRevToInConvFactorHighGear / kNEODriveEncoderCodesPerRev;
@@ -34,9 +34,10 @@ public class Constants {
 		public static int kTalonDriveContinuousCurrentLimit = 40;
 		public static int kTalonDrivePeakCurrentLimit = 40;
 		public static int kTalonDrivePeakCurrentDuration = 0;
-		public static int kNEODriveCurrentLimit = 80;
+		public static int kNEODriveStallCurrentLimit = 80;
+		public static int kNEODriveFreeCurrentLimit = 20;
 		public static double kDriveDeadband = .1;
-		public static double kDriveOpenLoopRampRate = 0;
+		public static double kDriveOpenLoopRampRate = .1;
 		public static double kDriveVoltageScale = 12.0;
 		public static double kDriveClosedLoopRampTime = 0;
 		public static double kMaxSpeedLowGear = 9;// * 12 * 60 / kRevToInConvFactorLowGear; //fps * 12 * 60 / kRevtoin
@@ -49,8 +50,9 @@ public class Constants {
 		
 
 //Elevator
-		public static int kElevatorCruiseVelocity = (int)(36 / kElevatorInchesPerTick/ 10); //inches/sec -> ticks/100ms
-		public static int kElevatorAcceleration = (int)(72 / kElevatorInchesPerTick / 10); //inches/sec/sec -> tick/100ms^2
+		public static int kElevatorCruiseVelocity = (int)( 72/ kElevatorInchesPerTick/ 10); //inches/sec -> ticks/100ms
+		public static int kElevatorAcceleration = (int)(100 / kElevatorInchesPerTick / 10); //inches/sec/sec -> tick/100ms^2
+		public static final int kElevatorSCurveStrength = 0;
 		public static double kElevatorVoltageScale = 12.0;
 		public static final double kElevatorRampTime = .1; 
 		public static final int kElevatorContinuousCurrentLimit = 20;
@@ -59,21 +61,28 @@ public class Constants {
 		public static final double kElevatorDeadband = 0;
 		public static final int kMaxElevatorPosition = 10000000;
 		public static final int kMinElevatorPosition = 0;
+		public static final int k775ProFreeSpeedRPM = 18730;
+		public static final double kElevatorGearboxReduction = 1/13;
+		public static final int kElevatorTicksPerRev = 8192;
+		public static final double kMaxElevatorVelocity = 14000; //ticks/100ms
 
 		public static final int kElevatorTolerance = (int)(1 / kElevatorInchesPerTick);
 
-		public static final int kElevatorLowAccelerationThreshold = 1;
+		public static final int kElevatorLowAccelerationThreshold = ((int)(40 / kElevatorInchesPerTick));
 
-		public static final int kElevatorPickup = 0;
-		public static final int kElevatorRaisedPickup = 0;
-		public static final int kElevatorLevel1 = (int)(2.5 / kElevatorInchesPerTick);
-		public static final int kElevatorLevel2 = (int)(20 / kElevatorInchesPerTick);
-		public static final int kElevatorLevel3 = (int)(60 / kElevatorInchesPerTick);
+		public static final int kElevatorHatchPickup = 0;
+		public static final int kElevatorRaisedHatchPickup = (int)(4 / kElevatorInchesPerTick);
+		public static final int kElevatorBallLevel1 = (int)(2.5 / kElevatorInchesPerTick);
+		public static final int kElevatorBallLevel2 = (int)(20 / kElevatorInchesPerTick);
+		public static final int kElevatorBallLevel3 = (int)(50 / kElevatorInchesPerTick);
+		public static final int kElevatorHatchLevel1 = (int)(4 / kElevatorInchesPerTick);
+		public static final int kElevatorHatchLevel2 = (int)(20 / kElevatorInchesPerTick);
+		public static final int kElevatorHatchLevel3 = (int)(65 / kElevatorInchesPerTick);
 
-		public static double kElevator_kP = .02;
+		public static double kElevator_kP = .16;
 		public static double kElevator_kI = 0;
 		public static double kElevator_kD = 0;
-		public static double kElevator_kF = 0;
+		public static double kElevator_kF = 1023 / kMaxElevatorVelocity;//11.694760041671591487403907388346; // 1/max velocity * 1023 ( converts to talon native units)
 		public static final int kElevator_kIZone = 0;
 		public static int kElevatorSlot = 0;
 

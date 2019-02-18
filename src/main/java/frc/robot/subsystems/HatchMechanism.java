@@ -60,6 +60,13 @@ public class HatchMechanism implements Subsystem {
 
     }
 
+    public boolean getIsGripperDown() {
+        return mIsGripperDown;
+    }
+    public boolean getIsSliderOut() {
+        return mIsSliderOut;
+    }
+
     public boolean getHasHatch() {
         return false;
     }

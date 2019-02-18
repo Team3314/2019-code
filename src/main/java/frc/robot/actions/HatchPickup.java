@@ -18,10 +18,14 @@ public class HatchPickup extends Action {
     }
 
     @Override
-    public void init() {
+    public void init() { /* XXX TEMPORARY
         if(Math.abs(getAngle() - 180) <= 20 && isTargetInView()) {
             currentState = State.ALIGN;
-        }
+        }*/
+        setGripperDown(true);
+        setSliderOut(false);
+        driveGyrolock(.5, getAngle());
+        currentState = State.DRIVE;
     }
 
     @Override

@@ -47,7 +47,7 @@ public class CargoIntakeStateMachine {
                 break;
             case INTAKING:
                 intake.setIntakeState(IntakeState.INTAKING);
-                elevator.set(Constants.kElevatorLevel1);
+                elevator.set(Constants.kElevatorBallLevel1);
                 if(intake.getCargoInIntake()) {
                     currentState = States.RAISING;
                 }

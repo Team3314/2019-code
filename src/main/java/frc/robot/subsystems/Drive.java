@@ -218,11 +218,11 @@ public class Drive extends Drivetrain implements Subsystem {
     }
 
     public double getLeftRioPositionTicks() {
-        return leftRioEncoder.getEncoderCounts() - rioOffsetL;
+        return leftRioEncoder.getEncoderCounts();
     }
 
     public double getRightRioPositionTicks() {
-        return rightRioEncoder.getEncoderCounts() - rioOffsetR;
+        return rightRioEncoder.getEncoderCounts();
     }
     
     public double getLeftRioPosition() {
@@ -314,13 +314,14 @@ public class Drive extends Drivetrain implements Subsystem {
     	SmartDashboard.putNumber("Left Voltage", leftDrive.getOutputVoltage());
         SmartDashboard.putNumber("Right Voltage", rightDrive.getOutputVoltage());
         SmartDashboard.putNumber("Accelerometer", getAcceleration());
+        SmartDashboard.putBoolean("Elevator Up", elevatorUp);
     }
   
     public void resetDriveEncoders() {
         neoOffsetL = leftDrive.getPosition();
         neoOffsetR = rightDrive.getPosition();
-        rioOffsetL = leftRioEncoder.getEncoderCounts();
-        rioOffsetR = rightRioEncoder.getEncoderCounts();
+        leftRioEncoder.zero();
+        rightRioEncoder.zero();
         ticksLeftNeoHighGear = 0;
         ticksLeftNeoLowGear = 0;
         ticksRightNeoHighGear = 0;

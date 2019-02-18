@@ -15,8 +15,10 @@ public class Camera implements Subsystem {
 
     private double targetInView, targetHorizError, targetVertError, targetArea, targetSkew, targetLatency;
 	
-	private double ledMode, camMode, snapshot;
-	private String ledString, camString, snapshotString;
+	private double camMode, snapshot;
+	private String camString, snapshotString;
+
+	private boolean lightRingsOn = true;
 
 	private double correction;
 
@@ -25,15 +27,17 @@ public class Camera implements Subsystem {
 	private double turnAngle;
     
     private double rawDistance;
-    private double targetHeight = 0; //31.40 or 39.25 inches off the carpet
+	private double targetHeight = 0; //31.40 or 39.25 inches off the carpet
+	
+	public Camera(Solenoid leftLightRing, Solenoid rightLightRing) {
+		this.leftLightRing = leftLightRing;
+		this.rightLightRing = rightLightRing;
+	}	
 
 	@Override
     public void update() {
-		if (camMode == Constants.kVisionProcessorMode) {
-			setLEDMode(Constants.kLEDDefault);
-		} else {
-			setLEDMode(Constants.kLEDOff);
-		}
+		leftLightRing.set(lightRingsOn);
+		rightLightRing.set(lightRingsOn);
 
         targetInView = table.getEntry("tv").getDouble(0);
         targetHorizError = table.getEntry("tx").getDouble(-1337.254); //deg
@@ -77,15 +81,8 @@ public class Camera implements Subsystem {
         return rawDistance;
 	}
 
-	public String getLEDMode() {
-		if (ledMode == Constants.kLEDDefault) {
-			ledString = "DEFAULT";
-		} else if (ledMode == Constants.kLEDOff) {
-			ledString = "OFF";
-		} else if (ledMode == Constants.kLEDOn) {
-			ledString = "ON";
-		}
-		return ledString;
+	public boolean getLightRingsOn() {
+		return lightRingsOn;
 	}
 	
 	public String getCamMode() {
@@ -120,8 +117,8 @@ public class Camera implements Subsystem {
 	/**
 	 * Setters
 	 */
-	public void setLEDMode(int ledMode) {
-	 table.getEntry("ledMode").setDouble(ledMode);
+	public void setLightRings(boolean on) {
+		lightRingsOn = on;
 	}
 	
 	public void setCamMode(int camMode) {
@@ -145,7 +142,7 @@ public class Camera implements Subsystem {
 		SmartDashboard.putNumber("Target skew", targetSkew);
 		SmartDashboard.putNumber("Target latency", targetLatency);
 		SmartDashboard.putNumber("Raw distance", getRawDistance());
-		SmartDashboard.putString("LED mode", getLEDMode());
+		SmartDashboard.putBoolean("Light Rings On", getLightRingsOn());
 		SmartDashboard.putString("Camera mode", getCamMode());
 		SmartDashboard.putString("Snapshot mode", getSnapshot());
 		SmartDashboard.putNumber("Correction", correction);
