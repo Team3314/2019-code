@@ -31,7 +31,15 @@ public class HatchPlaceRocket extends Action {
     @Override
     public void update() {
         switch(currentState) {
+            case DRIVE_BACK:
+                startPathFollower(null); //TODO ADD PATHS
+                break;
             case TURN_TO_ROCKET:
+                if(placeFar) {
+                    driveGyrolock(0, 180);
+                }
+                else 
+                    driveGyrolock(0, 0);
                 break;
             case ALIGN:
                 break;

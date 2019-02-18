@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import frc.robot.Constants;
 import edu.wpi.first.networktables.*;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -18,6 +19,8 @@ public class Camera implements Subsystem {
 	private String ledString, camString, snapshotString;
 
 	private double correction;
+
+	private Solenoid leftLightRing, rightLightRing;
 
 	private double turnAngle;
     

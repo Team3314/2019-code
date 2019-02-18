@@ -54,7 +54,7 @@ public class CargoIntakeStateMachine {
                 break;
             case RAISING:
                 intake.setIntakeState(IntakeState.RAISING);
-                if(elevator.inPosition()) {
+                if(elevator.inPosition() && intake.getIsUp()) {
                     currentState = States.TRANSFER;
                 }
                 break;
@@ -74,5 +74,6 @@ public class CargoIntakeStateMachine {
 
     public void outputToSmartDashboard() {
         SmartDashboard.putString("Cargo Intake State Machine State", currentState.toString());
+        SmartDashboard.putBoolean("Intake Request", intakeRequest);
     }
 }

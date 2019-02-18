@@ -6,6 +6,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
+
 public class Constants {
 
 	public static boolean practiceBot = false;
@@ -26,7 +27,7 @@ public class Constants {
 		public static double kFPSToTicksPer100ms = (kFeetToEncoderCodes / 10);
 		public static double kVoltageToNativeTalonUnits = 1023.0/12.0;
 
-		public static double kElevatorTicksToInches = 0;
+		public static double kElevatorInchesPerTick = 4.4468368947179040128423054179364e-4;//0.97759262293478401818325242307913
 
 		public static int kCANTimeout =0;
 //Drivetrain
@@ -48,27 +49,33 @@ public class Constants {
 		
 
 //Elevator
-		public static int kElevatorCruiseVelocity = 0;
-		public static int kElevatorAcceleration = 0;
+		public static int kElevatorCruiseVelocity = (int)(36 / kElevatorInchesPerTick/ 10); //inches/sec -> ticks/100ms
+		public static int kElevatorAcceleration = (int)(72 / kElevatorInchesPerTick / 10); //inches/sec/sec -> tick/100ms^2
 		public static double kElevatorVoltageScale = 12.0;
-		public static final double kElevatorOpenLoopRampRate = 0;
-		public static final double kElevatorRampTime = .1;
+		public static final double kElevatorRampTime = .1; 
 		public static final int kElevatorContinuousCurrentLimit = 20;
 		public static final int kElevatorPeakCurrentLimit = 35;
 		public static final int kElevatorPeakCurrentDuration = 200;
 		public static final double kElevatorDeadband = 0;
-		public static final int kMaxElevatorPosition = 0;
+		public static final int kMaxElevatorPosition = 10000000;
 		public static final int kMinElevatorPosition = 0;
 
-		public static final int kElevatorTolerance = 0;
+		public static final int kElevatorTolerance = (int)(1 / kElevatorInchesPerTick);
 
 		public static final int kElevatorLowAccelerationThreshold = 1;
 
 		public static final int kElevatorPickup = 0;
 		public static final int kElevatorRaisedPickup = 0;
-		public static final int kElevatorLevel1 = 0;
-		public static final int kElevatorLevel2 = 0;
-		public static final int kElevatorLevel3 = 0;
+		public static final int kElevatorLevel1 = (int)(2.5 / kElevatorInchesPerTick);
+		public static final int kElevatorLevel2 = (int)(20 / kElevatorInchesPerTick);
+		public static final int kElevatorLevel3 = (int)(60 / kElevatorInchesPerTick);
+
+		public static double kElevator_kP = .02;
+		public static double kElevator_kI = 0;
+		public static double kElevator_kD = 0;
+		public static double kElevator_kF = 0;
+		public static final int kElevator_kIZone = 0;
+		public static int kElevatorSlot = 0;
 
 //Cargo Intake
 		public static final int kIntakeContinuousCurrentLimit = 0; //last year 15a
@@ -114,12 +121,6 @@ public class Constants {
 		public static double kMotionProfileHeading_kA = 0;
 
 	//Elevator
-		public static double kElevator_kP = 0;
-		public static double kElevator_kI = 0;
-		public static double kElevator_kD = 0;
-		public static double kElevator_kF = 0;
-		public static final int kElevator_kIZone = 0;
-		public static int kElevatorSlot = 0;
 		
 //Drive Motion Profile
 		public static int kDriveMotionControlFramePeriod = 5; //ms
@@ -183,19 +184,37 @@ public class Constants {
 
 //Pneumatics
     //Gears
-		public static Value kHighGear = Value.kForward;
-		public static Value kLowGear = Value.kReverse;
+		public static Value kHighGear = Value.kReverse;
+		public static Value kLowGear = Value.kForward;
 	
 	//Hatch mechanism
-		public static Value kGripperUp = Value.kForward;
-		public static Value kGripperDown = Value.kReverse;
+		public static Value kGripperUp = Value.kReverse;
+		public static Value kGripperDown = Value.kForward;
 		public static Value kSliderIn = Value.kForward;
 		public static Value kSliderOut = Value.kReverse;
 
 	//Cargo Intake	
-		public static final Value kIntakeDown = Value.kForward;
-		public static final Value kIntakeUp = Value.kReverse; 
-		public static final double kVoltageThreshold = 3;
+		public static final Value kIntakeDown = Value.kReverse;
+		public static final Value kIntakeUp = Value.kForward; 
+		public static final double kCargoSensorVoltageThreshold = 3;
+
+
+		public static final double kRightStopUpAngle = 82;
+
+
+		public static final double kLeftStopUpAngle = 125;
+
+
+		public static final double kRightStopDownAngle = 115;
+
+
+		public static final double kLeftStopDownAngle = 85;
+
+
+		public static final Value kClimberDown = Value.kForward;
+
+
+		public static final Value kClimberUp = Value.kReverse;
 
 
 }

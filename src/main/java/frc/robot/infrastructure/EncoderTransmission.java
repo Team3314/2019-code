@@ -76,4 +76,7 @@ public class EncoderTransmission extends Transmission {
     public boolean encoderIsSparkMax() {
         return encoder instanceof SparkMax;
     }
+    public SmartSpeedController getMotor(int motor) {
+        return motors[motor];
+    }
 }

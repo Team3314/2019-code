@@ -80,7 +80,9 @@ public class Drive extends Drivetrain implements Subsystem {
 		//so that when turning the robot takes the shortest path instead of going the long way around
 		//Effectively changes PID input from a line to a circle
 		gyroControl.setOutputRange(-Constants.kGyroOutputRange, Constants.kGyroOutputRange);		// Limits speed of turn to prevent overshoot
-		gyroControl.setAbsoluteTolerance(Constants.kAbsoluteGyroTolerance);
+        gyroControl.setAbsoluteTolerance(Constants.kAbsoluteGyroTolerance);
+        gyroControl.setInputRange(-180, 180);
+        gyroControl.setContinuous(true);
 
     }
 
@@ -244,22 +246,6 @@ public class Drive extends Drivetrain implements Subsystem {
             else {
                 gyroControl.disable();
             }
-            /*if(mode == DriveMode.POSITION) {
-                leftDrive.enablePID();
-                rightDrive.enablePID();
-                leftDrive.setPIDSourceType(PIDSourceType.kDisplacement);
-                rightDrive.setPIDSourceType(PIDSourceType.kDisplacement);
-            }
-            else if(mode == DriveMode.VELOCITY) {
-                leftDrive.enablePID();
-                rightDrive.enablePID();
-                leftDrive.setPIDSourceType(PIDSourceType.kRate);
-                rightDrive.setPIDSourceType(PIDSourceType.kRate);
-            }
-            else {
-                leftDrive.disablePID();
-                rightDrive.disablePID();
-            }*/
 
             if(mode == DriveMode.MOTION_PROFILE) {
 

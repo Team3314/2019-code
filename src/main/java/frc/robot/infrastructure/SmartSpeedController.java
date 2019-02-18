@@ -79,4 +79,6 @@ public abstract class SmartSpeedController implements SpeedController, CustomEnc
     public abstract void setControlMode(frc.robot.infrastructure.SpeedControllerMode mode);
 
     public abstract void setRampRate(double rate);
+    
+    public abstract boolean getReverseLimit();
 }

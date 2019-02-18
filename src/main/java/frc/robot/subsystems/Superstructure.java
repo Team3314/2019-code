@@ -4,7 +4,10 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.actions.*;
 
@@ -40,6 +43,8 @@ public class Superstructure implements Subsystem {
             }
                 actions.getFirst().update();
         }
+
+
     }
 
     public void outputToSmartDashboard(){

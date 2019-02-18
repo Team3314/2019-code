@@ -11,10 +11,12 @@ import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.robot.subsystems.Drive;
 import frc.robot.statemachines.CargoIntakeStateMachine;
+import frc.robot.statemachines.ClimberStateMachine;
 import frc.robot.statemachines.HatchIntakeStateMachine;
 import frc.robot.autos.DoubleHatchAuto;
 import frc.robot.subsystems.Camera;
 import frc.robot.subsystems.CargoIntake;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorControlMode;
 import frc.robot.subsystems.HatchMechanism;
@@ -32,15 +34,17 @@ import frc.robot.subsystems.Drive.DriveMode;
 public class Robot extends TimedRobot {
   
   public static RobotMap map = new RobotMap();
+  public static HumanInput HI = new HumanInput();
   public static Drive drive = new Drive(map.leftDrive, map.rightDrive, map.navx, map.shifter, map.leftDriveEncoder, map.rightDriveEncoder);
-  public static CargoIntake cargoIntake = new CargoIntake(map.intakeTransmission, map.outtakeTransmission, map.pivotPiston);
+  public static CargoIntake cargoIntake = new CargoIntake(map.intakeTransmission, map.outtakeTransmission, map.pivotPiston, map.rightStop, map.leftStop, map.highPressure);
   public static HatchMechanism hatch = new HatchMechanism(map.gripperPiston, map.sliderPiston);
   public static Elevator elevator = new Elevator(map.elevatorTransmission);
   public static Camera camera = new Camera();
   public static Superstructure superstructure = new Superstructure(map.compressor);
-  public static HumanInput HI = new HumanInput();
+  public static Climber climber = new Climber(map.climberPiston);
   public static CargoIntakeStateMachine cargoIntakeStateMachine = new CargoIntakeStateMachine();
   public static HatchIntakeStateMachine hatchIntakeStateMachine = new HatchIntakeStateMachine();
+  public static ClimberStateMachine climberStateMachine = new ClimberStateMachine();
 
   DoubleHatchAuto auto1 = new DoubleHatchAuto();
   public Runnable smartDashboardRunnable = new Runnable(){
@@ -70,11 +74,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    cargoIntake.outputToSmartDashboard();
   }
   @Override
   public void robotPeriodic() {
-    //outputToSmartDashboard();
   }
   @Override
   public void autonomousInit() {
@@ -92,12 +94,15 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    superstructure.startCompressor();
+    superstructure.startCompressor();/*
+    elevator.setElevatorState(ElevatorControlMode.MANUAL);
+    elevator.set(.001);
+    */
   }
 
   @Override
   public void teleopPeriodic() {
-
+    
     allPeriodic();
     //Switches between control of robot between action queue and manual 
     if(HI.getClearQueue()) {
@@ -106,6 +111,12 @@ public class Robot extends TimedRobot {
     if(superstructure.isQueueDone()) {
       if(HI.getAutoGamePiece()) {
         superstructure.setAutoGamePiece(HI.getElevatorPlaceLevel());
+      }
+      if(HI.getClimbMode()) {
+        climberStateMachine.setClimbMode(true);
+      }
+      else if(HI.getAbortClimb()) {
+        climberStateMachine.setClimbMode(false);
       }
       // Drive Controls
       if(HI.getGyrolock()) {
@@ -177,6 +188,12 @@ public class Robot extends TimedRobot {
         else if(HI.getCargoEject()) {
           cargoIntake.setIntakeState(IntakeState.VOMIT);
         }
+        else if(HI.getCargoStopDown()) {
+          cargoIntake.setIntakeState(IntakeState.STOP_DOWN);
+        }
+        else if(HI.getCargoClimb()) {
+          cargoIntake.setIntakeState(IntakeState.CLIMB);
+        }
         else {
           cargoIntake.setIntakeState(IntakeState.WAITING);
         }
@@ -196,6 +213,9 @@ public class Robot extends TimedRobot {
         else if (HI.getSliderIn()) {
           hatch.setSliderOut(false);
         }
+        /**
+         * CLIMBER CONTROLS
+         */
       }
     }
   }
@@ -216,8 +236,10 @@ public class Robot extends TimedRobot {
     elevator.outputToSmartDashboard();
 		camera.outputToSmartDashboard();
     superstructure.outputToSmartDashboard();
-    cargoIntakeStateMachine.outputToSmartDashboard();
+    climber.outputToSmartDashboard();
     hatchIntakeStateMachine.outputToSmartDashboard();
+    climberStateMachine.outputToSmartDashboard();
+    cargoIntakeStateMachine.outputToSmartDashboard();
   }
 
   public void allPeriodic() {
@@ -227,9 +249,10 @@ public class Robot extends TimedRobot {
     elevator.update();  
     superstructure.update();
     hatch.update();
+    climber.update();
     cargoIntakeStateMachine.update();
     hatchIntakeStateMachine.update();
-
+    climberStateMachine.update();
   }
 
 }

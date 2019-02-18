@@ -2,23 +2,27 @@ package frc.robot.statemachines;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
+import frc.robot.HumanInput;
 import frc.robot.Robot;
+import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.HatchMechanism;
+import frc.robot.subsystems.Drive.DriveMode;
 
 public class HatchIntakeStateMachine {
 
     public enum State {
         WAITING,
+        DRIVE,
         LOWER,
-        EXTEND,
         RAISE,
-        GRAB,
-        PULL
+        GRAB
     }
 
     private Elevator elevator;
     private HatchMechanism hatch;
+    private Drive drive;
+    private HumanInput HI;
 
     private State currentState = State.WAITING;
 
@@ -27,6 +31,9 @@ public class HatchIntakeStateMachine {
     public HatchIntakeStateMachine() {
         elevator = Robot.elevator;
         hatch = Robot.hatch;
+        drive = Robot.drive;
+        HI = Robot.HI;
+        
     }
 
     public void update() {
@@ -35,22 +42,12 @@ public class HatchIntakeStateMachine {
         }
         switch(currentState) {
             case WAITING:
-                hatch.setGripperDown(false);
-                hatch.setSliderOut(false);
                 if(intakeRequest && !lastIntakeRequest) {
-                    currentState = State.LOWER;
+                    hatch.setGripperDown(true);
+                    hatch.setSliderOut(false);
+                    elevator.set(Constants.kElevatorPickup);
+                    currentState = State.DRIVE;
                 }
-                break;
-            case LOWER:
-                elevator.set(Constants.kElevatorLevel1);
-                if(elevator.inPosition()) {
-                    currentState = State.EXTEND;
-                }
-                break;
-            case EXTEND:
-                hatch.setGripperDown(true);
-                hatch.setSliderOut(true);
-                currentState = State.RAISE;
                 break;
             case RAISE:
                 elevator.set(Constants.kElevatorRaisedPickup);
@@ -61,12 +58,8 @@ public class HatchIntakeStateMachine {
             case GRAB:
                 hatch.setGripperDown(false);
                 if(hatch.getHasHatch()) {    
-                    currentState = State.PULL;
+                    currentState = State.WAITING;
                 }
-                break;
-            case PULL:
-                hatch.setSliderOut(false);
-                currentState = State.WAITING;
                 break;
         }
         lastIntakeRequest = intakeRequest;
