@@ -52,10 +52,13 @@ public class HumanInput {
 		return rightStick.getRawButton(2);
 	}
 	public boolean getVision() {
-		return false;//leftStick.getRawButton(1);
+		return leftStick.getRawButton(1);
 	}
-	public boolean getLightRingToggle() {
+	public boolean getLightRingsOff() {
 		return leftStick.getRawButton(9);
+	}
+	public boolean getLightRingsOn() {
+		return leftStick.getRawButton(10);
 	}
 	//TODO buttons
 	//Elevator Controls

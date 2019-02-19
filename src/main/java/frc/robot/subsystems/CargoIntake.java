@@ -3,14 +3,10 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.Relay;
-import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
-import frc.robot.HumanInput;
-import frc.robot.Robot;
 import frc.robot.infrastructure.SpeedControllerMode;
 import frc.robot.infrastructure.Transmission;
 
@@ -36,27 +32,23 @@ public class CargoIntake implements Subsystem {
 
     private Value pivotState = Constants.kIntakeUp;
 
-    private boolean stopUp = false, high = false;
+    private boolean high = false;
 
     private AnalogInput intakeCargoSensor = new AnalogInput(0), elevatorCargoSensor = new AnalogInput(1);
     private DigitalInput raisedSensor = new DigitalInput(4);
     private IntakeState currentIntakeState = IntakeState.WAITING;
-    private Servo rightStop, leftStop;
     SpeedControllerMode intakeControlMode = SpeedControllerMode.kDutyCycle;
     SpeedControllerMode outtakeControlMode = SpeedControllerMode.kDutyCycle;
 
-    public CargoIntake(Transmission intake, Transmission outtake, DoubleSolenoid pivotPiston, Servo rightStop, Servo leftStop, Solenoid highPressure) {
+    public CargoIntake(Transmission intake, Transmission outtake, DoubleSolenoid pivotPiston, Solenoid highPressure) {
         this.intake = intake;
         this.outtake = outtake;
-        this.leftStop = leftStop;
-        this.rightStop = rightStop;
         pivot = pivotPiston;
         this.highPressure = highPressure;
     }
 
     @Override
     public void update() {
-        stopUp = true;
         high = false;
         setIntakeSpeed(0);
         setOuttakeSpeed(0);
@@ -86,12 +78,10 @@ public class CargoIntake implements Subsystem {
                 setIntakeSpeed(-1);
                 break;
             case STOP_DOWN:
-                stopUp = false;
                 high = true;
                 setIntakeDown(false);
                 break;
             case CLIMB:
-                stopUp = false;
                 high = true;
                 setIntakeDown(true);
                 break;
@@ -100,7 +90,6 @@ public class CargoIntake implements Subsystem {
                 setIntakeSpeed(1);
                 break;
         }
-        setStopUp(stopUp);
         highPressure.set(high);
         pivot.set(pivotState);
         intake.set(intakeSpeed, intakeControlMode);
@@ -126,18 +115,6 @@ public class CargoIntake implements Subsystem {
         }
     }
 
-    private void setStopUp(boolean up) {
-        if(up) {
-            rightStop.setAngle(Constants.kRightStopUpAngle);
-            leftStop.setAngle(Constants.kLeftStopUpAngle);
-        }
-        else {
-            rightStop.setAngle(Constants.kRightStopDownAngle);
-            leftStop.setAngle(Constants.kLeftStopDownAngle);
-        }
-
-    }
-
     /**
      * @param currentState the currentState to set
      */
@@ -160,8 +137,6 @@ public class CargoIntake implements Subsystem {
         SmartDashboard.putNumber("Cargo intake sensor voltage", intakeCargoSensor.getVoltage());
         SmartDashboard.putBoolean("Ball in Intake", getCargoInIntake());
         SmartDashboard.putBoolean("Ball in Carriage", getCargoInCarriage());
-        SmartDashboard.putNumber("Right Stop Angle", rightStop.getAngle());
-        SmartDashboard.putNumber("Left Stop Angle", leftStop.getAngle());
         SmartDashboard.putBoolean("Cargo Intake Raised", getIsUp());
     }
 

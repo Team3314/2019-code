@@ -2,14 +2,11 @@ package frc.robot.statemachines;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
-import frc.robot.HumanInput;
 import frc.robot.Robot;
-import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.HatchMechanism;
-import frc.robot.subsystems.Drive.DriveMode;
 
-public class HatchIntakeStateMachine {
+public class HatchIntakeStateMachine extends StateMachine {
 
     public enum State {
         WAITING,
@@ -24,21 +21,19 @@ public class HatchIntakeStateMachine {
 
     private State currentState = State.WAITING;
 
-    private boolean intakeRequest, lastIntakeRequest;
-
     public HatchIntakeStateMachine() {
         elevator = Robot.elevator;
         hatch = Robot.hatch;
         
     }
-
+    @Override
     public void update() {
-        if(!intakeRequest) {
+        if(!request) {
             currentState = State.WAITING;
         }
         switch(currentState) {
             case WAITING:
-                if(intakeRequest && !lastIntakeRequest) {
+                if(request && !lastRequest) {
                     hatch.setGripperDown(true);
                     hatch.setSliderOut(false);
                     elevator.set(Constants.kElevatorHatchPickup);
@@ -58,13 +53,9 @@ public class HatchIntakeStateMachine {
                 }
                 break;
         }
-        lastIntakeRequest = intakeRequest;
+        lastRequest = request;
     }
-
-    public void setIntakeRequest(boolean request) {
-        intakeRequest = request;
-    }
-
+    @Override
     public void outputToSmartDashboard() {
         SmartDashboard.putString("Hatch Intake State Machine State", currentState.toString());
     }

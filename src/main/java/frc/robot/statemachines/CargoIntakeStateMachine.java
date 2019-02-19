@@ -7,9 +7,8 @@ import frc.robot.Robot;
 import frc.robot.subsystems.CargoIntake;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.CargoIntake.IntakeState;
-import frc.robot.subsystems.Elevator.ElevatorControlMode;
 
-public class CargoIntakeStateMachine {
+public class CargoIntakeStateMachine extends StateMachine {
     public enum States {
         WAITING,
         INTAKING,
@@ -21,11 +20,7 @@ public class CargoIntakeStateMachine {
     Elevator elevator;
     HumanInput HI;
 
-
-
     private States currentState = States.WAITING;
-
-    private boolean intakeRequest, lastIntakeRequest;
 
 
     public CargoIntakeStateMachine() {
@@ -33,15 +28,15 @@ public class CargoIntakeStateMachine {
         elevator = Robot.elevator;
         HI = Robot.HI;
     }
-
+    @Override
     public void update() {
-        if(!intakeRequest) {
+        if(!request) {
             currentState = States.WAITING;
         }
         switch(currentState) { 
             case WAITING:
                 intake.setIntakeState(IntakeState.WAITING);
-                if(intakeRequest && !lastIntakeRequest) {
+                if(request && !lastRequest) {
                     currentState = States.INTAKING;
                 }
                 break;
@@ -65,15 +60,11 @@ public class CargoIntakeStateMachine {
                 }
                 break;
         }
-        lastIntakeRequest = intakeRequest;
-    }  
-
-    public void setIntakeRequest(boolean request) {
-        intakeRequest = request;
+        lastRequest = request;
     }
-
+    
+    @Override
     public void outputToSmartDashboard() {
         SmartDashboard.putString("Cargo Intake State Machine State", currentState.toString());
-        SmartDashboard.putBoolean("Intake Request", intakeRequest);
     }
 }

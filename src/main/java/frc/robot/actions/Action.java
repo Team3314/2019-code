@@ -98,8 +98,9 @@ public abstract class Action {
 		return (camera.getCorrection() < .07);
 	}
 	protected void turnToTarget() {
-		driveGyrolock(0, getAngle() + camera.getTurnAngle());
+		driveGyrolock(0, getAngle() + camera.getTargetHorizError());
 	}
+	protected void driveAtTarget() {}
 	//motion profiling
 	protected void startPathFollower(Path path) {
 		pathFollower.followPath(path);
@@ -161,10 +162,10 @@ public abstract class Action {
 		hatch.setSliderOut(slide);
 	}
 	protected void setHatchIntakeRequest(boolean intakeRequest) {
-		hatchIntakeStateMachine.setIntakeRequest(intakeRequest);
+		hatchIntakeStateMachine.setRequest(intakeRequest);
 	}
 	protected void setCargoIntakeRequest(boolean intakeRequest) {
-		cargoIntakeStateMachine.setIntakeRequest(intakeRequest);
+		cargoIntakeStateMachine.setRequest(intakeRequest);
 	}
 
 }

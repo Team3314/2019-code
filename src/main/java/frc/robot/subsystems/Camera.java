@@ -10,10 +10,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Camera implements Subsystem {
 
-	private NetworkTable table = NetworkTableInstance.getDefault().getTable("jetson");
+	private NetworkTable table = NetworkTableInstance.getDefault().getTable("SmartDashboard").getSubTable("jetson");
 	private NetworkTableEntry expectedTargetAngle = new NetworkTableEntry(NetworkTableInstance.getDefault(), 420);
 
-    private double targetInView, targetHorizError, targetVertError, targetArea, targetSkew, targetLatency;
+	private double validLeftTargetsInView, validRightTargetsInView;
+	private boolean targetInView;
+	private double targetHorizError, targetVertError, targetArea, targetSkew, targetLatency;
 	
 	private double camMode, snapshot;
 	private String camString, snapshotString;
@@ -23,8 +25,6 @@ public class Camera implements Subsystem {
 	private double correction;
 
 	private Solenoid leftLightRing, rightLightRing;
-
-	private double turnAngle;
     
     private double rawDistance;
 	private double targetHeight = 0; //31.40 or 39.25 inches off the carpet
@@ -39,16 +39,16 @@ public class Camera implements Subsystem {
 		leftLightRing.set(lightRingsOn);
 		rightLightRing.set(lightRingsOn);
 
-        targetInView = table.getEntry("tv").getDouble(0);
-        targetHorizError = table.getEntry("tx").getDouble(-1337.254); //deg
-        targetVertError = table.getEntry("ty").getDouble(-1337.254); //deg
-		targetArea = table.getEntry("ta").getDouble(0);
-		targetSkew = table.getEntry("ts").getDouble(0);
-		targetLatency = 11 + table.getEntry("tl").getDouble(0);
-
-		correction = targetHorizError * Constants.kVisionCtrl_kP;
-
-        rawDistance = (targetHeight - Constants.kCameraHeight) / (Math.tan(Math.toRadians(targetVertError + Constants.kMountingAngle)));
+        
+		targetHorizError = table.getEntry("Angle To Target").getDouble(0);
+		rawDistance = table.getEntry("Distance").getDouble(1337.254);
+		validLeftTargetsInView = table.getEntry("Left targetsFound").getDouble(0);
+		validRightTargetsInView = table.getEntry("Right targetsFound").getDouble(0);
+		targetInView = (validLeftTargetsInView >= 2  && validRightTargetsInView >= 1) || (validLeftTargetsInView >= 1  && validRightTargetsInView >= 2);
+		if((validLeftTargetsInView >= 2  && validRightTargetsInView <= 1))
+			targetHorizError = 10;
+		else if(validLeftTargetsInView <= 1  && validRightTargetsInView >= 2) 
+			targetHorizError = -10;
         //solution to height differentiation problem: different pipelines with same settings? pipeline 0 = ball target height, pipeline 1 = the 3 hatch target heights;
     }
 
@@ -60,18 +60,14 @@ public class Camera implements Subsystem {
      * @return the targetsInView
      */
     public boolean isTargetInView() {
-        if (targetInView == 1.0) {
-            return true;
-        } else {
-            return false;
-        }
+        return targetInView;
     }
 
     /**
      * @return the targetHorizOffset
      */
     public double getTargetHorizError() {
-		return targetHorizError;
+		return -targetHorizError;
 	}
 
 	/**
@@ -110,10 +106,6 @@ public class Camera implements Subsystem {
 		return correction;
 	}
 
-	public double getTurnAngle() {
-		return turnAngle;
-	}
-
 	/**
 	 * Setters
 	 */
@@ -129,8 +121,8 @@ public class Camera implements Subsystem {
 	 table.getEntry("snapshot").setDouble(snapshot);
 	}
 
-	public void setHint(double[] expectedAngleRange) {
-		expectedTargetAngle.setDoubleArray(expectedAngleRange);
+	public void setHint(String hint) {
+		expectedTargetAngle.setString(hint);
 	}
 	
 	@Override
@@ -146,6 +138,7 @@ public class Camera implements Subsystem {
 		SmartDashboard.putString("Camera mode", getCamMode());
 		SmartDashboard.putString("Snapshot mode", getSnapshot());
 		SmartDashboard.putNumber("Correction", correction);
+		SmartDashboard.putNumber("Angle Offset", SmartDashboard.getNumber("Angle offset", 0));
 	}
 
 	@Override

@@ -1,10 +1,9 @@
 package frc.robot;
 
-import com.ctre.phoenix.ParamEnum;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
-import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.RemoteLimitSwitchSource;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
@@ -14,10 +13,8 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
-import edu.wpi.first.wpilibj.Relay;
 import frc.robot.infrastructure.EncoderAdapter;
 import frc.robot.infrastructure.EncoderTransmission;
 import frc.robot.infrastructure.SmartSpeedController;
@@ -81,12 +78,9 @@ public class RobotMap {
         Transmission intakeTransmission;
         Transmission outtakeTransmission;
 
-        DoubleSolenoid pivotPiston;
+        DoubleSolenoid intakePiston, intakeToGroundPiston;
 
         Solenoid highPressure;
-
-        Servo leftStop;
-        Servo rightStop;
 
     //Hatch mechanism
         DoubleSolenoid gripperPiston;
@@ -110,31 +104,7 @@ public class RobotMap {
         leftDriveEncoder = new EncoderAdapter(new Encoder(0, 1, false, EncodingType.k4X));
         rightDriveEncoder = new EncoderAdapter(new Encoder(2, 3, false, EncodingType.k4X));
 
-            
-            int leftMasterID;
-            int leftSlave1ID;
-            int leftSlave2ID;
-            int rightMasterID;
-            int rightSlave1ID;
-            int rightSlave2ID;
-        if(Constants.practiceBot) {
-            leftMasterID = 1;
-            leftSlave1ID = 2;
-            leftSlave2ID = 3;
-            rightMasterID = 4;
-            rightSlave1ID = 5;
-            rightSlave2ID = 6;
-        }
-        else {
-            leftMasterID = 4;
-            leftSlave1ID = 5;
-            leftSlave2ID = 6;
-            rightMasterID = 1;
-            rightSlave1ID = 2;
-            rightSlave2ID = 3;
-        }
-
-        mLeftMaster = new CANSparkMax(leftMasterID, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
+        mLeftMaster = new CANSparkMax(4, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
         mLeftMaster.setSmartCurrentLimit(Constants.kNEODriveStallCurrentLimit, Constants.kNEODriveFreeCurrentLimit);
         mLeftMaster.setOpenLoopRampRate(Constants.kDriveOpenLoopRampRate);
         mLeftMaster.setCANTimeout(Constants.kCANTimeout);
@@ -147,21 +117,21 @@ public class RobotMap {
         mLeftMaster.getPIDController().setOutputRange(-Constants.kVelocity_MaxOutput, Constants.kVelocity_MaxOutput, Constants.kVelocitySlot);
 
 
-        mLeftSlave1 = new CANSparkMax(leftSlave1ID, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
+        mLeftSlave1 = new CANSparkMax(5, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
         mLeftSlave1.follow(mLeftMaster, true);
         mLeftSlave1.setParameter(ConfigParameter.kInputDeadband, Constants.kDriveDeadband);
         mLeftSlave1.setSmartCurrentLimit(Constants.kNEODriveStallCurrentLimit, Constants.kNEODriveFreeCurrentLimit);
         mLeftSlave1.setOpenLoopRampRate(Constants.kDriveOpenLoopRampRate);
         mLeftSlave1.setCANTimeout(Constants.kCANTimeout);
 
-        mLeftSlave2 = new CANSparkMax(leftSlave2ID, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
+        mLeftSlave2 = new CANSparkMax(6, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
         mLeftSlave2.follow(mLeftMaster, false);
         mLeftSlave2.setParameter(ConfigParameter.kInputDeadband, Constants.kDriveDeadband);
         mLeftSlave2.setSmartCurrentLimit(Constants.kNEODriveStallCurrentLimit, Constants.kNEODriveFreeCurrentLimit);
         mLeftSlave2.setOpenLoopRampRate(Constants.kDriveOpenLoopRampRate);
         mLeftSlave2.setCANTimeout(Constants.kCANTimeout);
 
-        mRightMaster = new CANSparkMax(rightMasterID, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
+        mRightMaster = new CANSparkMax(1, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
         mRightMaster.setSmartCurrentLimit(Constants.kNEODriveStallCurrentLimit, Constants.kNEODriveFreeCurrentLimit);
         mRightMaster.setOpenLoopRampRate(Constants.kDriveOpenLoopRampRate);
         mRightMaster.setCANTimeout(Constants.kCANTimeout);
@@ -173,14 +143,14 @@ public class RobotMap {
         mRightMaster.getPIDController().setFF(Constants.kVelocity_kF, Constants.kVelocitySlot);
         mRightMaster.getPIDController().setOutputRange(-Constants.kVelocity_MaxOutput, Constants.kVelocity_MaxOutput, Constants.kVelocitySlot);
 
-        mRightSlave1 = new CANSparkMax(rightSlave1ID, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
+        mRightSlave1 = new CANSparkMax(2, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
         mRightSlave1.follow(mRightMaster, true);
         mRightSlave1.setParameter(ConfigParameter.kInputDeadband, Constants.kDriveDeadband);
         mRightSlave1.setSmartCurrentLimit(Constants.kNEODriveStallCurrentLimit, Constants.kNEODriveFreeCurrentLimit);
         mRightSlave1.setOpenLoopRampRate(Constants.kDriveOpenLoopRampRate);
         mRightSlave1.setCANTimeout(Constants.kCANTimeout);
 
-        mRightSlave2 = new CANSparkMax(rightSlave2ID, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
+        mRightSlave2 = new CANSparkMax(3, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
         mRightSlave2.follow(mRightMaster, false);
         mRightSlave2.setParameter(ConfigParameter.kInputDeadband, Constants.kDriveDeadband);
         mRightSlave2.setSmartCurrentLimit(Constants.kNEODriveStallCurrentLimit, Constants.kNEODriveFreeCurrentLimit);
@@ -234,6 +204,9 @@ public class RobotMap {
         mElevatorMaster.enableVoltageCompensation(true);
         mElevatorMaster.setSensorPhase(false);
         mElevatorMaster.setInverted(true);
+
+        mElevatorMaster.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 20, Constants.kCANTimeout);
+        mElevatorMaster.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 20, Constants.kCANTimeout);
         
         mElevatorSlave = new WPI_TalonSRX(8);
         mElevatorSlave.follow(mElevatorMaster);
@@ -264,13 +237,11 @@ public class RobotMap {
         intakeTransmission = new Transmission(intakeMotors);
         outtakeTransmission = new Transmission(outtakeMotors);
 
-        pivotPiston = new DoubleSolenoid(0, 0, 1);
-        highPressure = new Solenoid(1, 7);
+        intakePiston = new DoubleSolenoid(0, 0, 1);
+        intakeToGroundPiston = new DoubleSolenoid(2, 7, 8);
+        highPressure = new Solenoid(2, 2);
         leftLightRing = new Solenoid(2, 0);
         rightLightRing = new Solenoid(2, 1);
-
-        rightStop = new Servo(0);
-        leftStop = new Servo(1);
 
     //Hatch mechanism
         gripperPiston = new DoubleSolenoid(1, 0, 1);

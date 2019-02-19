@@ -12,7 +12,7 @@ public class Path {
 	}
 	
 	public Path(String name, Mode mode) {
-		//XXX TEMPORARY FIX FOR PATHWEAVER LEFT AND RIGHT PATHS SWITCHED
+		//PathWeaver switches left&right paths
 		leftPath = new File("/home/deploy/output/" + name + ".right.pf1.csv");
 		rightPath = new File("/home/deploy/output/" + name + ".left.pf1.rcsv");
 		this.mode = mode;

@@ -10,7 +10,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.CargoIntake.IntakeState;
 
-public class ClimberStateMachine {
+public class ClimberStateMachine extends StateMachine {
     public enum States {
         WAITING,
         RAISE_BACK,
@@ -24,10 +24,9 @@ public class ClimberStateMachine {
     private Elevator elevator = Robot.elevator;
     private HumanInput HI = Robot.HI;
 
-    private boolean climbRequest = false;
-
     private States currentState = States.WAITING;
 
+    @Override
     public void update() {
         switch(currentState) { 
             case WAITING:
@@ -47,13 +46,7 @@ public class ClimberStateMachine {
         }
     }
 
-    public void setClimbMode(boolean mode) {
-        climbRequest = mode;
-    }
-    public boolean getClimbRequest() {
-        return climbRequest;
-    }
-
+    @Override
     public void outputToSmartDashboard() {
         SmartDashboard.putString("Cargo Intake State Machine State", currentState.toString());
     }

@@ -35,11 +35,11 @@ public class Robot extends TimedRobot {
   
   public static RobotMap map = new RobotMap();
   public static HumanInput HI = new HumanInput();
+  public static Camera camera = new Camera(map.leftLightRing, map.rightLightRing);
   public static Drive drive = new Drive(map.leftDrive, map.rightDrive, map.navx, map.shifter, map.leftDriveEncoder, map.rightDriveEncoder);
-  public static CargoIntake cargoIntake = new CargoIntake(map.intakeTransmission, map.outtakeTransmission, map.pivotPiston, map.rightStop, map.leftStop, map.highPressure);
+  public static CargoIntake cargoIntake = new CargoIntake(map.intakeTransmission, map.outtakeTransmission, map.intakePiston, map.highPressure);
   public static HatchMechanism hatch = new HatchMechanism(map.gripperPiston, map.sliderPiston);
   public static Elevator elevator = new Elevator(map.elevatorTransmission);
-  public static Camera camera = new Camera(map.leftLightRing, map.rightLightRing);
   public static Superstructure superstructure = new Superstructure(map.compressor);
   public static Climber climber = new Climber(map.climberPiston);
   public static CargoIntakeStateMachine cargoIntakeStateMachine = new CargoIntakeStateMachine();
@@ -64,16 +64,19 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     smartDashboardNotifier.startPeriodic(.1);
     drive.resetSensors();
+    elevator.resetSensors();
     auto1.reset();
   }
 
   @Override
   public void disabledInit() {
     drive.resetDriveEncoders();
+    elevator.set(elevator.getPosition());
   }
 
   @Override
   public void disabledPeriodic() {
+    allPeriodic();
   }
   @Override
   public void robotPeriodic() {
@@ -112,10 +115,10 @@ public class Robot extends TimedRobot {
         superstructure.setAutoGamePiece(HI.getElevatorPlaceLevel());
       }
       if(HI.getClimbMode()) {
-        climberStateMachine.setClimbMode(true);
+        climberStateMachine.setRequest(true);
       }
       else if(HI.getAbortClimb()) {
-        climberStateMachine.setClimbMode(false);
+        climberStateMachine.setRequest(false);
       }
       // Drive Controls
       if(HI.getGyrolock()) {
@@ -124,6 +127,7 @@ public class Robot extends TimedRobot {
       }
       else if (HI.getVision()) {
         drive.setDriveMode(DriveMode.VISION_CONTROL);
+        drive.set(HI.getLeftThrottle(), HI.getLeftThrottle());
       }
       else if (HI.getVelocityControl()) {
         drive.setDriveMode(DriveMode.VELOCITY);
@@ -140,22 +144,23 @@ public class Robot extends TimedRobot {
       else if(HI.getLowGear()) {
         drive.setHighGear(false);
       }
-      if(HI.getLightRingToggle())
-        camera.setLightRings(!camera.getLightRingsOn());
-
+      if(HI.getLightRingsOn())
+        camera.setLightRings(true);
+      else if(HI.getLightRingsOff()) 
+        camera.setLightRings(false);
       drive.setElevatorUp(elevator.getPosition() >= Constants.kElevatorLowAccelerationThreshold);
 
       /**
        * ELEVATOR CONTROLS
       */
       if(HI.getAutoCargoIntake() && !HI.getElevatorManual()) {
-        cargoIntakeStateMachine.setIntakeRequest(true);
+        cargoIntakeStateMachine.setRequest(true);
       }
       else if(HI.getAutoHatchIntake() && !HI.getElevatorManual()) {
-        hatchIntakeStateMachine.setIntakeRequest(true);
+        hatchIntakeStateMachine.setRequest(true);
       }
       else {
-        cargoIntakeStateMachine.setIntakeRequest(false);
+        cargoIntakeStateMachine.setRequest(false);
         if(HI.getElevatorManual()) { 
           elevator.setElevatorState(ElevatorControlMode.MANUAL);
           elevator.set(HI.getElevatorSpeed());
@@ -237,6 +242,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testPeriodic() {
+    camera.update();
+    camera.setLightRings(true);
   }
 
   public void outputToSmartDashboard() {
