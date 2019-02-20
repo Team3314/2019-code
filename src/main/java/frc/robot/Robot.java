@@ -37,7 +37,7 @@ public class Robot extends TimedRobot {
   public static HumanInput HI = new HumanInput();
   public static Camera camera = new Camera(map.leftLightRing, map.rightLightRing);
   public static Drive drive = new Drive(map.leftDrive, map.rightDrive, map.navx, map.shifter, map.leftDriveEncoder, map.rightDriveEncoder);
-  public static CargoIntake cargoIntake = new CargoIntake(map.intakeTransmission, map.outtakeTransmission, map.intakePiston, map.highPressure);
+  public static CargoIntake cargoIntake = new CargoIntake(map.intakeTransmission, map.outtakeTransmission, map.intakePiston, map.intakeToGroundPiston, map.highPressure);
   public static HatchMechanism hatch = new HatchMechanism(map.gripperPiston, map.sliderPiston);
   public static Elevator elevator = new Elevator(map.elevatorTransmission);
   public static Superstructure superstructure = new Superstructure(map.compressor);
@@ -204,7 +204,7 @@ public class Robot extends TimedRobot {
           cargoIntake.setIntakeState(IntakeState.VOMIT);
         }
         else if(HI.getCargoStopDown()) {
-          cargoIntake.setIntakeState(IntakeState.STOP_DOWN);
+          cargoIntake.setIntakeState(IntakeState.INTAKE_DOWN);
         }
         else if(HI.getCargoClimb()) {
           cargoIntake.setIntakeState(IntakeState.CLIMB);

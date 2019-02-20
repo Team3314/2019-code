@@ -19,18 +19,18 @@ public class CargoIntake implements Subsystem {
         TRANSFERRING,
         VOMIT,
         PLACE,
-        STOP_DOWN,
+        INTAKE_DOWN,
         CLIMB,
         OVERRIDE
     }
 
     private Transmission intake, outtake;
-    private DoubleSolenoid pivot;
+    private DoubleSolenoid pivot, climb;
     private Solenoid highPressure;
 
     private double intakeSpeed, outtakeSpeed;
 
-    private Value pivotState = Constants.kIntakeUp;
+    private Value pivotState = Constants.kIntakeUp, climbState = Constants.kIntakeClimberUp;
 
     private boolean high = false;
 
@@ -40,10 +40,11 @@ public class CargoIntake implements Subsystem {
     SpeedControllerMode intakeControlMode = SpeedControllerMode.kDutyCycle;
     SpeedControllerMode outtakeControlMode = SpeedControllerMode.kDutyCycle;
 
-    public CargoIntake(Transmission intake, Transmission outtake, DoubleSolenoid pivotPiston, Solenoid highPressure) {
+    public CargoIntake(Transmission intake, Transmission outtake, DoubleSolenoid pivotPiston, DoubleSolenoid climb, Solenoid highPressure) {
         this.intake = intake;
         this.outtake = outtake;
         pivot = pivotPiston;
+        this.climb = climb;
         this.highPressure = highPressure;
     }
 
@@ -55,8 +56,6 @@ public class CargoIntake implements Subsystem {
         switch (currentIntakeState) {
             case WAITING:
                 setIntakeDown(false);
-                setIntakeSpeed(0);
-                setOuttakeSpeed(0);
                 break;
             case INTAKING:
                 setIntakeDown(true);
@@ -64,7 +63,6 @@ public class CargoIntake implements Subsystem {
                 break;
             case RAISING:
                 setIntakeDown(false);
-                setIntakeSpeed(0);
                 break;
             case TRANSFERRING:
                 setIntakeSpeed(1);
@@ -77,12 +75,14 @@ public class CargoIntake implements Subsystem {
             case VOMIT:
                 setIntakeSpeed(-1);
                 break;
-            case STOP_DOWN:
-                high = true;
-                setIntakeDown(false);
+            case INTAKE_DOWN:
+                high = false;
+                setClimbDown(false);
+                setIntakeDown(true);
                 break;
             case CLIMB:
                 high = true;
+                setClimbDown(true);
                 setIntakeDown(true);
                 break;
             case OVERRIDE:
@@ -91,6 +91,7 @@ public class CargoIntake implements Subsystem {
                 break;
         }
         highPressure.set(high);
+        climb.set(climbState);
         pivot.set(pivotState);
         intake.set(intakeSpeed, intakeControlMode);
         outtake.set(outtakeSpeed, outtakeControlMode);
@@ -113,6 +114,12 @@ public class CargoIntake implements Subsystem {
         else {
             pivotState = Constants.kIntakeUp;
         }
+    }
+    private void setClimbDown(boolean down) {
+        if(down) 
+            climbState = Constants.kClimberDown;
+        else
+            climbState = Constants.kClimberUp;
     }
 
     /**
