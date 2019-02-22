@@ -12,7 +12,9 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import frc.robot.subsystems.Drive;
 import frc.robot.statemachines.CargoIntakeStateMachine;
 import frc.robot.statemachines.ClimberStateMachine;
+import frc.robot.statemachines.GamePieceStateMachine;
 import frc.robot.statemachines.HatchIntakeStateMachine;
+import frc.robot.statemachines.TrackingStateMachine;
 import frc.robot.autos.DoubleHatchAuto;
 import frc.robot.subsystems.Camera;
 import frc.robot.subsystems.CargoIntake;
@@ -45,6 +47,8 @@ public class Robot extends TimedRobot {
   public static CargoIntakeStateMachine cargoIntakeStateMachine = new CargoIntakeStateMachine();
   public static HatchIntakeStateMachine hatchIntakeStateMachine = new HatchIntakeStateMachine();
   public static ClimberStateMachine climberStateMachine = new ClimberStateMachine();
+  public static TrackingStateMachine trackingStateMacahine = new TrackingStateMachine();
+  public static GamePieceStateMachine gamePieceStateMachine = new GamePieceStateMachine();
 
   DoubleHatchAuto auto1 = new DoubleHatchAuto();
   public Runnable smartDashboardRunnable = new Runnable(){
@@ -243,7 +247,10 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
     camera.update();
-    camera.setLightRings(true);
+    if(HI.getLightRingsOn())
+      camera.setLightRings(true);
+    if(HI.getLightRingsOff())
+      camera.setLightRings(false);
   }
 
   public void outputToSmartDashboard() {
