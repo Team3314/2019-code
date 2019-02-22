@@ -56,7 +56,7 @@ public class SparkMax extends SmartSpeedController {
 
     @Override
     public double getOutputVoltage() {
-        return ((CANSparkMax)controller).getAppliedOutput();
+        return ((CANSparkMax)controller).getAppliedOutput() * ((CANSparkMax)controller).getBusVoltage();
     }
 
     @Override

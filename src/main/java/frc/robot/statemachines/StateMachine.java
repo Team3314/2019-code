@@ -12,6 +12,6 @@ public abstract class StateMachine {
 
     public abstract void outputToSmartDashboard();
 
-
+    public abstract boolean isDone();
 
 }

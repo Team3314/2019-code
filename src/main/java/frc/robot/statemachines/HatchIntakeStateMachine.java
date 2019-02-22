@@ -1,5 +1,6 @@
 package frc.robot.statemachines;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Robot;
@@ -13,11 +14,13 @@ public class HatchIntakeStateMachine extends StateMachine {
         DRIVE,
         LOWER,
         RAISE,
-        GRAB
+        GRAB,
+        DONE
     }
 
     private Elevator elevator;
     private HatchMechanism hatch;
+    private Timer timer = new Timer();
 
     private State currentState = State.WAITING;
 
@@ -44,12 +47,13 @@ public class HatchIntakeStateMachine extends StateMachine {
                 elevator.set(Constants.kElevatorRaisedHatchPickup);
                 if(elevator.inPosition()) {
                     currentState = State.GRAB;
+                    timer.start();
                 }
                 break;
             case GRAB:
                 hatch.setGripperDown(false);
-                if(hatch.getHasHatch()) {    
-                    currentState = State.WAITING;
+                if(timer.get() > .125) {    
+                    currentState = State.DONE;
                 }
                 break;
         }
@@ -58,5 +62,10 @@ public class HatchIntakeStateMachine extends StateMachine {
     @Override
     public void outputToSmartDashboard() {
         SmartDashboard.putString("Hatch Intake State Machine State", currentState.toString());
+    }
+
+    @Override
+    public boolean isDone() {
+        return currentState == State.DONE;
     }
 }
