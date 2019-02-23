@@ -86,7 +86,7 @@ public class Drive extends Drivetrain implements Subsystem {
     }
 
     public void update(){
-       /* if(mIsHighGear) {
+       if(mIsHighGear) {
             shifter.set(Constants.kHighGear);
             ticksLeftNeoHighGear =  getLeftNeoPositionTicks() - ticksLeftNeoLowGear;
             ticksRightNeoHighGear = getRightNeoPositionTicks() - ticksRightNeoLowGear;
@@ -101,7 +101,7 @@ public class Drive extends Drivetrain implements Subsystem {
             neoInchesPerRev = Constants.kRevToInConvFactorLowGear;
         }
         tickToInConversion = neoInchesPerRev / Constants.kNEODriveEncoderCodesPerRev;
-        updateSpeedAndPosition();*/
+        updateSpeedAndPosition();
         switch(currentDriveMode) {
             case IDLE:
                 controlMode = SpeedControllerMode.kDutyCycle;
@@ -110,8 +110,8 @@ public class Drive extends Drivetrain implements Subsystem {
                 rawRightSpeed = 0;
                 break;
             case OPEN_LOOP:
-                rawLeftSpeed = leftDemand * Math.abs(leftDemand);
-                rawRightSpeed = rightDemand * Math.abs(rightDemand);
+                rawLeftSpeed = leftDemand;
+                rawRightSpeed = rightDemand;
                 setIdleMode(IdleMode.kBrake);
                 controlMode = SpeedControllerMode.kDutyCycle;
                 break;
@@ -123,6 +123,10 @@ public class Drive extends Drivetrain implements Subsystem {
                 controlMode = SpeedControllerMode.kDutyCycle;
                 break;
             case VISION_CONTROL:
+                if(!gyroInPosition()) {
+                    leftDemand = 0;
+                    rightDemand = 0;
+                }
                 rawLeftSpeed = leftDemand + gyroPIDOutput.getOutput();
                 rawRightSpeed = rightDemand - gyroPIDOutput.getOutput();
                 if(camera.isTargetInView())

@@ -70,7 +70,7 @@ public class Constants {
 
 		public static final int kElevatorLowAccelerationThreshold = ((int)(30 / kElevatorInchesPerTick));
 
-		public static final int kElevatorHatchPickup = 0;
+		public static final int kElevatorHatchPickup = 2;
 		public static final int kElevatorRaisedHatchPickup = (int)(4 / kElevatorInchesPerTick);
 		public static final int kElevatorBallLevel1 = (int)(2.5 / kElevatorInchesPerTick);
 		public static final int kElevatorBallLevel2 = (int)(25 / kElevatorInchesPerTick);

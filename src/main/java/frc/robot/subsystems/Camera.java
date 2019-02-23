@@ -10,8 +10,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Camera implements Subsystem {
 
+	public enum DSCamera {
+		FRONT,
+		BACK,
+		LEFT,
+		RIGHT
+	}
+
 	private NetworkTable table = NetworkTableInstance.getDefault().getTable("SmartDashboard").getSubTable("jetson");
-	private NetworkTableEntry expectedTargetAngle = new NetworkTableEntry(NetworkTableInstance.getDefault(), 420);
+	private NetworkTableEntry expectedTargetAngle = new NetworkTableEntry(NetworkTableInstance.getDefault(), 420), 
+		driveStationCamera = new NetworkTableEntry(NetworkTableInstance.getDefault(), 420);
 
 	private double validLeftTargetsInView, validRightTargetsInView;
 	private boolean targetInView;
@@ -119,6 +127,10 @@ public class Camera implements Subsystem {
 	
 	public void setSnapshot(int snapshot) {
 	 table.getEntry("snapshot").setDouble(snapshot);
+	}
+
+	public void setDSView(DSCamera camera) {
+		driveStationCamera.setString(camera.toString());
 	}
 
 	public void setHint(String hint) {

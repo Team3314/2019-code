@@ -79,9 +79,6 @@ public class Superstructure implements Subsystem {
         if(cargoIntake.getCargoInIntake()) {
             addAction(new CargoPlaceRocket(level));
         }
-        else if(hatch.getHasHatch()) {
-            addAction(new HatchPlaceRocket(level));
-        }
         else {
             addAction(new HatchPickup());
         }

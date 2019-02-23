@@ -170,4 +170,18 @@ public class HumanInput {
 	public boolean getAbortClimb() {
 		return true;
 	}
+
+//Camera
+	public boolean getForwardCamera() {
+		return rightStick.getPOV() == 0;
+	}
+	public boolean getRightCamera() {
+		return rightStick.getPOV() == 90;
+	}
+	public boolean getBackCamera() {
+		return rightStick.getPOV() == 180;
+	}
+	public boolean getLeftCamera() {
+		return rightStick.getPOV() == 270;
+	}
 }

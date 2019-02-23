@@ -9,16 +9,30 @@ public class Drivetrain {
         rightDrive = right;
     }
 
+    public void update() {
+        leftDrive.set(leftDemand);
+        rightDrive.set(rightDemand);
+    }
+
     public void setLeft(double input) {
-        leftDrive.set(input);
+        leftDemand = input;
     }
 
     public void setRight(double input) {
-        rightDrive.set(input);
+        rightDemand = input;
     }
 
     public void set(double left, double right) {
         leftDemand = left;
         rightDemand = right;
+    }
+
+    public void setTank(double left, double right, double power) {
+        leftDemand = Math.copySign(Math.pow(left, power), left);
+        rightDemand = Math.copySign(Math.pow(right, power), right);
+    }
+
+    public void setArcade(double speed, double turn, double power) {
+
     }
 }

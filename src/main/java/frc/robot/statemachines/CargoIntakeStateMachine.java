@@ -9,18 +9,19 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.CargoIntake.IntakeState;
 
 public class CargoIntakeStateMachine extends StateMachine {
-    public enum States {
+    public enum State {
         WAITING,
         INTAKING,
         RAISING,
-        TRANSFER
+        TRANSFER,
+        DONE
     } 
 
     CargoIntake intake;
     Elevator elevator;
     HumanInput HI;
 
-    private States currentState = States.WAITING;
+    private State currentState = State.WAITING;
 
 
     public CargoIntakeStateMachine() {
@@ -30,34 +31,36 @@ public class CargoIntakeStateMachine extends StateMachine {
     }
     @Override
     public void update() {
-        if(!request) {
-            currentState = States.WAITING;
+        if(!request && lastRequest) {
+            currentState = State.WAITING;
         }
         switch(currentState) { 
             case WAITING:
                 intake.setIntakeState(IntakeState.WAITING);
                 if(request && !lastRequest) {
-                    currentState = States.INTAKING;
+                    currentState = State.INTAKING;
                 }
                 break;
             case INTAKING:
                 intake.setIntakeState(IntakeState.INTAKING);
                 elevator.set(Constants.kElevatorBallLevel1);
                 if(intake.getCargoInIntake()) {
-                    currentState = States.RAISING;
+                    currentState = State.RAISING;
                 }
                 break;
             case RAISING:
                 intake.setIntakeState(IntakeState.RAISING);
                 if(elevator.inPosition() && intake.getIsUp()) {
-                    currentState = States.TRANSFER;
+                    currentState = State.TRANSFER;
                 }
                 break;
             case TRANSFER:
                 intake.setIntakeState(IntakeState.TRANSFERRING);
                 if(intake.getCargoInCarriage()) {
-                    currentState = States.WAITING;
+                    currentState = State.DONE;
                 }
+                break;
+            case DONE:
                 break;
         }
         lastRequest = request;
@@ -66,5 +69,11 @@ public class CargoIntakeStateMachine extends StateMachine {
     @Override
     public void outputToSmartDashboard() {
         SmartDashboard.putString("Cargo Intake State Machine State", currentState.toString());
+    }
+    
+
+    @Override
+    public boolean isDone() {
+        return currentState == State.DONE;
     }
 }

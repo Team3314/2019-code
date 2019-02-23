@@ -14,6 +14,7 @@ import frc.robot.statemachines.CargoIntakeStateMachine;
 import frc.robot.statemachines.ClimberStateMachine;
 import frc.robot.statemachines.GamePieceStateMachine;
 import frc.robot.statemachines.HatchIntakeStateMachine;
+import frc.robot.statemachines.HatchPlaceStateMachine;
 import frc.robot.statemachines.TrackingStateMachine;
 import frc.robot.autos.DoubleHatchAuto;
 import frc.robot.subsystems.Camera;
@@ -23,6 +24,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorControlMode;
 import frc.robot.subsystems.HatchMechanism;
 import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.Camera.DSCamera;
 import frc.robot.subsystems.CargoIntake.IntakeState;
 import frc.robot.subsystems.Drive.DriveMode;
 
@@ -46,6 +48,7 @@ public class Robot extends TimedRobot {
   public static Climber climber = new Climber(map.climberPiston);
   public static CargoIntakeStateMachine cargoIntakeStateMachine = new CargoIntakeStateMachine();
   public static HatchIntakeStateMachine hatchIntakeStateMachine = new HatchIntakeStateMachine();
+  public static HatchPlaceStateMachine hatchPlaceStateMachine = new HatchPlaceStateMachine();
   public static ClimberStateMachine climberStateMachine = new ClimberStateMachine();
   public static TrackingStateMachine trackingStateMacahine = new TrackingStateMachine();
   public static GamePieceStateMachine gamePieceStateMachine = new GamePieceStateMachine();
@@ -84,6 +87,14 @@ public class Robot extends TimedRobot {
   }
   @Override
   public void robotPeriodic() {
+    if(HI.getForwardCamera())
+      camera.setDSView(DSCamera.FRONT);
+    else if(HI.getRightCamera())
+      camera.setDSView(DSCamera.RIGHT);
+    else if(HI.getBackCamera()) 
+      camera.setDSView(DSCamera.BACK);
+    else if(HI.getLeftCamera()) 
+      camera.setDSView(DSCamera.LEFT);
   }
   @Override
   public void autonomousInit() {
@@ -127,19 +138,19 @@ public class Robot extends TimedRobot {
       // Drive Controls
       if(HI.getGyrolock()) {
         drive.setDriveMode(DriveMode.GYROLOCK);
-        drive.set(HI.getLeftThrottle(), HI.getLeftThrottle());
+        drive.setTank(HI.getLeftThrottle(), HI.getLeftThrottle(), 2);
       }
       else if (HI.getVision()) {
         drive.setDriveMode(DriveMode.VISION_CONTROL);
-        drive.set(HI.getLeftThrottle(), HI.getLeftThrottle());
+        drive.setTank(HI.getLeftThrottle(), HI.getLeftThrottle(), 2);
       }
       else if (HI.getVelocityControl()) {
         drive.setDriveMode(DriveMode.VELOCITY);
-        drive.set(HI.getLeftThrottle(), HI.getRightThrottle());
+        drive.setTank(HI.getLeftThrottle(), HI.getRightThrottle(), 2);
       }
       else {  
         drive.setDriveMode(DriveMode.OPEN_LOOP);
-        drive.set(HI.getLeftThrottle(), HI.getRightThrottle());
+        drive.setTank(HI.getLeftThrottle(), HI.getRightThrottle(), 2);
       }
 
       if(HI.getHighGear()) {
@@ -236,7 +247,7 @@ public class Robot extends TimedRobot {
          * CLIMBER CONTROLS
          */
       }
-    }
+   }
   }
 
   @Override

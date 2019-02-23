@@ -67,8 +67,4 @@ public class HatchMechanism implements Subsystem {
         return mIsSliderOut;
     }
 
-    public boolean getHasHatch() {
-        return false;
-    }
-
 }

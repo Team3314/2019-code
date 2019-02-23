@@ -149,9 +149,6 @@ public abstract class Action {
 	protected String getStartPos() {
 		return HI.getLeftRightCenter();
 	}
-	protected boolean hasHatch() {
-		return hatch.getHasHatch();
-	}
 	protected boolean hasCargo() {
 		return cargo.getCargoInIntake(); 
 	}

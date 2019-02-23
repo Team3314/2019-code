@@ -50,10 +50,6 @@ public class HatchPickup extends Action {
                 }
                 break;
             case PICKUP:
-                if(hasHatch()) {
-                    currentState = State.BACKUP;
-                    drivePosition(0);
-                }
                 break;
             case BACKUP:
                 if(driveInPosition()) {

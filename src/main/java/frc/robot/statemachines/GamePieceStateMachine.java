@@ -1,5 +1,6 @@
 package frc.robot.statemachines;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.HumanInput;
@@ -19,6 +20,7 @@ public class GamePieceStateMachine extends StateMachine {
         GRABBING_HATCH,
         PLACING_HATCH,
         PLACING_BALL,
+        BACKUP,
         DONE
     }
 
@@ -33,12 +35,18 @@ public class GamePieceStateMachine extends StateMachine {
     private Camera camera = Robot.camera;
     private HumanInput HI = Robot.HI;
 
+    private Timer timer = new Timer();
+
+
     private int desiredElevatorHeight = 0;
 
     @Override
     public void update() {
-        if(!request) {
+        if(!request && lastRequest) {
             currentState = State.WAITING;
+            timer.stop();
+            timer.reset();
+
         }
         switch(currentState) {
             case WAITING:
@@ -94,22 +102,33 @@ public class GamePieceStateMachine extends StateMachine {
                 hatchIntakeStateMachine.setRequest(true);
                 if(hatchIntakeStateMachine.isDone()) {
                     hatchIntakeStateMachine.setRequest(false);
-                    currentState = State.DONE;
+                    currentState = State.BACKUP;
+                    timer.start();
                 }
                 break;
             case PLACING_BALL:
                 cargoIntake.setIntakeState(IntakeState.PLACE);
                 if(!cargoIntake.getCargoInCarriage()) {
-                    currentState = State.DONE;
+                    currentState = State.BACKUP;
+                    timer.start();
                 }
                 break;
             case PLACING_HATCH:
                 hatchPlaceStateMachine.setRequest(true);
                 if(hatchPlaceStateMachine.isDone()) {
+                    currentState = State.BACKUP;
+                    timer.start();
+                }
+                break;
+            case BACKUP:
+                elevator.set(Constants.kElevatorHatchPickup);
+                drive.set(-.25, -.25);
+                if(timer.get() >= 1) {
+                    drive.set(0, 0);
                     currentState = State.DONE;
                 }
                 break;
-            case DONE:  
+            case DONE:
                 break;
         }
         lastRequest = request;

@@ -11,7 +11,6 @@ public class HatchIntakeStateMachine extends StateMachine {
 
     public enum State {
         WAITING,
-        DRIVE,
         LOWER,
         RAISE,
         GRAB,
@@ -31,15 +30,21 @@ public class HatchIntakeStateMachine extends StateMachine {
     }
     @Override
     public void update() {
-        if(!request) {
+        if(!request && lastRequest) {
             currentState = State.WAITING;
         }
         switch(currentState) {
             case WAITING:
                 if(request && !lastRequest) {
-                    hatch.setGripperDown(true);
+                    hatch.setGripperDown(false);
                     hatch.setSliderOut(false);
                     elevator.set(Constants.kElevatorHatchPickup);
+                    currentState = State.LOWER;
+                }
+                break;
+            case LOWER:
+                if(elevator.inPosition()) {
+                    hatch.setGripperDown(true);
                     currentState = State.RAISE;
                 }
                 break;
@@ -52,9 +57,13 @@ public class HatchIntakeStateMachine extends StateMachine {
                 break;
             case GRAB:
                 hatch.setGripperDown(false);
-                if(timer.get() > .125) {    
+                if(timer.get() > .1) {    
+                    timer.stop();
+                    timer.reset();
                     currentState = State.DONE;
                 }
+                break;
+            case DONE:
                 break;
         }
         lastRequest = request;
