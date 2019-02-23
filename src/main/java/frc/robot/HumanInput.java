@@ -27,7 +27,7 @@ public class HumanInput {
 
 //Actions
 	public boolean getAutoGamePiece() {
-		return false;//rightStick.getRawButton(4);
+		return rightStick.getRawButton(2);
 	}
 	public int getElevatorPlaceLevel() {
 		return 0;
