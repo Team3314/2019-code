@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.subsystems.HatchMechanism;
 
-public class HatchPlaceStateMachine extends StateMachine {
+public class HatchPlaceStateMachine {
 
     public enum State {
         WAITING,
@@ -19,7 +19,7 @@ public class HatchPlaceStateMachine extends StateMachine {
 
     private Timer timer = new Timer();
 
-    @Override
+    
     public void update() {
         if(!request && lastRequest) {
             currentState = State.WAITING;
@@ -57,12 +57,12 @@ public class HatchPlaceStateMachine extends StateMachine {
         lastRequest = request;
     }
 
-    @Override
+    
     public void outputToSmartDashboard() {
         SmartDashboard.putString("Hatch Place State Machine State", currentState.toString());
     }
 
-    @Override
+    
     public boolean isDone() {
         return currentState == State.DONE;
     }

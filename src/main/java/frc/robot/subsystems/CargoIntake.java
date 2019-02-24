@@ -3,10 +3,10 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.infrastructure.SpeedControllerMode;
 import frc.robot.infrastructure.Transmission;
 
@@ -19,55 +19,74 @@ public class CargoIntake implements Subsystem {
         TRANSFERRING,
         VOMIT,
         PLACE,
-        INTAKE_DOWN,
-        CLIMB,
         OVERRIDE
     }
 
     private Transmission intake, outtake;
-    private DoubleSolenoid pivot, climb;
-    private Solenoid highPressure;
+    private DoubleSolenoid pivot;
 
     private double intakeSpeed, outtakeSpeed;
 
-    private Value pivotState = Constants.kIntakeUp, climbState = Constants.kIntakeClimberUp;
+    private Value pivotState = Constants.kIntakeUp;
 
-    private boolean high = false;
+    private boolean intakeRequest, placeRequest, vomitRequest;
+    private boolean lastIntakeRequest, lastPlaceRequest, lastVomitRequest;
 
     private AnalogInput intakeCargoSensor = new AnalogInput(0), elevatorCargoSensor = new AnalogInput(1);
     private DigitalInput raisedSensor = new DigitalInput(4);
     private IntakeState currentIntakeState = IntakeState.WAITING;
+    private Elevator elevator = Robot.elevator;
     SpeedControllerMode intakeControlMode = SpeedControllerMode.kDutyCycle;
     SpeedControllerMode outtakeControlMode = SpeedControllerMode.kDutyCycle;
 
-    public CargoIntake(Transmission intake, Transmission outtake, DoubleSolenoid pivotPiston, DoubleSolenoid climb, Solenoid highPressure) {
+    public CargoIntake(Transmission intake, Transmission outtake, DoubleSolenoid pivotPiston) {
         this.intake = intake;
         this.outtake = outtake;
         pivot = pivotPiston;
-        this.climb = climb;
-        this.highPressure = highPressure;
     }
 
     @Override
     public void update() {
-        high = false;
+        if((!intakeRequest && lastIntakeRequest) ||
+         (!placeRequest && lastPlaceRequest) || 
+         (!vomitRequest && lastVomitRequest)) {
+            currentIntakeState = IntakeState.WAITING;
+        }
         setIntakeSpeed(0);
         setOuttakeSpeed(0);
         switch (currentIntakeState) {
             case WAITING:
-                setIntakeDown(false);
+                if(vomitRequest && !lastVomitRequest) {
+                    currentIntakeState = IntakeState.VOMIT;
+                }
+                if(placeRequest && !lastPlaceRequest) {
+                    currentIntakeState = IntakeState.PLACE;
+                }
+                if(intakeRequest && !lastIntakeRequest) {
+                    currentIntakeState = IntakeState.INTAKING;
+                }
                 break;
             case INTAKING:
                 setIntakeDown(true);
                 setIntakeSpeed(1);
+                elevator.set(Constants.kElevatorBallLevel1);
+                if(getCargoInIntake()) {
+                    currentIntakeState = IntakeState.RAISING;
+                }
                 break;
             case RAISING:
                 setIntakeDown(false);
+                if(elevator.inPosition() && getIsUp()) {
+                    currentIntakeState = IntakeState.TRANSFERRING;
+                }
                 break;
             case TRANSFERRING:
-                setIntakeSpeed(1);
-                setOuttakeSpeed(.25);
                 setIntakeDown(false);
+                setOuttakeSpeed(.25);
+                setIntakeSpeed(1);
+                if(getCargoInCarriage()) {
+                    currentIntakeState = IntakeState.WAITING;
+                }
                 break;
             case PLACE:
                 setOuttakeSpeed(1);
@@ -75,23 +94,16 @@ public class CargoIntake implements Subsystem {
             case VOMIT:
                 setIntakeSpeed(-1);
                 break;
-            case INTAKE_DOWN:
-                high = false;
-                setClimbDown(false);
-                setIntakeDown(true);
-                break;
-            case CLIMB:
-                high = true;
-                setClimbDown(true);
-                setIntakeDown(true);
-                break;
             case OVERRIDE:
                 setIntakeDown(true);
                 setIntakeSpeed(1);
                 break;
         }
-        highPressure.set(high);
-        climb.set(climbState);
+        
+        lastIntakeRequest = intakeRequest;
+        lastPlaceRequest = placeRequest;
+        lastVomitRequest = vomitRequest;
+
         pivot.set(pivotState);
         intake.set(intakeSpeed, intakeControlMode);
         outtake.set(outtakeSpeed, outtakeControlMode);
@@ -115,22 +127,15 @@ public class CargoIntake implements Subsystem {
             pivotState = Constants.kIntakeUp;
         }
     }
-    private void setClimbDown(boolean down) {
-        if(down) 
-            climbState = Constants.kClimberDown;
-        else
-            climbState = Constants.kClimberUp;
-    }
-
     /**
-     * @param currentState the currentState to set
+     * @param currentIntakeState the currentIntakeState to set
      */
     public void setIntakeState(IntakeState mode) {
         currentIntakeState = mode;
     }
 
     /**
-     * @return the currentState
+     * @return the currentIntakeState
      */
     public IntakeState getIntakeState() {
         return currentIntakeState;
@@ -140,7 +145,7 @@ public class CargoIntake implements Subsystem {
     public void outputToSmartDashboard() {
         SmartDashboard.putNumber("Cargo Intake current", intake.getOutputCurrent(0));
         SmartDashboard.putNumber("Cargo Intake speed", intakeSpeed);
-        SmartDashboard.putString("Cargo Intake state", getIntakeState().toString());
+        SmartDashboard.putString("Cargo Intake IntakeState", getIntakeState().toString());
         SmartDashboard.putNumber("Cargo intake sensor voltage", intakeCargoSensor.getVoltage());
         SmartDashboard.putBoolean("Ball in Intake", getCargoInIntake());
         SmartDashboard.putBoolean("Ball in Carriage", getCargoInCarriage());

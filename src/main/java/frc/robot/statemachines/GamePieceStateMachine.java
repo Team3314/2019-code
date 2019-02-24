@@ -40,7 +40,7 @@ public class GamePieceStateMachine extends StateMachine {
 
     private int desiredElevatorHeight = 0;
 
-    @Override
+    
     public void update() {
         if(!request && lastRequest) {
             currentState = State.WAITING;
@@ -134,14 +134,18 @@ public class GamePieceStateMachine extends StateMachine {
         lastRequest = request;
     }
 
-    @Override
+    
     public void outputToSmartDashboard() {
         SmartDashboard.putString("Game Piece State Machine State", currentState.toString());
     }
 
-    @Override
+    
     public boolean isDone() {
         return currentState == State.DONE;
+    }
+
+    public void setDesiredElevatorHeight(int height) {
+        desiredElevatorHeight = height;
     }
 
 }

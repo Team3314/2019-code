@@ -39,7 +39,11 @@ public class TrackingStateMachine extends StateMachine {
                 }
                 break;
             case DRIVING:
-                drive.setTank(HI.getLeftThrottle(), HI.getLeftThrottle(), 2);
+                if(!ds.isAutonomous())
+                    drive.setTank(HI.getLeftThrottle(), HI.getLeftThrottle(), 2);
+                else {
+                    drive.setTank(.5, .5, 1);
+                }
                 if(drive.collision()) {
                     drive.setDriveMode(DriveMode.OPEN_LOOP);
                     currentState = State.DONE;

@@ -326,6 +326,7 @@ public class Drive extends Drivetrain implements Subsystem {
         SmartDashboard.putNumber("Right Voltage", rightDrive.getOutputVoltage());
         SmartDashboard.putNumber("Accelerometer", getAcceleration());
         SmartDashboard.putBoolean("Elevator Up", elevatorUp);
+        SmartDashboard.putBoolean("high Gear", mIsHighGear);
     }
   
     public void resetDriveEncoders() {

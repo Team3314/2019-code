@@ -10,10 +10,25 @@ import frc.robot.Constants;
 
 public class HatchMechanism implements Subsystem {
 
+    public enum State {
+        WAITING,
+        LOWER,
+        RAISE,
+        GRAB,
+        EXTEND,
+        RETRACT,
+        DONE
+    }
+
     private DoubleSolenoid gripper, slider;
 
     private boolean mIsGripperDown = false;
     private boolean mIsSliderOut = false;
+
+    private boolean placeRequest, intakeRequest;
+    private boolean lastPlaceRequest, lastIntakeRequest;
+
+    private State currentState;
 
     public HatchMechanism(DoubleSolenoid grip, DoubleSolenoid slide) {
         gripper = grip;
@@ -22,6 +37,18 @@ public class HatchMechanism implements Subsystem {
 
     @Override
     public void update() {
+        switch(currentState) {
+            case WAITING:
+                break;
+            case LOWER:
+                break;
+            case RAISE:
+                break;
+            case GRAB:
+                break;
+            case 
+        }
+
         if (mIsGripperDown) {
             gripper.set(Constants.kGripperDown);
         } else {

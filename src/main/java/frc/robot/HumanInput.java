@@ -27,7 +27,7 @@ public class HumanInput {
 
 //Actions
 	public boolean getAutoGamePiece() {
-		return rightStick.getRawButton(2);
+		return false;//rightStick.getRawButton(2);
 	}
 	public int getElevatorPlaceLevel() {
 		return 0;
@@ -78,7 +78,7 @@ public class HumanInput {
 		return leftStick.getRawAxis(3) >.75;//buttonBox.getRawButton(1);
 	}
 	public double getElevatorSpeed() {
-		return gamepad.getRawAxis(1);
+		return -gamepad.getRawAxis(1);
 	}
 	//Cargo Intake Controls
 	public boolean getAutoCargoIntake() {
@@ -88,7 +88,7 @@ public class HumanInput {
 		return gamepad.getRawButton(4); // a
 	}
 
-	public boolean getCargoTransfer() {
+	public boolean getCargoTransfer(){
 		return gamepad.getRawButton(2); // b
 	}
 	public boolean getCargoPlace() {

@@ -238,7 +238,7 @@ public class RobotMap {
         outtakeTransmission = new Transmission(outtakeMotors);
 
         intakePiston = new DoubleSolenoid(0, 0, 1);
-        intakeToGroundPiston = new DoubleSolenoid(2, 7, 8);
+        intakeToGroundPiston = new DoubleSolenoid(2, 6, 7);
         highPressure = new Solenoid(2, 2);
         leftLightRing = new Solenoid(2, 0);
         rightLightRing = new Solenoid(2, 1);

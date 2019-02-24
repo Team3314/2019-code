@@ -28,7 +28,7 @@ public class HatchIntakeStateMachine extends StateMachine {
         hatch = Robot.hatch;
         
     }
-    @Override
+    
     public void update() {
         if(!request && lastRequest) {
             currentState = State.WAITING;
@@ -68,12 +68,12 @@ public class HatchIntakeStateMachine extends StateMachine {
         }
         lastRequest = request;
     }
-    @Override
+    
     public void outputToSmartDashboard() {
         SmartDashboard.putString("Hatch Intake State Machine State", currentState.toString());
     }
 
-    @Override
+    
     public boolean isDone() {
         return currentState == State.DONE;
     }
