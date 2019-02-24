@@ -9,6 +9,7 @@ import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.ConfigParameter;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
@@ -92,6 +93,8 @@ public class RobotMap {
 
         Solenoid leftLightRing;
         Solenoid rightLightRing;
+
+        AnalogInput distanceSensor;
 
         Compressor compressor;
     
@@ -252,5 +255,7 @@ public class RobotMap {
         compressor.setClosedLoopControl(true);
 
         climberPiston = new DoubleSolenoid(0, 4, 5);
+
+        distanceSensor = new AnalogInput(2);
     }
 }

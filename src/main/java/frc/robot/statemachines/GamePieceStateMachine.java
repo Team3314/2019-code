@@ -1,9 +1,9 @@
 package frc.robot.statemachines;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
-import frc.robot.HumanInput;
 import frc.robot.Robot;
 import frc.robot.subsystems.Camera;
 import frc.robot.subsystems.CargoIntake;
@@ -12,7 +12,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.HatchMechanism;
 import frc.robot.subsystems.CargoIntake.IntakeState;
 
-public class GamePieceStateMachine extends StateMachine {
+public class GamePieceStateMachine {
 
     public enum State {
         WAITING,
@@ -24,18 +24,29 @@ public class GamePieceStateMachine extends StateMachine {
         DONE
     }
 
+    public enum GamePieceStateMachineMode {
+        HATCH_LEVEL1,
+        HATCH_LEVEL2,
+        HATCH_LEVEL3,
+        BALL_LEVEL1,
+        BALL_LEVEL2,
+        BALL_LEVEL3,
+        HATCH_PICKUP
+    }
     private State currentState = State.WAITING, nextState;
+    private GamePieceStateMachineMode mode = GamePieceStateMachineMode.HATCH_LEVEL1;
     private Drive drive = Robot.drive;
     private Elevator elevator = Robot.elevator;
     private CargoIntake cargoIntake = Robot.cargoIntake;
     private HatchMechanism hatch = Robot.hatch;
-    private HatchIntakeStateMachine hatchIntakeStateMachine = Robot.hatchIntakeStateMachine;
-    private HatchPlaceStateMachine hatchPlaceStateMachine = Robot.hatchPlaceStateMachine;
     private TrackingStateMachine tracking = Robot.trackingStateMacahine;
     private Camera camera = Robot.camera;
-    private HumanInput HI = Robot.HI;
+    private DriverStation ds = DriverStation.getInstance();
 
     private Timer timer = new Timer();
+
+    private boolean request;
+    private boolean lastRequest;
 
 
     private int desiredElevatorHeight = 0;
@@ -50,58 +61,60 @@ public class GamePieceStateMachine extends StateMachine {
         }
         switch(currentState) {
             case WAITING:
+                desiredElevatorHeight = 0;
                 if(request) {
-                    tracking.setRequest(true);
+                    tracking.setTrackingRequest(true);
                     currentState = State.DRIVING;
                 }
                 break;
             case DRIVING:
-                if(HI.getElevatorLevel1()) {
-                    if(cargoIntake.getCargoInCarriage()) {
-                        nextState = State.PLACING_BALL;
-                        desiredElevatorHeight = Constants.kElevatorBallLevel1;
-                    }
-                    else {
-                        nextState = State.PLACING_HATCH;
+                switch(mode) { 
+                    case HATCH_LEVEL1:
                         desiredElevatorHeight = Constants.kElevatorHatchLevel1;
-                    }
-                }
-                else if (HI.getElevatorLevel2()) {
-                    if(cargoIntake.getCargoInCarriage()) {
-                        nextState = State.PLACING_BALL;
-                        desiredElevatorHeight = Constants.kElevatorBallLevel2;
-                    }
-                    else {
                         nextState = State.PLACING_HATCH;
+                        break;
+                    case HATCH_LEVEL2:
                         desiredElevatorHeight = Constants.kElevatorHatchLevel2;
-                    }
-                }
-                else if(HI.getElevatorLevel3()) {
-                    if(cargoIntake.getCargoInCarriage()) {
-                        nextState = State.PLACING_BALL;
-                        desiredElevatorHeight = Constants.kElevatorBallLevel3;
-                    }
-                    else {
                         nextState = State.PLACING_HATCH;
+                        break;
+                    case HATCH_LEVEL3:
                         desiredElevatorHeight = Constants.kElevatorHatchLevel3;
-                    }
+                        nextState = State.PLACING_HATCH;
+                        break;
+                    case BALL_LEVEL1:
+                        desiredElevatorHeight = Constants.kElevatorBallLevel1;
+                        nextState = State.PLACING_BALL;
+                        break;
+                    case BALL_LEVEL2:
+                        desiredElevatorHeight = Constants.kElevatorBallLevel2;
+                        nextState = State.PLACING_BALL;
+                        break;
+                    case BALL_LEVEL3:
+                        desiredElevatorHeight = Constants.kElevatorBallLevel3;
+                        nextState = State.PLACING_BALL;
+                        break;
+                    case HATCH_PICKUP:
+                        desiredElevatorHeight = Constants.kElevatorHatchPickup;
+                        break;
                 }
-                else if(HI.getElevatorPickup()) {
-                    nextState = State.GRABBING_HATCH;
-                    desiredElevatorHeight = Constants.kElevatorHatchPickup;
+                if(cargoIntake.getCargoInCarriage()) {
+                    nextState = State.PLACING_BALL;
                 }
-                if(camera.getRawDistance() <= 36) {
+                else { 
+                    nextState = State.PLACING_HATCH;
+                }
+                if(camera.getRawDistance() <= 72) {
                     elevator.set(desiredElevatorHeight);
                 }
                 if(tracking.isDone() && elevator.inPosition()) {
-                    tracking.setRequest(false);
+                    tracking.setTrackingRequest(false);
                     currentState = nextState;
                 }
                 break;
             case GRABBING_HATCH:
-                hatchIntakeStateMachine.setRequest(true);
-                if(hatchIntakeStateMachine.isDone()) {
-                    hatchIntakeStateMachine.setRequest(false);
+                hatch.setIntakeRequest(true);
+                if(hatch.isDone()) {
+                    hatch.setIntakeRequest(false);
                     currentState = State.BACKUP;
                     timer.start();
                 }
@@ -114,8 +127,9 @@ public class GamePieceStateMachine extends StateMachine {
                 }
                 break;
             case PLACING_HATCH:
-                hatchPlaceStateMachine.setRequest(true);
-                if(hatchPlaceStateMachine.isDone()) {
+                hatch.setPlaceRequest(true);
+                if(hatch.isDone()) {
+                    hatch.setPlaceRequest(false);
                     currentState = State.BACKUP;
                     timer.start();
                 }
@@ -123,7 +137,7 @@ public class GamePieceStateMachine extends StateMachine {
             case BACKUP:
                 elevator.set(Constants.kElevatorHatchPickup);
                 drive.set(-.25, -.25);
-                if(timer.get() >= 1) {
+                if(timer.get() >= .5) {
                     drive.set(0, 0);
                     currentState = State.DONE;
                 }
@@ -144,8 +158,11 @@ public class GamePieceStateMachine extends StateMachine {
         return currentState == State.DONE;
     }
 
-    public void setDesiredElevatorHeight(int height) {
-        desiredElevatorHeight = height;
+    public void setRequest(boolean request) {
+        this.request = request;
     }
 
+    public void setMode(GamePieceStateMachineMode mode) {
+        this.mode = mode;
+    }
 }

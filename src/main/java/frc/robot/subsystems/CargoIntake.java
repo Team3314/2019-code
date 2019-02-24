@@ -140,6 +140,25 @@ public class CargoIntake implements Subsystem {
     public IntakeState getIntakeState() {
         return currentIntakeState;
     }
+    /**
+     * @param intakeRequest the intakeRequest to set
+     */
+    public void setIntakeRequest(boolean intakeRequest) {
+        this.intakeRequest = intakeRequest;
+    }
+    /**
+     * @param placeRequest the placeRequest to set
+     */
+    public void setPlaceRequest(boolean placeRequest) {
+        this.placeRequest = placeRequest;
+    }
+
+    /**
+     * @param vomitRequest the vomitRequest to set
+     */
+    public void setVomitRequest(boolean vomitRequest) {
+        this.vomitRequest = vomitRequest;
+    }
 
     @Override
     public void outputToSmartDashboard() {
@@ -147,6 +166,7 @@ public class CargoIntake implements Subsystem {
         SmartDashboard.putNumber("Cargo Intake speed", intakeSpeed);
         SmartDashboard.putString("Cargo Intake IntakeState", getIntakeState().toString());
         SmartDashboard.putNumber("Cargo intake sensor voltage", intakeCargoSensor.getVoltage());
+        SmartDashboard.putNumber("Elevator Cargo sensor Voltage", elevatorCargoSensor.getVoltage());
         SmartDashboard.putBoolean("Ball in Intake", getCargoInIntake());
         SmartDashboard.putBoolean("Ball in Carriage", getCargoInCarriage());
         SmartDashboard.putBoolean("Cargo Intake Raised", getIsUp());
@@ -158,11 +178,11 @@ public class CargoIntake implements Subsystem {
     }
 
     public boolean getCargoInIntake() {
-        return intakeCargoSensor.getVoltage() < Constants.kCargoSensorVoltageThreshold;
+        return intakeCargoSensor.getVoltage() < Constants.kCargoSensorVoltageThreshold && intakeCargoSensor.getAverageVoltage() != 0;
     }
 
     public boolean getCargoInCarriage() {
-        return elevatorCargoSensor.getVoltage() < Constants.kCargoSensorVoltageThreshold;
+        return elevatorCargoSensor.getVoltage() < Constants.kCargoSensorVoltageThreshold && elevatorCargoSensor.getAverageVoltage() != 0;
     }
     public boolean getIsUp() {
         return !raisedSensor.get();

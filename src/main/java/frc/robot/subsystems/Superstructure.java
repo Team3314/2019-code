@@ -1,6 +1,9 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.hal.sim.mockdata.AnalogInDataJNI;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Superstructure implements Subsystem {
 

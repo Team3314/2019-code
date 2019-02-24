@@ -97,12 +97,12 @@ public class HumanInput {
 	public boolean getCargoEject() {
 		return gamepad.getRawButton(6); // rb
 	}
-	public boolean getCargoStopDown() {
-		return gamepad.getRawButton(10); // right stick
-	}
 	//Hatch Intake Controls
 	public boolean getAutoHatchIntake() {
-		return gamepad.getRawAxis(3) > .75;
+		return gamepad.getRawButton(9);
+	}
+	public boolean getAutoHatchPlace() {
+		return gamepad.getRawButton(10);
 	}
 	public boolean getGripperUp() {
 		return gamepad.getRawButton(7); //start
@@ -152,19 +152,11 @@ public class HumanInput {
 		return rightStick.getRawButton(7) && rightStick.getRawButton(11);
 	}
 
-	public boolean getRaiseBack() {
-		return gamepad.getRawButton(9);
-	}
-
 	public boolean getRaiseFront() {
 		return leftStick.getRawButton(7) && leftStick.getRawButton(11);
 	}
 	public boolean getClimbMode() {
 		return false;
-	}
-
-	public boolean getCargoClimb() {
-		return gamepad.getRawButton(9);
 	}
 
 	public boolean getAbortClimb() {

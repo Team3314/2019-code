@@ -6,6 +6,8 @@ import frc.robot.Robot;
 import frc.robot.motion.Path;
 import frc.robot.motion.PathFollower;
 import frc.robot.motion.PathList;
+import frc.robot.statemachines.GamePieceStateMachine;
+import frc.robot.statemachines.TrackingStateMachine;
 import frc.robot.subsystems.Camera;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Drive.DriveMode;
@@ -15,6 +17,8 @@ public abstract class Autonomous {
     private Drive drive = Robot.drive;
 	private HumanInput HI = Robot.HI;
 	private Camera camera = Robot.camera;
+	protected GamePieceStateMachine gamePieceStateMachine = Robot.gamePieceStateMachine;
+	protected TrackingStateMachine trackingStateMachine= Robot.trackingStateMacahine;
 	
 	private PathFollower pathFollower = new PathFollower();
 	private Timer timer = new Timer();
@@ -70,12 +74,20 @@ public abstract class Autonomous {
 		drive.set(desiredSpeed, desiredSpeed);
 		drive.setDesiredAngle(desiredAngle);
 	}
+
+	protected void driveVision(double desiredSpeed) {
+		drive.setDriveMode(DriveMode.VISION_CONTROL);
+		drive.set(desiredSpeed, desiredSpeed);
+	}
 	
 	protected boolean gyroTurnDone() {
 		return drive.gyroInPosition();
 	}
 	protected boolean targetInView() {
 		return camera.isTargetInView();
+	}
+	protected double getCameraDistance() {
+		return camera.getRawDistance();
 	}
 	//motion profiling
 	protected void startPathFollower(Path path) {
@@ -125,5 +137,9 @@ public abstract class Autonomous {
 	}
 	protected String getStartPos() {
 		return HI.getLeftRightCenter();
+	}
+
+	protected void setGamePieceRequest(boolean request) {
+		gamePieceStateMachine.setRequest(request);
 	}
 }

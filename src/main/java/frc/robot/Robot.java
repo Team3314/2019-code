@@ -10,11 +10,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.robot.subsystems.Drive;
-import frc.robot.statemachines.CargoIntakeStateMachine;
-import frc.robot.statemachines.ClimberStateMachine;
 import frc.robot.statemachines.GamePieceStateMachine;
-import frc.robot.statemachines.HatchIntakeStateMachine;
-import frc.robot.statemachines.HatchPlaceStateMachine;
 import frc.robot.statemachines.TrackingStateMachine;
 import frc.robot.autos.DoubleHatchAuto;
 import frc.robot.subsystems.Camera;
@@ -29,10 +25,10 @@ import frc.robot.subsystems.CargoIntake.IntakeState;
 import frc.robot.subsystems.Drive.DriveMode;
 
 /**
- * The VM is configured to automatically run tHIs class, and to call the
+ * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the TimedRobot
  * documentation. If you change the name of tHIs class or the package after
- * creating tHIs project, you must also update the build.gradle file in the
+ * creating this project, you must also update the build.gradle file in the
  * project.
  */
 public class Robot extends TimedRobot {
@@ -41,16 +37,12 @@ public class Robot extends TimedRobot {
   public static HumanInput HI = new HumanInput();
   public static Camera camera = new Camera(map.leftLightRing, map.rightLightRing);
   public static Drive drive = new Drive(map.leftDrive, map.rightDrive, map.navx, map.shifter, map.leftDriveEncoder, map.rightDriveEncoder);
-  public static CargoIntake cargoIntake = new CargoIntake(map.intakeTransmission, map.outtakeTransmission, map.intakePiston, map.intakeToGroundPiston, map.highPressure);
+  public static CargoIntake cargoIntake = new CargoIntake(map.intakeTransmission, map.outtakeTransmission, map.intakePiston);
   public static HatchMechanism hatch = new HatchMechanism(map.gripperPiston, map.sliderPiston);
   public static Elevator elevator = new Elevator(map.elevatorTransmission);
   public static Superstructure superstructure = new Superstructure(map.compressor);
-  public static Climber climber = new Climber(map.climberPiston);
-  public static CargoIntakeStateMachine cargoIntakeStateMachine = new CargoIntakeStateMachine();
-  public static HatchIntakeStateMachine hatchIntakeStateMachine = new HatchIntakeStateMachine();
-  public static HatchPlaceStateMachine hatchPlaceStateMachine = new HatchPlaceStateMachine();
-  public static ClimberStateMachine climberStateMachine = new ClimberStateMachine();
-  public static TrackingStateMachine trackingStateMacahine = new TrackingStateMachine();
+  public static Climber climber = new Climber(map.climberPiston, map.intakePiston, map.intakeToGroundPiston, map.highPressure);
+  public static TrackingStateMachine trackingStateMacahine = new TrackingStateMachine(map.distanceSensor);
   public static GamePieceStateMachine gamePieceStateMachine = new GamePieceStateMachine();
 
   DoubleHatchAuto auto1 = new DoubleHatchAuto();
@@ -78,7 +70,6 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     drive.resetDriveEncoders();
-    elevator.set(elevator.getPosition());
   }
 
   @Override
@@ -124,13 +115,14 @@ public class Robot extends TimedRobot {
     //Switches between control of robot between action queue and manual 
     if(HI.getAutoGamePiece()) {
       gamePieceStateMachine.setRequest(true);
+      drive.setTank(HI.getLeftThrottle(),HI.getLeftThrottle(), 2);
     }
     else {
       if(HI.getClimbMode()) {
-        climberStateMachine.setRequest(true);
+        climber.setClimbRequest(true);
       }
       else if(HI.getAbortClimb()) {
-        climberStateMachine.setRequest(false);
+        climber.setClimbRequest(false);
       }
       // Drive Controls
       if(HI.getGyrolock()) {
@@ -165,15 +157,13 @@ public class Robot extends TimedRobot {
       /**
        * ELEVATOR CONTROLS
       */
-      if(HI.getAutoCargoIntake() && !HI.getElevatorManual()) {
-        cargoIntakeStateMachine.setRequest(true);
+      hatch.setPlaceRequest(HI.getAutoHatchPlace());
+      if(!HI.getElevatorManual()) {
+        cargoIntake.setIntakeRequest(HI.getAutoCargoIntake()); 
+        hatch.setIntakeRequest(HI.getAutoHatchIntake());
       }
-      else if(HI.getAutoHatchIntake() && !HI.getElevatorManual()) {
-        hatchIntakeStateMachine.setRequest(true);
-      }
-      else {
-        cargoIntakeStateMachine.setRequest(false);
-        if(HI.getElevatorManual()) { 
+      if(!HI.getAutoCargoIntake() && !HI.getAutoHatchIntake() && !HI.getAutoHatchPlace()) {
+        if(HI.getElevatorManual()) {
           elevator.setElevatorState(ElevatorControlMode.MANUAL);
           elevator.set(HI.getElevatorSpeed());
         }
@@ -214,12 +204,6 @@ public class Robot extends TimedRobot {
         }
         else if(HI.getCargoEject()) {
           cargoIntake.setIntakeState(IntakeState.VOMIT);
-        }
-        else if(HI.getCargoStopDown()) {
-          cargoIntake.setIntakeState(IntakeState.INTAKE_DOWN);
-        }
-        else if(HI.getCargoClimb()) {
-          cargoIntake.setIntakeState(IntakeState.CLIMB);
         }
         else {
           cargoIntake.setIntakeState(IntakeState.WAITING);
@@ -269,9 +253,6 @@ public class Robot extends TimedRobot {
 		camera.outputToSmartDashboard();
     superstructure.outputToSmartDashboard();
     climber.outputToSmartDashboard();
-    hatchIntakeStateMachine.outputToSmartDashboard();
-    climberStateMachine.outputToSmartDashboard();
-    cargoIntakeStateMachine.outputToSmartDashboard();
   }
 
   public void allPeriodic() {
@@ -282,9 +263,6 @@ public class Robot extends TimedRobot {
     superstructure.update();
     hatch.update();
     climber.update();
-    cargoIntakeStateMachine.update();
-    hatchIntakeStateMachine.update();
-    climberStateMachine.update();
   }
 
 }

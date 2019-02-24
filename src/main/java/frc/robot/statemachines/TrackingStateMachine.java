@@ -1,13 +1,15 @@
 package frc.robot.statemachines;
 
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants;
 import frc.robot.HumanInput;
 import frc.robot.Robot;
-import frc.robot.subsystems.Camera;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Drive.DriveMode;
 
-public class TrackingStateMachine extends StateMachine {
+public class TrackingStateMachine {
     public enum State {
         WAITING,
         ALIGNING,
@@ -15,20 +17,28 @@ public class TrackingStateMachine extends StateMachine {
         DONE
     }
 
-    private Camera camera = Robot.camera;
     private Drive drive = Robot.drive;
     private HumanInput HI = Robot.HI;
+    private DriverStation ds = DriverStation.getInstance();
 
+    private AnalogInput distanceSensor;
+
+    private boolean trackingRequest, lastTrackingRequest;
+
+    public TrackingStateMachine(AnalogInput distanceSensor) {
+        this.distanceSensor = distanceSensor;
+    }
+
+    private double driveSpeed;
 
     private State currentState = State.WAITING;
 
-    @Override
     public void update() {
-        if(!request && lastRequest) 
+        if(!trackingRequest && lastTrackingRequest) 
             currentState = State.WAITING;
         switch(currentState) {
             case WAITING:
-                if(request && !lastRequest) {
+                if(trackingRequest && !lastTrackingRequest) {
                     drive.setDriveMode(DriveMode.VISION_CONTROL);
                     currentState = State.ALIGNING;
                 }
@@ -39,11 +49,6 @@ public class TrackingStateMachine extends StateMachine {
                 }
                 break;
             case DRIVING:
-                if(!ds.isAutonomous())
-                    drive.setTank(HI.getLeftThrottle(), HI.getLeftThrottle(), 2);
-                else {
-                    drive.setTank(.5, .5, 1);
-                }
                 if(drive.collision()) {
                     drive.setDriveMode(DriveMode.OPEN_LOOP);
                     currentState = State.DONE;
@@ -53,18 +58,24 @@ public class TrackingStateMachine extends StateMachine {
                 
                 break;
         }
+        lastTrackingRequest = trackingRequest;
     }
 
-    @Override
     public void outputToSmartDashboard() {
         SmartDashboard.putString("Tracking State Machine State", currentState.toString());
+        SmartDashboard.putBoolean("Distance Sensor Triggered", distanceSensorTriggered());
     
     }
 
-    @Override
     public boolean isDone() {
         return currentState == State.DONE;
     }
 
+    public void setTrackingRequest(boolean request) {
+        trackingRequest = request;
+    }
+    public boolean distanceSensorTriggered() {
+        return distanceSensor.getVoltage() > Constants.kCargoSensorVoltageThreshold;
+    }
 
 }
