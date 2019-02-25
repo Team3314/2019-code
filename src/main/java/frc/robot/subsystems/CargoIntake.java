@@ -32,6 +32,8 @@ public class CargoIntake implements Subsystem {
     private boolean intakeRequest, placeRequest, vomitRequest;
     private boolean lastIntakeRequest, lastPlaceRequest, lastVomitRequest;
 
+    private boolean loadingBall = false;
+
     private AnalogInput intakeCargoSensor = new AnalogInput(0), elevatorCargoSensor = new AnalogInput(1);
     private DigitalInput raisedSensor = new DigitalInput(4);
     private IntakeState currentIntakeState = IntakeState.WAITING;
@@ -47,8 +49,7 @@ public class CargoIntake implements Subsystem {
 
     @Override
     public void update() {
-        if((!intakeRequest && lastIntakeRequest) ||
-         (!placeRequest && lastPlaceRequest) || 
+        if((!placeRequest && lastPlaceRequest) || 
          (!vomitRequest && lastVomitRequest)) {
             currentIntakeState = IntakeState.WAITING;
         }
@@ -56,6 +57,8 @@ public class CargoIntake implements Subsystem {
         setOuttakeSpeed(0);
         switch (currentIntakeState) {
             case WAITING:
+                loadingBall = false;
+                setIntakeDown(false);
                 if(vomitRequest && !lastVomitRequest) {
                     currentIntakeState = IntakeState.VOMIT;
                 }
@@ -63,19 +66,27 @@ public class CargoIntake implements Subsystem {
                     currentIntakeState = IntakeState.PLACE;
                 }
                 if(intakeRequest && !lastIntakeRequest) {
+                    if(getCargoInCarriage()) {
+                        currentIntakeState = IntakeState.WAITING;
+                        break;
+                    }
                     currentIntakeState = IntakeState.INTAKING;
+                    loadingBall = true;
                 }
                 break;
             case INTAKING:
+                if(!intakeRequest)
+                    currentIntakeState = IntakeState.WAITING;
                 setIntakeDown(true);
                 setIntakeSpeed(1);
                 elevator.set(Constants.kElevatorBallLevel1);
-                if(getCargoInIntake()) {
+                if(getCargoInIntake() && intakeRequest) {
                     currentIntakeState = IntakeState.RAISING;
                 }
                 break;
             case RAISING:
                 setIntakeDown(false);
+                setIntakeSpeed(0);
                 if(elevator.inPosition() && getIsUp()) {
                     currentIntakeState = IntakeState.TRANSFERRING;
                 }
@@ -178,13 +189,19 @@ public class CargoIntake implements Subsystem {
     }
 
     public boolean getCargoInIntake() {
-        return intakeCargoSensor.getVoltage() < Constants.kCargoSensorVoltageThreshold && intakeCargoSensor.getAverageVoltage() != 0;
+        return intakeCargoSensor.getVoltage() < Constants.kCargoSensorVoltageThreshold && intakeCargoSensor.getVoltage() != 0;
     }
 
     public boolean getCargoInCarriage() {
-        return elevatorCargoSensor.getVoltage() < Constants.kCargoSensorVoltageThreshold && elevatorCargoSensor.getAverageVoltage() != 0;
+        return elevatorCargoSensor.getVoltage() < Constants.kCargoSensorVoltageThreshold && elevatorCargoSensor.getVoltage() != 0;
     }
     public boolean getIsUp() {
         return !raisedSensor.get();
+    }
+    public boolean getLoadingBall() {
+        return loadingBall;
+    }
+    public void stopLoadingBall() {
+        loadingBall = false;
     }
 }

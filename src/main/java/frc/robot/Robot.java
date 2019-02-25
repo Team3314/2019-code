@@ -37,9 +37,9 @@ public class Robot extends TimedRobot {
   public static HumanInput HI = new HumanInput();
   public static Camera camera = new Camera(map.leftLightRing, map.rightLightRing);
   public static Drive drive = new Drive(map.leftDrive, map.rightDrive, map.navx, map.shifter, map.leftDriveEncoder, map.rightDriveEncoder);
+  public static Elevator elevator = new Elevator(map.elevatorTransmission);
   public static CargoIntake cargoIntake = new CargoIntake(map.intakeTransmission, map.outtakeTransmission, map.intakePiston);
   public static HatchMechanism hatch = new HatchMechanism(map.gripperPiston, map.sliderPiston);
-  public static Elevator elevator = new Elevator(map.elevatorTransmission);
   public static Superstructure superstructure = new Superstructure(map.compressor);
   public static Climber climber = new Climber(map.climberPiston, map.intakePiston, map.intakeToGroundPiston, map.highPressure);
   public static TrackingStateMachine trackingStateMacahine = new TrackingStateMachine(map.distanceSensor);
@@ -108,6 +108,7 @@ public class Robot extends TimedRobot {
     elevator.set(elevator.getPosition());
   }
 
+
   @Override
   public void teleopPeriodic() {
     
@@ -157,12 +158,15 @@ public class Robot extends TimedRobot {
       /**
        * ELEVATOR CONTROLS
       */
+      if(HI.getCargoEject()) {
+        cargoIntake.stopLoadingBall();
+      }
       hatch.setPlaceRequest(HI.getAutoHatchPlace());
       if(!HI.getElevatorManual()) {
         cargoIntake.setIntakeRequest(HI.getAutoCargoIntake()); 
         hatch.setIntakeRequest(HI.getAutoHatchIntake());
       }
-      if(!HI.getAutoCargoIntake() && !HI.getAutoHatchIntake() && !HI.getAutoHatchPlace()) {
+      if(!cargoIntake.getLoadingBall() && !HI.getAutoHatchIntake() && !HI.getAutoHatchPlace()) {
         if(HI.getElevatorManual()) {
           elevator.setElevatorState(ElevatorControlMode.MANUAL);
           elevator.set(HI.getElevatorSpeed());
