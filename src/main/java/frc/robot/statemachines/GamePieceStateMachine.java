@@ -113,7 +113,7 @@ public class GamePieceStateMachine {
                 break;
             case GRABBING_HATCH:
                 hatch.setIntakeRequest(true);
-                if(hatch.isDone()) {
+                if(hatch.isWaiting()) {
                     hatch.setIntakeRequest(false);
                     currentState = State.BACKUP;
                     timer.start();
@@ -128,7 +128,7 @@ public class GamePieceStateMachine {
                 break;
             case PLACING_HATCH:
                 hatch.setPlaceRequest(true);
-                if(hatch.isDone()) {
+                if(hatch.isWaiting()) {
                     hatch.setPlaceRequest(false);
                     currentState = State.BACKUP;
                     timer.start();

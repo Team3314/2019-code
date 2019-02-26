@@ -3,16 +3,19 @@ package frc.robot;
 import frc.robot.autos.*;
 
 public class AutoModeSelector {
-	private HumanInput hi = Robot.HI;
-	private String autoModeBinary, delayBinary;
-	private int autoModeDecimal, delayDecimal;
-	private Autonomous autoMode;
-	private Autonomous auto0 = new DoubleHatchAuto(),
+	private static HumanInput hi = Robot.HI;
+	private static String autoModeBinary;
+	private static int autoModeDecimal;
+	private static Autonomous autoMode;
+	private static Autonomous auto0 = new DoubleHatchAuto(),
 						auto1 = new AutoHatchToSideCargo1();
 
-	private Autonomous[] autos = {auto0, auto1};
-public Autonomous getSelectedAutoMode() {
+	private static Autonomous[] autos = {auto0, auto1};
+
+	public static Autonomous getSelectedAutoMode() {
+		autoModeBinary = "" + hi.getBinaryFour() + hi.getBinaryTwo() + hi.getBinaryOne();
 		autoModeDecimal = Integer.parseInt(autoModeBinary, 2);
+		autoMode = autos[autoModeDecimal];
 		autoMode.reset();
  		return autoMode;
 	}

@@ -52,13 +52,7 @@ public class Camera implements Subsystem {
 		rawDistance = table.getEntry("Distance").getDouble(1337.254);
 		validLeftTargetsInView = table.getEntry("Left targetsFound").getDouble(0);
 		validRightTargetsInView = table.getEntry("Right targetsFound").getDouble(0);
-		targetInView = (validLeftTargetsInView >= 1  && validRightTargetsInView >= 1); //|| (validLeftTargetsInView >= 1  && validRightTargetsInView >= 2);
-		/*
-		if((validLeftTargetsInView >= 2  && validRightTargetsInView <= 1))
-			targetHorizError = 10;
-		else if(validLeftTargetsInView <= 1  && validRightTargetsInView >= 2) 
-			targetHorizError = -10;*/
-        //solution to height differentiation problem: different pipelines with same settings? pipeline 0 = ball target height, pipeline 1 = the 3 hatch target heights;
+		targetInView = (validLeftTargetsInView >= 1  && validRightTargetsInView >= 1);
     }
 
 	/**

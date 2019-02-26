@@ -11,13 +11,15 @@ public class Elevator extends Lift implements Subsystem {
 
     public enum ElevatorControlMode {
         MOTION_MAGIC,
-        MANUAL
+        MANUAL,
+        HOMING
     }
 
     private ElevatorControlMode currentElevatorMode = ElevatorControlMode.MOTION_MAGIC;
     private SpeedControllerMode controlMode;
 
     private boolean reverseLimit, lastReverseLimit;
+    private boolean homed = false;
 
     public void update(){
         reverseLimit = transmission.getMotor(1).getReverseLimit();
@@ -27,6 +29,7 @@ public class Elevator extends Lift implements Subsystem {
             if(demand < 0) {
                 demand = 0;
             }
+            homed = true;
         }
         switch(currentElevatorMode) {
             case MOTION_MAGIC:
@@ -34,6 +37,15 @@ public class Elevator extends Lift implements Subsystem {
                 break;
             case MANUAL:
                 controlMode = SpeedControllerMode.kDutyCycle;
+                break;
+            case HOMING:
+                controlMode = SpeedControllerMode.kDutyCycle;
+                set(-.1);
+                if(transmission.getOutputCurrent(0) > 1 && transmission.getVelocity() < 100) {
+                    homed = true;
+                }
+                if(homed)
+                    currentElevatorMode = ElevatorControlMode.MOTION_MAGIC;
                 break;
         }
         transmission.set(demand, controlMode);
@@ -74,6 +86,14 @@ public class Elevator extends Lift implements Subsystem {
         return getPosition() * Constants.kElevatorInchesPerTick;
     }
 
+    public boolean getHomed() {
+        return homed;
+    }
+
+    public boolean isHoming() {
+        return currentElevatorMode == ElevatorControlMode.HOMING;
+    }
+
     public void setElevatorState(ElevatorControlMode mode) {
         if(currentElevatorMode != mode) {
             switch(mode) {
@@ -81,6 +101,8 @@ public class Elevator extends Lift implements Subsystem {
                     set(getPosition());
                     break;
                 case MANUAL:
+                    break;
+                case HOMING:
                     break;
             }
             currentElevatorMode = mode;

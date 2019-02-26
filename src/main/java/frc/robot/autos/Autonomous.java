@@ -141,5 +141,8 @@ public abstract class Autonomous {
 
 	protected void setGamePieceRequest(boolean request) {
 		gamePieceStateMachine.setRequest(request);
+		if(request) {
+			drive.set(.5, .5);
+		}
 	}
 }

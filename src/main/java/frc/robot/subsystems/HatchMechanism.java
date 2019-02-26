@@ -19,8 +19,8 @@ public class HatchMechanism implements Subsystem {
         RAISE,
         GRAB,
         EXTEND,
-        RETRACT,
-        DONE
+        RELEASE,
+        RETRACT
     }
 
     private DoubleSolenoid gripper, slider;
@@ -46,86 +46,91 @@ public class HatchMechanism implements Subsystem {
 
     @Override
     public void update() {
-        if((!placeRequest && lastPlaceRequest) ||
-            (!intakeRequest && lastIntakeRequest)) {
-                currentState = State.WAITING;
-                timer.reset();
-            }
         switch(currentState) {
             case WAITING:
                 if(intakeRequest && !lastIntakeRequest) {
-                    elevator.set(Constants.kElevatorHatchPickup);
-
-                    currentState = State.LOWER; 
+                    if(!mIsGripperDown) {
+                        elevator.set(Constants.kElevatorBallLevel1);
+                        currentState = State.LOWER;
+                    }
+                    else {
+                        elevator.set(Constants.kElevatorHatchPickup);
+                        timer.start();
+                        currentState = State.GRAB; 
+                    }
                 }
                 else if(placeRequest && !lastPlaceRequest) {
-                    currentState = State.GRAB;
+                    setSliderOut(true);
+                    timer.start();
+                    currentState = State.EXTEND;
                 }
                 break;
             case LOWER:
                 if(elevator.inPosition()) {
                     setGripperDown(true);
+                    timer.start();
+                    elevator.set(Constants.kElevatorHatchPickup);
+                    currentState = State.GRAB;
+                }
+                break;
+            case GRAB:
+                if(timer.get() > .1 && elevator.inPosition()) {
+                    setGripperDown(false);    
+                    timer.stop();
+                    timer.reset();
                     currentState = State.RAISE;
                 }
                 break;
             case RAISE:
                 elevator.set(Constants.kElevatorRaisedHatchPickup);
                 if(elevator.inPosition()) {
-                    currentState = State.GRAB;
+                    currentState = State.WAITING;
                     timer.start();
                 }
                 break;
-            case GRAB:
-                setGripperDown(false);
-                if(timer.get() > .1) {    
-                    timer.stop();
+            case EXTEND:
+                if(timer.get() > .2) {
+                    currentState = State.RELEASE;
+                    setGripperDown(true);
                     timer.reset();
-                    currentState = State.DONE;
+                    timer.start();
                 }
                 break;
-            case EXTEND:
-                if(timer.get() > .1) {
+            case RELEASE:
+                if(placeRequest && !lastPlaceRequest) {
                     currentState = State.RETRACT;
-                    setSliderOut(false);
-                    timer.reset();
                 }
                 break;
             case RETRACT:
-                if(timer.get() > .1) {
-                    currentState = State.DONE;
-                    setGripperDown(false);
-                    timer.reset();
-                    timer.stop();
-                }
-            case DONE:
-                break;
+                setSliderOut(false);
+                setGripperDown(false);
+                currentState = State.WAITING;
         }
-        slider.set(sliderPosition);
-        gripper.set(gripperPosition);
+        if(mIsSliderOut)
+            slider.set(Constants.kSliderOut);
+        else
+            slider.set(Constants.kSliderIn);    
+        if(mIsGripperDown)
+            gripper.set(Constants.kGripperDown);
+        else   
+            gripper.set(Constants.kGripperUp);
+        lastPlaceRequest = placeRequest;
+        lastIntakeRequest = intakeRequest;
+
     }
 
     /**
      * @param mIsGripperDown the mIsGripperDown to set
      */
     public void setGripperDown(boolean grip) {
-        if(grip) {
-            gripperPosition = Constants.kGripperDown;
-        }
-        else {
-            gripperPosition = Constants.kGripperUp;
-        }
+        mIsGripperDown = grip;
     }
 
     /**
      * @param mIsSliderOut the mIsSliderOut to set
      */
     public void setSliderOut(boolean slide) {
-        if(slide) {
-           sliderPosition = Constants.kSliderOut; 
-        }
-        else {
-            sliderPosition = Constants.kSliderIn;
-        }
+        mIsSliderOut = slide;
     }
 
     /**
@@ -153,8 +158,8 @@ public class HatchMechanism implements Subsystem {
 
     }
 
-    public boolean isDone() {
-        return currentState == State.DONE;
+    public boolean isWaiting() {
+        return currentState == State.WAITING;
     }
 
     public boolean getIsGripperDown() {

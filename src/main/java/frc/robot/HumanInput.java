@@ -117,6 +117,10 @@ public class HumanInput {
 		return gamepad.getRawAxis(2) > .5; //lt
 	}
 
+	public boolean getHome() {
+		return false;
+	}
+
 	//
 	public boolean getClearQueue() {
 		return buttonBox.getRawButton(16);

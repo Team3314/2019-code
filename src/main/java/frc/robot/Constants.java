@@ -60,7 +60,7 @@ public class Constants {
 		public static final int kElevatorPeakCurrentDuration = 200;
 		public static final double kElevatorDeadband = 0;
 		public static final int kMaxElevatorPosition = 10000000;
-		public static final int kMinElevatorPosition = 0;
+		public static final int kMinElevatorPosition = (int)(-1 / kElevatorInchesPerTick);
 		public static final int k775ProFreeSpeedRPM = 18730;
 		public static final double kElevatorGearboxReduction = 1/13;
 		public static final int kElevatorTicksPerRev = 8192;
@@ -69,13 +69,13 @@ public class Constants {
 		public static final int kElevatorTolerance = (int)(1 / kElevatorInchesPerTick);
 
 		public static final int kElevatorLowAccelerationThreshold = ((int)(30 / kElevatorInchesPerTick));
-
-		public static final int kElevatorHatchPickup = (int)(2.5 / kElevatorInchesPerTick);
-		public static final int kElevatorRaisedHatchPickup = (int)(4 / kElevatorInchesPerTick);
+	
+		public static final int kElevatorHatchPickup = (int)(5 / kElevatorInchesPerTick);
+		public static final int kElevatorRaisedHatchPickup = (int)(7.5 / kElevatorInchesPerTick);
 		public static final int kElevatorBallLevel1 = (int)(2.5 / kElevatorInchesPerTick);
 		public static final int kElevatorBallLevel2 = (int)(27 / kElevatorInchesPerTick);
 		public static final int kElevatorBallLevel3 = (int)(55 / kElevatorInchesPerTick);
-		public static final int kElevatorHatchLevel1 = (int)(3 / kElevatorInchesPerTick);
+		public static final int kElevatorHatchLevel1 = (int)(5 / kElevatorInchesPerTick);
 		public static final int kElevatorHatchLevel2 = (int)(32 / kElevatorInchesPerTick);
 		public static final int kElevatorHatchLevel3 = (int)(62 / kElevatorInchesPerTick);
 

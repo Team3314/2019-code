@@ -19,7 +19,6 @@ public class TrackingStateMachine {
 
     private Drive drive = Robot.drive;
     private HumanInput HI = Robot.HI;
-    private DriverStation ds = DriverStation.getInstance();
 
     private AnalogInput distanceSensor;
 
@@ -28,9 +27,6 @@ public class TrackingStateMachine {
     public TrackingStateMachine(AnalogInput distanceSensor) {
         this.distanceSensor = distanceSensor;
     }
-
-    private double driveSpeed;
-
     private State currentState = State.WAITING;
 
     public void update() {
