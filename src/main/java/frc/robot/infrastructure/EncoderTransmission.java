@@ -31,8 +31,12 @@ public class EncoderTransmission extends Transmission {
         return encoder.getVelocity();
     }
 
-    public void setRampRate(double rate) {
-        motors[0].setOpenLoopRampRate(rate);
+    public void setOpenLoopRampTime(double time) {
+        motors[0].setOpenLoopRampTime(time);
+    }
+
+    public void setClosedLoopRampTime(double time) {
+        motors[0].setClosedLoopRampTime(time);
     }
     
     public void reset() {

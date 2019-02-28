@@ -92,13 +92,19 @@ public class TalonSRX extends SmartSpeedController {
     }
 
     @Override
-    public void setOpenLoopRampRate(double rate) {
-        ((WPI_TalonSRX)controller).configOpenloopRamp(rate);
+    public void setOpenLoopRampTime(double time) {
+        ((WPI_TalonSRX)controller).configOpenloopRamp(time);
+    }
+
+    @Override
+    public void setClosedLoopRampTime(double time) {
+        ((WPI_TalonSRX)controller).configClosedloopRamp(time);
     }
 
     public boolean getReverseLimit() {
         return ((WPI_TalonSRX)controller).getSensorCollection().isRevLimitSwitchClosed();
     }
+
     
 
 }

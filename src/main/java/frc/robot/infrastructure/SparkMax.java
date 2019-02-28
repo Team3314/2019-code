@@ -103,12 +103,19 @@ public class SparkMax extends SmartSpeedController {
     }
 
     @Override
-    public void setOpenLoopRampRate(double rate) {
+    public void setOpenLoopRampTime(double rate) {
         ((CANSparkMax)controller).setOpenLoopRampRate(rate);
+    }
+
+    @Override
+    public void setClosedLoopRampTime(double time) {
+        ((CANSparkMax)controller).setClosedLoopRampRate(time);
     }
 
     @Override
     public boolean getReverseLimit() {
         return false;
     }
+
+    
 }

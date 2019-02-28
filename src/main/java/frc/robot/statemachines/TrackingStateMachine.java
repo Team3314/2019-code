@@ -1,10 +1,12 @@
 package frc.robot.statemachines;
 
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.HumanInput;
 import frc.robot.Robot;
+import frc.robot.subsystems.Camera;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Drive.DriveMode;
 
@@ -17,11 +19,15 @@ public class TrackingStateMachine {
     }
 
     private Drive drive = Robot.drive;
+    private Camera camera = Robot.camera;
     private HumanInput HI = Robot.HI;
+    private DriverStation ds = DriverStation.getInstance();
 
     private AnalogInput distanceSensor;
 
     private boolean trackingRequest, lastTrackingRequest;
+
+    private double driveSpeed = 0;
 
     public TrackingStateMachine(AnalogInput distanceSensor) {
         this.distanceSensor = distanceSensor;
@@ -44,6 +50,15 @@ public class TrackingStateMachine {
                 }
                 break;
             case DRIVING:
+                if(ds.isAutonomous()) {
+                    drive.set(.5,.5);
+                }
+                else {
+                    drive.setTank(HI.getRightThrottle(), HI.getRightThrottle(), 2);
+                }
+                if(camera.getRawDistance() <= drive.getStoppingDistance()) {
+                      
+                }
                 if(drive.collision()) {
                     drive.setDriveMode(DriveMode.TANK);
                     currentState = State.DONE;
@@ -72,5 +87,6 @@ public class TrackingStateMachine {
     public boolean distanceSensorTriggered() {
         return distanceSensor.getVoltage() > Constants.kCargoSensorVoltageThreshold;
     }
+    
 
 }

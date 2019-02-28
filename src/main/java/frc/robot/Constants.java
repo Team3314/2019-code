@@ -35,7 +35,10 @@ public class Constants {
 		public static int kTalonDrivePeakCurrentDuration = 0;
 		public static int kNEODriveStallCurrentLimit = 80;
 		public static int kNEODriveFreeCurrentLimit = 20;
-		public static double kDriveDeadband = .1;
+		public static double kMaxDeccelerationLowGear = 60; //inches/sec^2
+		public static double kMaxDeccelerationHighGear = 60; //inches/sec^2
+		public static double kSafeImpactSpeed = 36; //inches/sec
+		public static double kDriveDeadband = .1; 
 		public static double kDriveOpenLoopRampRate = .5;
 		public static double kDriveVoltageScale = 12.0;
 		public static double kDriveClosedLoopRampTime = 0;

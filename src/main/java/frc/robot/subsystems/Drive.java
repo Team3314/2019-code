@@ -34,7 +34,6 @@ public class Drive extends Drivetrain implements Subsystem {
 		TANK,
         GYROLOCK,
         POSITION,
-        VELOCITY,
         VISION_CONTROL, 
         MOTION_PROFILE
 	}
@@ -53,6 +52,9 @@ public class Drive extends Drivetrain implements Subsystem {
 
     private double leftNeoDrivePositionInches, rightNeoDrivePositionInches, leftNeoDrivePositionTicks, rightNeoDrivePositionTicks, leftNeoDriveSpeedTicks, rightNeoDriveSpeedTicks, 
     leftNeoDriveSpeedInches, rightNeoDriveSpeedInches, ticksLeftNeoHighGear, ticksLeftNeoLowGear, ticksRightNeoHighGear, ticksRightNeoLowGear, neoInchesPerRev;
+
+    private double stoppingDistance, stoppingTime;
+
     private PIDController gyroControl;
     private CustomPIDOutput gyroPIDOutput;
 
@@ -100,6 +102,8 @@ public class Drive extends Drivetrain implements Subsystem {
             speedCap = Constants.kRaisedElevatorDriveSpeedCap / Constants.kMaxSpeedLowGear;
             neoInchesPerRev = Constants.kRevToInConvFactorLowGear;
         }
+        stoppingDistance = (Math.pow(Constants.kSafeImpactSpeed, 2) - (Math.pow(getAverageRioSpeed(), 2)) /  (2 *Constants.kMaxDeccelerationLowGear));
+        stoppingTime = (Constants.kSafeImpactSpeed - getAverageRioSpeed()) / Constants.kMaxDeccelerationLowGear;
         tickToInConversion = neoInchesPerRev / Constants.kNEODriveEncoderCodesPerRev;
         if(camera.isTargetInView()) {
             cameraTurnAngle = getAngle() + camera.getTargetHorizError();
@@ -153,11 +157,11 @@ public class Drive extends Drivetrain implements Subsystem {
                 break;
         }
         if(velocityControl) {
-                rawLeftSpeed = leftDemand * Constants.kMaxSpeed;
-                rawRightSpeed = rightDemand * Constants.kMaxSpeed;
+                rawLeftSpeed *= Constants.kMaxSpeed;
+                rawRightSpeed *= Constants.kMaxSpeed;
         }
         if(elevatorUp) {
-            setRampRate(Constants.kRaisedElevatorDriveRampRate);
+            setOpenLoopRampTime(Constants.kRaisedElevatorDriveRampRate);
             if(rawLeftSpeed > speedCap) {
                 rawLeftSpeed = speedCap;
             }
@@ -166,7 +170,7 @@ public class Drive extends Drivetrain implements Subsystem {
             }
         }
         else {
-            setRampRate(Constants.kDriveOpenLoopRampRate);
+            setOpenLoopRampTime(Constants.kDriveOpenLoopRampRate);
         }
         rightDrive.set(rawRightSpeed, controlMode);
         leftDrive.set(rawLeftSpeed, controlMode);
@@ -211,7 +215,7 @@ public class Drive extends Drivetrain implements Subsystem {
     }
     
     public double getRightNeoPosition() {
-    	return -rightNeoDrivePositionInches;
+    	return rightNeoDrivePositionInches;
     }
     
     public double getAverageNeoPosition() {
@@ -231,11 +235,22 @@ public class Drive extends Drivetrain implements Subsystem {
     }
     
     public double getRightRioPosition() {
-    	return -rightRioDrivePositionInches;
+    	return rightRioDrivePositionInches;
     }
     
     public double getAverageRioPosition() {
     	return (leftRioDrivePositionInches-rightRioDrivePositionInches)/2;
+    }
+
+    public double getAverageRioSpeed() {
+        return (leftRioDriveSpeedInches + rightRioDriveSpeedInches) / 2;
+    }
+    public double getAverageNeoSpeed() {
+        return (leftNeoDriveSpeedInches + rightNeoDriveSpeedInches) / 2;
+    }
+    
+    public double getStoppingDistance() {
+        return stoppingDistance;
     }
     
     public void setDriveMode(DriveMode mode) {
@@ -346,9 +361,14 @@ public class Drive extends Drivetrain implements Subsystem {
         return false;
     }
 
-    public void setRampRate(double rate){ 
-        leftDrive.setRampRate(rate);
-        rightDrive.setRampRate(rate);
+    public void setClosedLoopRampTime(double time) {
+        leftDrive.setClosedLoopRampTime(time);
+        rightDrive.setClosedLoopRampTime(time);
+    }
+
+    public void setOpenLoopRampTime(double time){ 
+        leftDrive.setOpenLoopRampTime(time);
+        rightDrive.setOpenLoopRampTime(time);
     }
 
     public void setElevatorUp(boolean elevatorUp) {
