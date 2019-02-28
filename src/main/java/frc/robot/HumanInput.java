@@ -49,7 +49,7 @@ public class HumanInput {
 		return rightStick.getRawButton(1);
 	}
 	public boolean getVelocityControl() {
-		return rightStick.getRawButton(2);
+		return rightStick.getRawAxis(3) > .75;
 	}
 	public boolean getVision() {
 		return leftStick.getRawButton(1);
@@ -179,5 +179,18 @@ public class HumanInput {
 	}
 	public boolean getLeftCamera() {
 		return rightStick.getPOV() == 270;
+	}
+
+	public boolean turnToZero() {
+		return leftStick.getPOV() == 0;
+	}
+	public boolean turnToRight() {
+		return leftStick.getPOV() == 90;
+	}
+	public boolean turnBack() {
+		return leftStick.getPOV() == 180;
+	}
+	public boolean turnToLeft() {
+		return leftStick.getPOV() == 270;
 	}
 }

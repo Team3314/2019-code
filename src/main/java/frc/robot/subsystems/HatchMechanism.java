@@ -28,8 +28,6 @@ public class HatchMechanism implements Subsystem {
     private boolean mIsGripperDown = false;
     private boolean mIsSliderOut = false;
 
-    private Value gripperPosition = Constants.kGripperUp, sliderPosition = Constants.kSliderIn;
-
     private Elevator elevator = Robot.elevator;
 
     private boolean placeRequest, intakeRequest;

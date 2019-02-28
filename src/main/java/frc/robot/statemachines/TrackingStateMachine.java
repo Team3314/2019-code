@@ -1,7 +1,6 @@
 package frc.robot.statemachines;
 
 import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.HumanInput;
@@ -46,7 +45,7 @@ public class TrackingStateMachine {
                 break;
             case DRIVING:
                 if(drive.collision()) {
-                    drive.setDriveMode(DriveMode.OPEN_LOOP);
+                    drive.setDriveMode(DriveMode.TANK);
                     currentState = State.DONE;
                 }
                 break;

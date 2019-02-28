@@ -1,4 +1,3 @@
-
 package frc.robot;
 
 import com.revrobotics.CANSparkMaxLowLevel;
@@ -92,7 +91,7 @@ public class Constants {
 		public static final int kIntakeCurrentDuration = 0; //last year 100ms
 //PID Constants
 	//Gyrolock
-		public static double kGyroLock_kP = .01;
+		public static double kGyroLock_kP = .005;
 		public static double kGyroLock_kI = 0;
 		public static double kGyroLock_kD = 0;
 		public static double kGyroLock_kF = 0;
@@ -104,6 +103,15 @@ public class Constants {
 		public static double kVelocity_kIZone = 0;
 		public static double kVelocity_MaxOutput = 1;
 		public static int kVelocitySlot = 1;
+
+	//Velocity High Gear
+		public static double kHighGearVelocity_kP = 2e-6;
+		public static double kHighGearVelocity_kI = 0;
+		public static double kHighGearVelocity_kD = 0;
+		public static double kHighGearVelocity_kF = 1.7e-4;
+		public static double kHighGearVelocity_kIZone = 0;
+		public static double kHighGearVelocity_MaxOutput = 1;
+		public static int kHighGearVelocitySlot = 1;
 	//Vision
 		public static double kVisionCtrl_kP = .015;
 		public static double kVisionCtrl_kI = 0;
@@ -188,7 +196,7 @@ public class Constants {
 		public static double kMountingAngle = 10; //degrees
 	
 //Gyro
-		public static double kGyroOutputRange = .5;
+		public static double kGyroOutputRange = 1;
 		public static double kAbsoluteGyroTolerance = 3;
 
 //Pneumatics

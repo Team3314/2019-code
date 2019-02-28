@@ -31,7 +31,7 @@ public class Drive extends Drivetrain implements Subsystem {
 
     public enum DriveMode {
 		IDLE,
-		OPEN_LOOP,
+		TANK,
         GYROLOCK,
         POSITION,
         VELOCITY,
@@ -40,13 +40,13 @@ public class Drive extends Drivetrain implements Subsystem {
 	}
 
     //Control Modes
-    private DriveMode currentDriveMode = DriveMode.OPEN_LOOP;
+    private DriveMode currentDriveMode = DriveMode.TANK;
     SpeedControllerMode controlMode = SpeedControllerMode.kIdle;
     
     //Hardware states
-    private boolean mIsHighGear, elevatorUp;
+    private boolean mIsHighGear, elevatorUp, velocityControl = false;
     private IdleMode idleMode;
-    private double rawLeftSpeed, rawRightSpeed, desiredAngle, tickToInConversion, speedCap, neoOffsetL, neoOffsetR;
+    private double rawLeftSpeed, rawRightSpeed, desiredAngle, cameraTurnAngle, tickToInConversion, speedCap, neoOffsetL, neoOffsetR;
     
     private double leftRioDrivePositionInches, rightRioDrivePositionInches, leftRioDrivePositionTicks, rightRioDrivePositionTicks, leftRioDriveSpeedTicks, rightRioDriveSpeedTicks, 
         leftRioDriveSpeedInches, rightRioDriveSpeedInches, rioTicksPerRev, rioInchesPerRev;
@@ -101,41 +101,43 @@ public class Drive extends Drivetrain implements Subsystem {
             neoInchesPerRev = Constants.kRevToInConvFactorLowGear;
         }
         tickToInConversion = neoInchesPerRev / Constants.kNEODriveEncoderCodesPerRev;
+        if(camera.isTargetInView()) {
+            cameraTurnAngle = getAngle() + camera.getTargetHorizError();
+        }
+        if(velocityControl) {
+            controlMode = SpeedControllerMode.kVelocity;
+        }
+        else {
+            controlMode = SpeedControllerMode.kDutyCycle;
+        }
         updateSpeedAndPosition();
         switch(currentDriveMode) {
             case IDLE:
-                controlMode = SpeedControllerMode.kDutyCycle;
                 setIdleMode(IdleMode.kBrake);
                 rawLeftSpeed = 0;
                 rawRightSpeed = 0;
                 break;
-            case OPEN_LOOP:
+            case TANK:
                 rawLeftSpeed = leftDemand;
                 rawRightSpeed = rightDemand;
                 setIdleMode(IdleMode.kBrake);
-                controlMode = SpeedControllerMode.kDutyCycle;
                 break;
             case GYROLOCK:
                 rawLeftSpeed = leftDemand + gyroPIDOutput.getOutput();
                 rawRightSpeed = rightDemand - gyroPIDOutput.getOutput();
                 gyroControl.setSetpoint(desiredAngle);
                 setIdleMode(IdleMode.kBrake);
-                controlMode = SpeedControllerMode.kDutyCycle;
                 break;
             case VISION_CONTROL:
                 if(!gyroInPosition()) {
-                    leftDemand = 0;
-                    rightDemand = 0;
+                    //leftDemand = 0;
+                    //rightDemand = 0;
                 }
                 rawLeftSpeed = leftDemand + gyroPIDOutput.getOutput();
                 rawRightSpeed = rightDemand - gyroPIDOutput.getOutput();
-                if(camera.isTargetInView())
-                    setDesiredAngle(getAngle() + camera.getTargetHorizError());
-                else
-                    setDesiredAngle(getAngle());
+                setDesiredAngle(cameraTurnAngle);
                 gyroControl.setSetpoint(desiredAngle);
                 setIdleMode(IdleMode.kBrake);
-                controlMode = SpeedControllerMode.kDutyCycle;
                 break;
             case POSITION:
                 rawLeftSpeed = leftDemand;
@@ -143,25 +145,16 @@ public class Drive extends Drivetrain implements Subsystem {
                 setIdleMode(IdleMode.kBrake);
                 controlMode = SpeedControllerMode.kPosition;
                 break;
-            case VELOCITY:
-                if(mIsHighGear) {
-                    rawLeftSpeed = leftDemand * Constants.kMaxSpeed;
-                    rawRightSpeed = rightDemand * Constants.kMaxSpeed;
-                }
-                else {
-                    rawLeftSpeed = leftDemand * Constants.kMaxSpeed;
-                    rawRightSpeed = rightDemand * Constants.kMaxSpeed;
-                }
-                speedCap *= Constants.kMaxSpeed;
-                setIdleMode(IdleMode.kCoast);
-                controlMode = SpeedControllerMode.kVelocity;
-                break;
             case MOTION_PROFILE:
                 setIdleMode(IdleMode.kBrake);
                 controlMode = SpeedControllerMode.kVelocity;
                 rawLeftSpeed = leftDemand;
                 rawRightSpeed = rightDemand;
                 break;
+        }
+        if(velocityControl) {
+                rawLeftSpeed = leftDemand * Constants.kMaxSpeed;
+                rawRightSpeed = rightDemand * Constants.kMaxSpeed;
         }
         if(elevatorUp) {
             setRampRate(Constants.kRaisedElevatorDriveRampRate);
@@ -194,7 +187,7 @@ public class Drive extends Drivetrain implements Subsystem {
     }
     
     public double getDesiredAngle() {
-    	return desiredAngle;
+    	return -desiredAngle;
     }
     
     public double getAngle() {
@@ -318,7 +311,7 @@ public class Drive extends Drivetrain implements Subsystem {
     	SmartDashboard.putString("Neutral Mode", String.valueOf(idleMode));
     	SmartDashboard.putNumber("Raw Left Speed", rawLeftSpeed);
     	SmartDashboard.putNumber("Raw Right Speed", rawRightSpeed);
-    	SmartDashboard.putNumber("Desired Angle", desiredAngle);
+    	SmartDashboard.putNumber("Desired Angle", getDesiredAngle());
     	SmartDashboard.putNumber("Current angle", getAngle());
         SmartDashboard.putNumber("Gyro adjustment", gyroPIDOutput.getOutput());
         SmartDashboard.putBoolean("Gyro Turn Done", gyroInPosition());
@@ -363,5 +356,9 @@ public class Drive extends Drivetrain implements Subsystem {
     }
     public boolean collision(){
         return Math.round(100* navx.getWorldLinearAccelY()) > 55 ;
+    }
+
+    public void setVelocityControl(boolean velocityControl) {
+        this.velocityControl = velocityControl;
     }
 }

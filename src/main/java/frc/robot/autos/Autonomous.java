@@ -42,12 +42,12 @@ public abstract class Autonomous {
 	}
 	
 	protected void drivePower(double speed) {
-		drive.setDriveMode(DriveMode.OPEN_LOOP);
+		drive.setDriveMode(DriveMode.TANK);
 		drive.set(speed, speed);
 	}
 	
 	protected void drivePower(double leftSpeed, double rightSpeed) {
-		drive.setDriveMode(DriveMode.OPEN_LOOP);
+		drive.setDriveMode(DriveMode.TANK);
 		drive.set(leftSpeed, rightSpeed);
 	}
 	

@@ -52,7 +52,7 @@ public class Camera implements Subsystem {
 		rawDistance = table.getEntry("Distance").getDouble(1337.254);
 		validLeftTargetsInView = table.getEntry("Left targetsFound").getDouble(0);
 		validRightTargetsInView = table.getEntry("Right targetsFound").getDouble(0);
-		targetInView = (validLeftTargetsInView >= 1  && validRightTargetsInView >= 1);
+		targetInView = (validLeftTargetsInView >= 1  && validRightTargetsInView >= 1) && targetHorizError != -1.0;
     }
 
 	/**

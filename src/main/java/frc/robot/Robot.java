@@ -127,6 +127,7 @@ public class Robot extends TimedRobot {
     
     allPeriodic();
     //Switches between control of robot between action queue and manual 
+    drive.setVelocityControl(HI.getVelocityControl());
     if(HI.getAutoGamePiece()) {
       gamePieceStateMachine.setRequest(true);
       drive.setTank(HI.getLeftThrottle(),HI.getLeftThrottle(), 2);
@@ -142,17 +143,21 @@ public class Robot extends TimedRobot {
       if(HI.getGyrolock()) {
         drive.setDriveMode(DriveMode.GYROLOCK);
         drive.setTank(HI.getLeftThrottle(), HI.getLeftThrottle(), 2);
+        if(HI.turnToZero())
+          drive.setDesiredAngle(0);
+        else if(HI.turnToRight())
+          drive.setDesiredAngle((-90));
+        else if(HI.turnBack())
+          drive.setDesiredAngle(180);
+        else if(HI.turnToLeft())
+          drive.setDesiredAngle(90);
       }
       else if (HI.getVision()) {
         drive.setDriveMode(DriveMode.VISION_CONTROL);
-        drive.setTank(HI.getLeftThrottle(), HI.getLeftThrottle(), 2);
-      }
-      else if (HI.getVelocityControl()) {
-        drive.setDriveMode(DriveMode.VELOCITY);
-        drive.setTank(HI.getLeftThrottle(), HI.getRightThrottle(), 2);
+        drive.setTank(HI.getRightThrottle(), HI.getRightThrottle(), 2);
       }
       else {  
-        drive.setDriveMode(DriveMode.OPEN_LOOP);
+        drive.setDriveMode(DriveMode.TANK);
         drive.setTank(HI.getLeftThrottle(), HI.getRightThrottle(), 2);
       }
 
