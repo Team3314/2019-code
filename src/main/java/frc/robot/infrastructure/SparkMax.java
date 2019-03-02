@@ -46,7 +46,12 @@ public class SparkMax extends SmartSpeedController {
 
     @Override
     public void zero() {
-      //unimplemented by REV
+      ((CANSparkMax)controller).setEncPosition(0);
+    }
+    @Override
+    public void setDistancePerPulse(double distancePerPulse) {
+        ((CANSparkMax)controller).getEncoder().setPositionConversionFactor(distancePerPulse);
+        ((CANSparkMax)controller).getEncoder().setVelocityConversionFactor(distancePerPulse);
     }
 
     @Override

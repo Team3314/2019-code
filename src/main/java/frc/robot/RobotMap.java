@@ -109,7 +109,7 @@ public class RobotMap {
 
         mLeftMaster = new CANSparkMax(4, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
         mLeftMaster.setSmartCurrentLimit(Constants.kNEODriveStallCurrentLimit, Constants.kNEODriveFreeCurrentLimit);
-        mLeftMaster.setOpenLoopRampRate(Constants.kDriveOpenLoopRampRate);
+        mLeftMaster.setOpenLoopRampRate(Constants.kDriveRampRate);
         mLeftMaster.setCANTimeout(Constants.kCANTimeout);
         mLeftMaster.setParameter(ConfigParameter.kInputDeadband, Constants.kDriveDeadband);
         mLeftMaster.getPIDController().setP(Constants.kVelocity_kP, Constants.kVelocitySlot);
@@ -124,19 +124,19 @@ public class RobotMap {
         mLeftSlave1.follow(mLeftMaster, true);
         mLeftSlave1.setParameter(ConfigParameter.kInputDeadband, Constants.kDriveDeadband);
         mLeftSlave1.setSmartCurrentLimit(Constants.kNEODriveStallCurrentLimit, Constants.kNEODriveFreeCurrentLimit);
-        mLeftSlave1.setOpenLoopRampRate(Constants.kDriveOpenLoopRampRate);
+        mLeftSlave1.setOpenLoopRampRate(Constants.kDriveRampRate);
         mLeftSlave1.setCANTimeout(Constants.kCANTimeout);
 
         mLeftSlave2 = new CANSparkMax(6, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
         mLeftSlave2.follow(mLeftMaster, false);
         mLeftSlave2.setParameter(ConfigParameter.kInputDeadband, Constants.kDriveDeadband);
         mLeftSlave2.setSmartCurrentLimit(Constants.kNEODriveStallCurrentLimit, Constants.kNEODriveFreeCurrentLimit);
-        mLeftSlave2.setOpenLoopRampRate(Constants.kDriveOpenLoopRampRate);
+        mLeftSlave2.setOpenLoopRampRate(Constants.kDriveRampRate);
         mLeftSlave2.setCANTimeout(Constants.kCANTimeout);
 
         mRightMaster = new CANSparkMax(1, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
         mRightMaster.setSmartCurrentLimit(Constants.kNEODriveStallCurrentLimit, Constants.kNEODriveFreeCurrentLimit);
-        mRightMaster.setOpenLoopRampRate(Constants.kDriveOpenLoopRampRate);
+        mRightMaster.setOpenLoopRampRate(Constants.kDriveRampRate);
         mRightMaster.setCANTimeout(Constants.kCANTimeout);
         mRightMaster.setParameter(ConfigParameter.kInputDeadband, Constants.kDriveDeadband);
         mRightMaster.getPIDController().setP(Constants.kVelocity_kP, Constants.kVelocitySlot);
@@ -146,18 +146,19 @@ public class RobotMap {
         mRightMaster.getPIDController().setFF(Constants.kVelocity_kF, Constants.kVelocitySlot);
         mRightMaster.getPIDController().setOutputRange(-Constants.kVelocity_MaxOutput, Constants.kVelocity_MaxOutput, Constants.kVelocitySlot);
 
+
         mRightSlave1 = new CANSparkMax(2, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
         mRightSlave1.follow(mRightMaster, true);
         mRightSlave1.setParameter(ConfigParameter.kInputDeadband, Constants.kDriveDeadband);
         mRightSlave1.setSmartCurrentLimit(Constants.kNEODriveStallCurrentLimit, Constants.kNEODriveFreeCurrentLimit);
-        mRightSlave1.setOpenLoopRampRate(Constants.kDriveOpenLoopRampRate);
+        mRightSlave1.setOpenLoopRampRate(Constants.kDriveRampRate);
         mRightSlave1.setCANTimeout(Constants.kCANTimeout);
 
         mRightSlave2 = new CANSparkMax(3, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
         mRightSlave2.follow(mRightMaster, false);
         mRightSlave2.setParameter(ConfigParameter.kInputDeadband, Constants.kDriveDeadband);
         mRightSlave2.setSmartCurrentLimit(Constants.kNEODriveStallCurrentLimit, Constants.kNEODriveFreeCurrentLimit);
-        mRightSlave2.setOpenLoopRampRate(Constants.kDriveOpenLoopRampRate);
+        mRightSlave2.setOpenLoopRampRate(Constants.kDriveRampRate);
         mRightSlave2.setCANTimeout(Constants.kCANTimeout);
 
         mLeftMasterWrapper = new SparkMax(mLeftMaster);

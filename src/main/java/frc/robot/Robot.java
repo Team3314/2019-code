@@ -9,10 +9,12 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Drive;
 import frc.robot.autos.Autonomous;
 import frc.robot.statemachines.GamePieceStateMachine;
 import frc.robot.statemachines.TrackingStateMachine;
+import frc.robot.statemachines.GamePieceStateMachine.GamePieceStateMachineMode;
 import frc.robot.subsystems.Camera;
 import frc.robot.subsystems.CargoIntake;
 import frc.robot.subsystems.Climber;
@@ -78,6 +80,7 @@ public class Robot extends TimedRobot {
   }
   @Override
   public void robotPeriodic() {
+    HI.setHasGamepad(HI.getHasGamepad());
 
     if(HI.getForwardCamera())
       camera.setDSView(DSCamera.FRONT);
@@ -124,15 +127,41 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    
+    SmartDashboard.putNumber("POV",HI.gamepad.getPOV());
     allPeriodic();
     //Switches between control of robot between action queue and manual 
     drive.setVelocityControl(HI.getVelocityControl());
+    if(cargoIntake.getCargoInCarriage()) {
+      if(HI.getStoreElevatorLevel1()) {
+        gamePieceStateMachine.setMode(GamePieceStateMachineMode.BALL_LEVEL1);
+      }
+      else if(HI.getStoreElevatorLevel2()) {
+        gamePieceStateMachine.setMode(GamePieceStateMachineMode.BALL_LEVEL2);
+      }
+      else if(HI.getStoreElevatorLevel3()) {
+        gamePieceStateMachine.setMode(GamePieceStateMachineMode.BALL_LEVEL3);
+      }
+    }
+    else {
+      if(HI.getStoreElevatorLevel1()) {
+        gamePieceStateMachine.setMode(GamePieceStateMachineMode.HATCH_LEVEL1);
+      }
+      else if(HI.getStoreElevatorLevel2()) {
+        gamePieceStateMachine.setMode(GamePieceStateMachineMode.HATCH_LEVEL2);
+      }
+      else if(HI.getStoreElevatorLevel3()) {
+        gamePieceStateMachine.setMode(GamePieceStateMachineMode.HATCH_LEVEL3);
+      }
+    }
+    if(HI.getStoreElevatorPickup()) {
+      gamePieceStateMachine.setMode(GamePieceStateMachineMode.HATCH_PICKUP);
+    }
     if(HI.getAutoGamePiece()) {
       gamePieceStateMachine.setRequest(true);
       drive.setTank(HI.getLeftThrottle(),HI.getLeftThrottle(), 2);
     }
     else {
+      gamePieceStateMachine.setRequest(false);
       if(HI.getClimbMode()) {
         climber.setClimbRequest(true);
       }
@@ -152,7 +181,7 @@ public class Robot extends TimedRobot {
         else if(HI.turnToLeft())
           drive.setDesiredAngle(90);
       }
-      else if (HI.getVision()) {
+      else if(HI.getVision()) {
         drive.setDriveMode(DriveMode.VISION_CONTROL);
         drive.setTank(HI.getRightThrottle(), HI.getRightThrottle(), 2);
       }
@@ -160,7 +189,6 @@ public class Robot extends TimedRobot {
         drive.setDriveMode(DriveMode.TANK);
         drive.setTank(HI.getLeftThrottle(), HI.getRightThrottle(), 2);
       }
-
       if(HI.getHighGear()) {
         drive.setHighGear(true);
       }
@@ -196,22 +224,28 @@ public class Robot extends TimedRobot {
           else {
             elevator.setElevatorState(ElevatorControlMode.MOTION_MAGIC);
             if(HI.getElevatorLevel1()) {
-              if(cargoIntake.getCargoInCarriage())
+              if(cargoIntake.getCargoInCarriage()) {
                 elevator.set(Constants.kElevatorBallLevel1);
-              else
+              }
+              else {
                 elevator.set(Constants.kElevatorHatchLevel1);
+              }
             }
             else if (HI.getElevatorLevel2()) {
-              if(cargoIntake.getCargoInCarriage())
+              if(cargoIntake.getCargoInCarriage()) {
                 elevator.set(Constants.kElevatorBallLevel2);
-              else
+              }
+              else {
                 elevator.set(Constants.kElevatorHatchLevel2);
+              }
             }
             else if(HI.getElevatorLevel3()) {
-              if(cargoIntake.getCargoInCarriage())
+              if(cargoIntake.getCargoInCarriage()) {
                 elevator.set(Constants.kElevatorBallLevel3);
-              else
+              }
+              else {
                 elevator.set(Constants.kElevatorHatchLevel3);
+              }
             }
             
           }
@@ -280,6 +314,7 @@ public class Robot extends TimedRobot {
 		camera.outputToSmartDashboard();
     superstructure.outputToSmartDashboard();
     climber.outputToSmartDashboard();
+    gamePieceStateMachine.outputToSmartDashboard();
   }
 
   public void allPeriodic() {
@@ -290,6 +325,7 @@ public class Robot extends TimedRobot {
     superstructure.update();
     hatch.update();
     climber.update();
+    gamePieceStateMachine.update();
   }
 
 }

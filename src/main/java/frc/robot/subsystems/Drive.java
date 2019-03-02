@@ -45,15 +45,15 @@ public class Drive extends Drivetrain implements Subsystem {
     //Hardware states
     private boolean mIsHighGear, elevatorUp, velocityControl = false;
     private IdleMode idleMode;
-    private double rawLeftSpeed, rawRightSpeed, desiredAngle, cameraTurnAngle, tickToInConversion, speedCap, neoOffsetL, neoOffsetR;
+    private double rawLeftSpeed, rawRightSpeed, desiredAngle, cameraTurnAngle, tickToInConversion, speedCap, neoOffsetL, neoOffsetR, maxDeccel, maxSpeed, cameraDistance;
     
     private double leftRioDrivePositionInches, rightRioDrivePositionInches, leftRioDrivePositionTicks, rightRioDrivePositionTicks, leftRioDriveSpeedTicks, rightRioDriveSpeedTicks, 
-        leftRioDriveSpeedInches, rightRioDriveSpeedInches, rioTicksPerRev, rioInchesPerRev;
+        leftRioDriveSpeedInches, rightRioDriveSpeedInches;
 
-    private double leftNeoDrivePositionInches, rightNeoDrivePositionInches, leftNeoDrivePositionTicks, rightNeoDrivePositionTicks, leftNeoDriveSpeedTicks, rightNeoDriveSpeedTicks, 
-    leftNeoDriveSpeedInches, rightNeoDriveSpeedInches, ticksLeftNeoHighGear, ticksLeftNeoLowGear, ticksRightNeoHighGear, ticksRightNeoLowGear, neoInchesPerRev;
+    private double leftNeoDrivePositionInches, rightNeoDrivePositionInches, 
+    leftNeoDriveSpeedInches, rightNeoDriveSpeedInches, leftNeoInchesHighGear, leftNeoInchesLowGear, rightNeoInchesHighGear, rightNeoInchesLowGear, neoInchesPerRev;
 
-    private double stoppingDistance, stoppingTime;
+    private double stoppingDistance, calculatedVelocity, targetDistance;
 
     private PIDController gyroControl;
     private CustomPIDOutput gyroPIDOutput;
@@ -89,25 +89,36 @@ public class Drive extends Drivetrain implements Subsystem {
 
     public void update(){
        if(mIsHighGear) {
+            leftDrive.setEncoderDistancePerPulse(Constants.kNeoTicksToInHighGear);
+            rightDrive.setEncoderDistancePerPulse(Constants.kNeoTicksToInHighGear);
             shifter.set(Constants.kHighGear);
-            ticksLeftNeoHighGear =  getLeftNeoPositionTicks() - ticksLeftNeoLowGear;
-            ticksRightNeoHighGear = getRightNeoPositionTicks() - ticksRightNeoLowGear;
+            leftNeoInchesHighGear =  getLeftNeoPosition() - leftNeoInchesLowGear;
+            rightNeoInchesHighGear = getRightNeoPosition() - rightNeoInchesLowGear;
             speedCap = Constants.kRaisedElevatorDriveSpeedCap / Constants.kMaxSpeedHighGear;
             neoInchesPerRev = Constants.kRevToInConvFactorHighGear;
+            maxSpeed = Constants.kMaxSpeedHighGear;
+            maxDeccel = Constants.kMaxDeccelerationHighGear;
+
     	}
     	else {
+            leftDrive.setEncoderDistancePerPulse(Constants.kNeoTicksToInLowGear);
+            rightDrive.setEncoderDistancePerPulse(Constants.kNeoTicksToInLowGear);
             shifter.set(Constants.kLowGear);
-            ticksLeftNeoLowGear =  getLeftNeoPositionTicks() - ticksLeftNeoHighGear;
-            ticksRightNeoLowGear = getRightNeoPositionTicks() - ticksRightNeoHighGear;
+            leftNeoInchesLowGear =  getLeftNeoPosition() - leftNeoInchesHighGear;
+            rightNeoInchesLowGear = getRightNeoPosition() - rightNeoInchesHighGear;
             speedCap = Constants.kRaisedElevatorDriveSpeedCap / Constants.kMaxSpeedLowGear;
             neoInchesPerRev = Constants.kRevToInConvFactorLowGear;
+            maxSpeed = Constants.kMaxSpeedLowGear;
+            maxDeccel = Constants.kMaxDeccelerationLowGear;
+
         }
-        stoppingDistance = (Math.pow(Constants.kSafeImpactSpeed, 2) - (Math.pow(getAverageRioSpeed(), 2)) /  (2 *Constants.kMaxDeccelerationLowGear));
-        stoppingTime = (Constants.kSafeImpactSpeed - getAverageRioSpeed()) / Constants.kMaxDeccelerationLowGear;
-        tickToInConversion = neoInchesPerRev / Constants.kNEODriveEncoderCodesPerRev;
         if(camera.isTargetInView()) {
             cameraTurnAngle = getAngle() + camera.getTargetHorizError();
+            cameraDistance = camera.getRawDistance();
+            targetDistance = getAverageRioPosition() + cameraDistance;
         }
+        calculatedVelocity = (Math.sqrt(Constants.kSafeImpactSpeed * Constants.kSafeImpactSpeed - 2 * maxDeccel * (getDistanceToTarget() - 12)));
+        tickToInConversion = neoInchesPerRev / Constants.kNEODriveEncoderCodesPerRev;
         if(velocityControl) {
             controlMode = SpeedControllerMode.kVelocity;
         }
@@ -137,6 +148,10 @@ public class Drive extends Drivetrain implements Subsystem {
                     //leftDemand = 0;
                     //rightDemand = 0;
                 }
+                if((leftDemand * maxSpeed) > calculatedVelocity) {
+                    leftDemand = calculatedVelocity / maxSpeed;
+                    rightDemand = calculatedVelocity / maxSpeed;
+                }
                 rawLeftSpeed = leftDemand + gyroPIDOutput.getOutput();
                 rawRightSpeed = rightDemand - gyroPIDOutput.getOutput();
                 setDesiredAngle(cameraTurnAngle);
@@ -152,29 +167,29 @@ public class Drive extends Drivetrain implements Subsystem {
             case MOTION_PROFILE:
                 setIdleMode(IdleMode.kBrake);
                 controlMode = SpeedControllerMode.kVelocity;
-                rawLeftSpeed = leftDemand;
-                rawRightSpeed = rightDemand;
                 break;
-        }
-        if(velocityControl) {
-                rawLeftSpeed *= Constants.kMaxSpeed;
-                rawRightSpeed *= Constants.kMaxSpeed;
-        }
-        if(elevatorUp) {
-            setOpenLoopRampTime(Constants.kRaisedElevatorDriveRampRate);
-            if(rawLeftSpeed > speedCap) {
-                rawLeftSpeed = speedCap;
             }
-            if(rawRightSpeed > speedCap) {
-                rawRightSpeed = speedCap;
+            if(velocityControl) {
+                    rawLeftSpeed *= Constants.kMaxSpeedRevs;
+                    rawRightSpeed *= Constants.kMaxSpeedRevs;
             }
-        }
-        else {
-            setOpenLoopRampTime(Constants.kDriveOpenLoopRampRate);
-        }
+            if(elevatorUp) {
+                setOpenLoopRampTime(Constants.kRaisedElevatorDriveRampRate);
+                if(rawLeftSpeed > speedCap) {
+                    rawLeftSpeed = speedCap;
+                }
+                if(rawRightSpeed > speedCap) {
+                    rawRightSpeed = speedCap;
+                }
+                if(rawLeftSpeed > speedCap) {
+                    rawLeftSpeed = speedCap;
+                }
+                if(rawRightSpeed > speedCap) {
+                    rawRightSpeed = speedCap;
+                }
+            }
         rightDrive.set(rawRightSpeed, controlMode);
         leftDrive.set(rawLeftSpeed, controlMode);
-
     }
 
     public void setIdleMode(IdleMode mode) {
@@ -274,20 +289,16 @@ public class Drive extends Drivetrain implements Subsystem {
     }
 
     public void updateSpeedAndPosition() {
-        leftNeoDrivePositionTicks = getLeftNeoPositionTicks();
-        rightNeoDrivePositionTicks = getRightNeoPositionTicks();
-        leftNeoDrivePositionInches = ticksLeftNeoHighGear * Constants.kRevToInConvFactorHighGear + ticksLeftNeoLowGear * Constants.kRevToInConvFactorLowGear;
-        rightNeoDrivePositionInches = ticksRightNeoHighGear * Constants.kRevToInConvFactorHighGear + ticksRightNeoLowGear * Constants.kRevToInConvFactorLowGear;
-        leftNeoDriveSpeedTicks = leftDrive.getVelocity();
-        rightNeoDriveSpeedTicks = rightDrive.getVelocity();
-        leftNeoDriveSpeedInches = leftNeoDriveSpeedTicks * tickToInConversion;
-        rightNeoDriveSpeedInches = rightNeoDriveSpeedTicks * tickToInConversion;
+        leftNeoDrivePositionInches = leftNeoInchesHighGear + leftNeoInchesLowGear;
+        rightNeoDrivePositionInches = rightNeoInchesHighGear + rightNeoInchesLowGear;
+        leftNeoDriveSpeedInches = leftDrive.getVelocity();
+        rightNeoDriveSpeedInches = rightDrive.getVelocity();
         leftRioDrivePositionTicks = getLeftRioPositionTicks();
         rightRioDrivePositionTicks = getRightRioPositionTicks();
         leftRioDrivePositionInches = leftRioDrivePositionTicks * Constants.kDriveTicksToInches;
         rightRioDrivePositionInches = rightRioDrivePositionTicks * Constants.kDriveTicksToInches;
         leftRioDriveSpeedTicks = leftDrive.getVelocity();
-        rightRioDriveSpeedTicks = rightDrive.getVelocity();
+        rightRioDriveSpeedTicks = -rightDrive.getVelocity();
         leftRioDriveSpeedInches = leftRioDriveSpeedTicks * tickToInConversion;
         rightRioDriveSpeedInches = rightRioDriveSpeedTicks * tickToInConversion;
 
@@ -298,12 +309,8 @@ public class Drive extends Drivetrain implements Subsystem {
     }
     
     public void outputToSmartDashboard() {
-    	SmartDashboard.putNumber("Left NEO Encoder Position Ticks", leftNeoDrivePositionTicks);
-    	SmartDashboard.putNumber("Right NEO Encoder Position Ticks", rightNeoDrivePositionTicks);
     	SmartDashboard.putNumber("Left NEO Encoder Inches", getLeftNeoPosition());
     	SmartDashboard.putNumber("Right NEO Encoder Inches", getRightNeoPosition());
-    	SmartDashboard.putNumber("Left EO Encoder Speed RPS", leftNeoDriveSpeedTicks);
-        SmartDashboard.putNumber("Right NEO Encoder Speed RPS", rightNeoDriveSpeedTicks);
         SmartDashboard.putNumber("Left NEO Encoder Speed Inches", leftNeoDriveSpeedInches);
         SmartDashboard.putNumber("Right NEO Encoder Speed Inches", rightNeoDriveSpeedInches);
         SmartDashboard.putNumber("Avg. NEO Position", getAverageNeoPosition());
@@ -335,17 +342,20 @@ public class Drive extends Drivetrain implements Subsystem {
         SmartDashboard.putNumber("Accelerometer", getAcceleration());
         SmartDashboard.putBoolean("Elevator Up", elevatorUp);
         SmartDashboard.putBoolean("high Gear", mIsHighGear);
+        SmartDashboard.putNumber("Stopping Distance", stoppingDistance);
+        SmartDashboard.putNumber("Distance To Target", targetDistance);
+        SmartDashboard.putNumber("Calculated Velocity", calculatedVelocity);
     }
   
     public void resetDriveEncoders() {
-        neoOffsetL = leftDrive.getPosition();
+        neoOffsetL = leftDrive.getPosition();   
         neoOffsetR = rightDrive.getPosition();
         leftRioEncoder.zero();
         rightRioEncoder.zero();
-        ticksLeftNeoHighGear = 0;
-        ticksLeftNeoLowGear = 0;
-        ticksRightNeoHighGear = 0;
-        ticksRightNeoLowGear = 0;
+        leftNeoInchesHighGear = 0;
+        leftNeoInchesLowGear = 0;
+        rightNeoInchesHighGear = 0;
+        rightNeoInchesLowGear = 0;
     }
     
     public void resetSensors() {
@@ -380,5 +390,8 @@ public class Drive extends Drivetrain implements Subsystem {
 
     public void setVelocityControl(boolean velocityControl) {
         this.velocityControl = velocityControl;
+    }
+    public double getDistanceToTarget() {
+        return targetDistance - getAverageRioPosition();
     }
 }

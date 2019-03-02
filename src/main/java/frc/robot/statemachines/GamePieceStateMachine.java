@@ -1,21 +1,21 @@
 package frc.robot.statemachines;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Robot;
-import frc.robot.subsystems.Camera;
 import frc.robot.subsystems.CargoIntake;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.HatchMechanism;
 import frc.robot.subsystems.CargoIntake.IntakeState;
+import frc.robot.subsystems.Drive.DriveMode;
 
 public class GamePieceStateMachine {
 
     public enum State {
         WAITING,
+        ALIGNING,
         DRIVING,
         GRABBING_HATCH,
         PLACING_HATCH,
@@ -39,14 +39,12 @@ public class GamePieceStateMachine {
     private Elevator elevator = Robot.elevator;
     private CargoIntake cargoIntake = Robot.cargoIntake;
     private HatchMechanism hatch = Robot.hatch;
-    private TrackingStateMachine tracking = Robot.trackingStateMacahine;
-    private Camera camera = Robot.camera;
-    private DriverStation ds = DriverStation.getInstance();
 
     private Timer timer = new Timer();
 
     private boolean request;
     private boolean lastRequest;
+    private boolean hasCollided = false;
 
 
     private int desiredElevatorHeight = 0;
@@ -61,13 +59,19 @@ public class GamePieceStateMachine {
         }
         switch(currentState) {
             case WAITING:
-                desiredElevatorHeight = 0;
+                hasCollided = false;
                 if(request) {
-                    tracking.setTrackingRequest(true);
+                    drive.setDriveMode(DriveMode.VISION_CONTROL);
+                    currentState = State.ALIGNING;
+                }
+                break;
+            case ALIGNING:
+                if(drive.gyroInPosition()) {
                     currentState = State.DRIVING;
                 }
                 break;
             case DRIVING:
+                drive.set(1, 1);
                 switch(mode) { 
                     case HATCH_LEVEL1:
                         desiredElevatorHeight = Constants.kElevatorHatchLevel1;
@@ -95,19 +99,16 @@ public class GamePieceStateMachine {
                         break;
                     case HATCH_PICKUP:
                         desiredElevatorHeight = Constants.kElevatorHatchPickup;
+                        nextState = State.GRABBING_HATCH;
                         break;
                 }
-                if(cargoIntake.getCargoInCarriage()) {
-                    nextState = State.PLACING_BALL;
+                if(drive.collision()) {
+                    hasCollided = true;
                 }
-                else { 
-                    nextState = State.PLACING_HATCH;
-                }
-                if(camera.getRawDistance() <= 72) {
+                if(drive.getDistanceToTarget() <= 36) {
                     elevator.set(desiredElevatorHeight);
                 }
-                if(tracking.isDone() && elevator.inPosition()) {
-                    tracking.setTrackingRequest(false);
+                if(hasCollided && elevator.inPosition()) {
                     currentState = nextState;
                 }
                 break;
@@ -151,6 +152,8 @@ public class GamePieceStateMachine {
     
     public void outputToSmartDashboard() {
         SmartDashboard.putString("Game Piece State Machine State", currentState.toString());
+        SmartDashboard.putString("Game Piece State Machine Mode", mode.toString());
+        SmartDashboard.putNumber("Game Piece State Machine Elevator Height", desiredElevatorHeight);
     }
 
     

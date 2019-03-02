@@ -83,4 +83,7 @@ public class EncoderTransmission extends Transmission {
     public SmartSpeedController getMotor(int motor) {
         return motors[motor];
     }
+    public void setEncoderDistancePerPulse(double distancePerPulse) {
+        motors[0].setDistancePerPulse(distancePerPulse);
+    }
 }

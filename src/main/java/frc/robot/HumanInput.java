@@ -9,28 +9,25 @@ import edu.wpi.first.wpilibj.Joystick;
 
 public class HumanInput {
 	
-	private final Joystick gamepad;
+	public final Joystick gamepad;
 	private final Joystick leftStick;
 	private final Joystick rightStick;
 	private final Joystick buttonBox;
 	private final Joystick autoSelector;
+
+	public boolean hasGamepad = false;
     
 	public HumanInput() {
 		gamepad = new Joystick(0);
 		leftStick = new Joystick(1);
-
 		rightStick = new Joystick(2);
 		buttonBox = new Joystick(3);
 		autoSelector = new Joystick(4);
-
 	}
 
 //Actions
 	public boolean getAutoGamePiece() {
-		return false;//rightStick.getRawButton(2);
-	}
-	public int getElevatorPlaceLevel() {
-		return 0;
+		return rightStick.getRawButton(2);
 	}
 //Drive Controls
     public double getLeftThrottle() {
@@ -60,7 +57,6 @@ public class HumanInput {
 	public boolean getLightRingsOn() {
 		return leftStick.getRawButton(10);
 	}
-	//TODO buttons
 	//Elevator Controls
 	public boolean getElevatorPickup() {
 		return false;
@@ -73,6 +69,18 @@ public class HumanInput {
 	}
 	public boolean getElevatorLevel3() {
 		return gamepad.getPOV() == 0;
+	}
+	public boolean getStoreElevatorLevel1() {
+		return buttonBox.getRawButton(1);
+	}
+	public boolean getStoreElevatorLevel2() {
+		return buttonBox.getRawButton(4);
+	}
+	public boolean getStoreElevatorLevel3() {
+		return buttonBox.getRawButton(7);
+	}
+	public boolean getStoreElevatorPickup() {
+		return buttonBox.getRawButton(10);
 	}
 	public boolean getElevatorManual() {
 		return leftStick.getRawAxis(3) >.75;//buttonBox.getRawButton(1);
@@ -148,17 +156,6 @@ public class HumanInput {
 			return 1;
 		return 0;
 	}
-
-	public boolean getClimb() {
-		return leftStick.getRawButton(7) && leftStick.getRawButton(11);
-	}
-	public boolean getNotClimb() {
-		return rightStick.getRawButton(7) && rightStick.getRawButton(11);
-	}
-
-	public boolean getRaiseFront() {
-		return leftStick.getRawButton(7) && leftStick.getRawButton(11);
-	}
 	public boolean getClimbMode() {
 		return false;
 	}
@@ -192,5 +189,11 @@ public class HumanInput {
 	}
 	public boolean turnToLeft() {
 		return leftStick.getPOV() == 270;
+	}
+	public boolean getHasGamepad() {
+		return gamepad.getPOV() == -1;
+	}
+	public void setHasGamepad(boolean gamepad) {
+		hasGamepad = gamepad;
 	}
 }

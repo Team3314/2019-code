@@ -56,13 +56,6 @@ public class TrackingStateMachine {
                 else {
                     drive.setTank(HI.getRightThrottle(), HI.getRightThrottle(), 2);
                 }
-                if(camera.getRawDistance() <= drive.getStoppingDistance()) {
-                      
-                }
-                if(drive.collision()) {
-                    drive.setDriveMode(DriveMode.TANK);
-                    currentState = State.DONE;
-                }
                 break;
             case DONE:
                 
