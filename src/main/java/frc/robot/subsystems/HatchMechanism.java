@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Robot;
@@ -20,7 +19,8 @@ public class HatchMechanism implements Subsystem {
         GRAB,
         EXTEND,
         RELEASE,
-        RETRACT
+        RETRACT,
+        DONE
     }
 
     private DoubleSolenoid gripper, slider;
@@ -30,8 +30,8 @@ public class HatchMechanism implements Subsystem {
 
     private Elevator elevator = Robot.elevator;
 
-    private boolean placeRequest, intakeRequest;
-    private boolean lastPlaceRequest, lastIntakeRequest;
+    private boolean placeRequest, intakeRequest, retractRequest;
+    private boolean lastPlaceRequest, lastIntakeRequest, lastRetractRequest;
 
     private Timer timer = new Timer();
 
@@ -62,6 +62,9 @@ public class HatchMechanism implements Subsystem {
                     timer.start();
                     currentState = State.EXTEND;
                 }
+                else if (retractRequest && !lastRetractRequest) {
+                    currentState = State.RETRACT;
+                }
                 break;
             case LOWER:
                 if(elevator.inPosition()) {
@@ -82,27 +85,26 @@ public class HatchMechanism implements Subsystem {
             case RAISE:
                 elevator.set(Constants.kElevatorRaisedHatchPickup);
                 if(elevator.inPosition()) {
-                    currentState = State.WAITING;
+                    currentState = State.DONE;
                     timer.start();
                 }
                 break;
             case EXTEND:
                 if(timer.get() > .2) {
-                    currentState = State.RELEASE;
+                    currentState = State.DONE;
                     setGripperDown(true);
                     timer.reset();
                     timer.start();
-                }
-                break;
-            case RELEASE:
-                if(placeRequest && !lastPlaceRequest) {
-                    currentState = State.RETRACT;
                 }
                 break;
             case RETRACT:
                 setSliderOut(false);
                 setGripperDown(false);
                 currentState = State.WAITING;
+            case DONE:
+                if(!placeRequest && !intakeRequest && !retractRequest) 
+                    currentState = State.WAITING;
+                break;
         }
         if(mIsSliderOut)
             slider.set(Constants.kSliderOut);
@@ -149,6 +151,7 @@ public class HatchMechanism implements Subsystem {
     public void outputToSmartDashboard() {
         SmartDashboard.putBoolean("Gripper down?", mIsGripperDown);
         SmartDashboard.putBoolean("Slider out?", mIsSliderOut);
+        SmartDashboard.putString("Hatch State", currentState.toString());
     }
 
     @Override
@@ -156,8 +159,8 @@ public class HatchMechanism implements Subsystem {
 
     }
 
-    public boolean isWaiting() {
-        return currentState == State.WAITING;
+    public boolean isDone() {
+        return currentState == State.DONE;
     }
 
     public boolean getIsGripperDown() {
@@ -165,6 +168,10 @@ public class HatchMechanism implements Subsystem {
     }
     public boolean getIsSliderOut() {
         return mIsSliderOut;
+    }
+
+    public void setRetractRequest(boolean request) {
+        retractRequest = request;
     }
 
 }

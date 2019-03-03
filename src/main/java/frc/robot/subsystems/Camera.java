@@ -48,7 +48,7 @@ public class Camera implements Subsystem {
 		rightLightRing.set(lightRingsOn);
 
         
-		targetHorizError = table.getEntry("Angle To Target").getDouble(0);
+		targetHorizError = -table.getEntry("Angle To Target").getDouble(0) * .8;
 		rawDistance = table.getEntry("Distance").getDouble(1337.254);
 		validLeftTargetsInView = table.getEntry("Left targetsFound").getDouble(0);
 		validRightTargetsInView = table.getEntry("Right targetsFound").getDouble(0);
@@ -70,7 +70,7 @@ public class Camera implements Subsystem {
      * @return the targetHorizOffset
      */
     public double getTargetHorizError() {
-		return -targetHorizError;
+		return targetHorizError;
 	}
 
 	/**

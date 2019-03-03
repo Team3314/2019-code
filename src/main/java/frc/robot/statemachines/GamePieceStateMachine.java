@@ -1,5 +1,7 @@
 package frc.robot.statemachines;
 
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
@@ -10,6 +12,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.HatchMechanism;
 import frc.robot.subsystems.CargoIntake.IntakeState;
 import frc.robot.subsystems.Drive.DriveMode;
+import frc.robot.subsystems.Elevator.ElevatorControlMode;
 
 public class GamePieceStateMachine {
 
@@ -21,6 +24,7 @@ public class GamePieceStateMachine {
         PLACING_HATCH,
         PLACING_BALL,
         BACKUP,
+        RETRACT,
         DONE
     }
 
@@ -33,12 +37,15 @@ public class GamePieceStateMachine {
         BALL_LEVEL3,
         HATCH_PICKUP
     }
+
+
     private State currentState = State.WAITING, nextState;
     private GamePieceStateMachineMode mode = GamePieceStateMachineMode.HATCH_LEVEL1;
     private Drive drive = Robot.drive;
     private Elevator elevator = Robot.elevator;
     private CargoIntake cargoIntake = Robot.cargoIntake;
     private HatchMechanism hatch = Robot.hatch;
+    private DriverStation ds = DriverStation.getInstance();
 
     private Timer timer = new Timer();
 
@@ -58,10 +65,11 @@ public class GamePieceStateMachine {
 
         }
         switch(currentState) {
-            case WAITING:
+            case WAITING:   
                 hasCollided = false;
                 if(request) {
                     drive.setDriveMode(DriveMode.VISION_CONTROL);
+                    elevator.setElevatorState(ElevatorControlMode.MOTION_MAGIC);
                     currentState = State.ALIGNING;
                 }
                 break;
@@ -71,7 +79,7 @@ public class GamePieceStateMachine {
                 }
                 break;
             case DRIVING:
-                drive.set(1, 1);
+                    drive.set(.5, .5);
                 switch(mode) { 
                     case HATCH_LEVEL1:
                         desiredElevatorHeight = Constants.kElevatorHatchLevel1;
@@ -106,42 +114,51 @@ public class GamePieceStateMachine {
                     hasCollided = true;
                 }
                 if(drive.getDistanceToTarget() <= 36) {
+                    //if(mode == GamePieceStateMachineMode.HATCH_PICKUP)
+                        //hatch.setGripperDown(true);
                     elevator.set(desiredElevatorHeight);
-                }
-                if(hasCollided && elevator.inPosition()) {
-                    currentState = nextState;
+                    if(drive.getAtTarget() && elevator.inPosition()) {
+                        currentState = nextState;
+                    }
+
                 }
                 break;
             case GRABBING_HATCH:
                 hatch.setIntakeRequest(true);
-                if(hatch.isWaiting()) {
+                if(hatch.isDone()) {
                     hatch.setIntakeRequest(false);
                     currentState = State.BACKUP;
-                    timer.start();
+                    drive.resetDriveEncoders();
                 }
                 break;
             case PLACING_BALL:
                 cargoIntake.setIntakeState(IntakeState.PLACE);
                 if(!cargoIntake.getCargoInCarriage()) {
+                    drive.resetDriveEncoders();
                     currentState = State.BACKUP;
-                    timer.start();
                 }
                 break;
             case PLACING_HATCH:
                 hatch.setPlaceRequest(true);
-                if(hatch.isWaiting()) {
+                if(hatch.isDone()) {
                     hatch.setPlaceRequest(false);
                     currentState = State.BACKUP;
-                    timer.start();
+                    drive.resetDriveEncoders();
                 }
                 break;
             case BACKUP:
-                elevator.set(Constants.kElevatorHatchPickup);
+                drive.setDriveMode(DriveMode.GYROLOCK);
                 drive.set(-.25, -.25);
-                if(timer.get() >= .5) {
+                if(drive.getAverageRioPosition() <= -12) {
+                    hatch.setRetractRequest(true);
                     drive.set(0, 0);
-                    currentState = State.DONE;
+                    currentState = State.RETRACT;
                 }
+                break;
+            case RETRACT:
+                elevator.set(Constants.kElevatorHatchPickup);
+                hatch.setRetractRequest(false);
+                currentState = State.DONE;
                 break;
             case DONE:
                 break;

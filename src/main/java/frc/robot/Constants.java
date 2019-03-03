@@ -35,7 +35,7 @@ public class Constants {
 		public static int kTalonDrivePeakCurrentDuration = 0;
 		public static int kNEODriveStallCurrentLimit = 80;
 		public static int kNEODriveFreeCurrentLimit = 20;
-		public static double kSafeImpactSpeed = 12; //inches/sec
+		public static double kSafeImpactSpeed = 6; //inches/sec
 		public static double kSafeImpactRevsHighGear = kSafeImpactSpeed / kRevToInConvFactorHighGear * 60;
 		public static double kSafeImpactRevsLowGear = kSafeImpactSpeed / kRevToInConvFactorLowGear * 60;
 		public static double kDriveDeadband = .1;
@@ -46,7 +46,7 @@ public class Constants {
 		public static double kMaxSpeedLowGear = 108; //fps * 12 * 60 / kRevtoin
 		public static double kMaxSpeedHighGear = 246;//fps * 12 * 60 / kRevtoin
 		public static double kMaxDeccelerationHighGear = -36;//inches/sec^2
-		public static double kMaxDeccelerationLowGear = -36;//inches/sec^2
+		public static double kMaxDeccelerationLowGear = -25;//inches/sec^2
 		public static double kMaxRampHighGear = kMaxSpeedHighGear / kMaxDeccelerationHighGear; 
 		public static double kMaxRampLowGear = kMaxSpeedLowGear / kMaxDeccelerationLowGear;
 		public static MotorType kSparkMotorType = CANSparkMaxLowLevel.MotorType.kBrushless;
@@ -103,10 +103,10 @@ public class Constants {
 		public static double kGyroLock_kD = 0;
 		public static double kGyroLock_kF = 0;
 	//Velocity
-		public static double kVelocity_kP = 2e-6;
+		public static double kVelocity_kP = 8e-6;
 		public static double kVelocity_kI = 0;
 		public static double kVelocity_kD = 0;
-		public static double kVelocity_kF = 1.7e-4;
+		public static double kVelocity_kF = 1.9e-4;
 		public static double kVelocity_kIZone = 0;
 		public static double kVelocity_MaxOutput = 1;
 		public static int kVelocitySlot = 1;
@@ -204,7 +204,7 @@ public class Constants {
 	
 //Gyro
 		public static double kGyroOutputRange = 1;
-		public static double kAbsoluteGyroTolerance = 3;
+		public static double kAbsoluteGyroTolerance = 5;
 
 //Pneumatics
     //Gears
@@ -241,6 +241,9 @@ public class Constants {
 
 
 		public static final Value kClimberUp = Value.kReverse;
+
+
+		public static final int kGyroDelay = 0;
 
 
 }

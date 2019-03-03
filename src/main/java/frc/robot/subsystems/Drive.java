@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -43,9 +44,11 @@ public class Drive extends Drivetrain implements Subsystem {
     SpeedControllerMode controlMode = SpeedControllerMode.kIdle;
     
     //Hardware states
-    private boolean mIsHighGear, elevatorUp, velocityControl = false;
+    private boolean mIsHighGear, elevatorUp, velocityControl = false, distanceSensorTriggered, lastDistanceSensorTriggered, atTarget = false;
+
     private IdleMode idleMode;
-    private double rawLeftSpeed, rawRightSpeed, desiredAngle, cameraTurnAngle, tickToInConversion, speedCap, neoOffsetL, neoOffsetR, maxDeccel, maxSpeed, cameraDistance;
+    private double rawLeftSpeed, rawRightSpeed, desiredAngle, cameraTurnAngle, tickToInConversion, speedCap, neoOffsetL, 
+    neoOffsetR, maxDeccel, maxSpeed, cameraDistance, distanceSensorBookmark = 0;
     
     private double leftRioDrivePositionInches, rightRioDrivePositionInches, leftRioDrivePositionTicks, rightRioDrivePositionTicks, leftRioDriveSpeedTicks, rightRioDriveSpeedTicks, 
         leftRioDriveSpeedInches, rightRioDriveSpeedInches;
@@ -55,18 +58,24 @@ public class Drive extends Drivetrain implements Subsystem {
 
     private double stoppingDistance, calculatedVelocity, targetDistance;
 
+    private double[] gryoAngleHistory = new double[200];
+    private int gyroAngleHistoryStoreIndex = 0;
+    private int gyroAngleGetIndex;
+
     private PIDController gyroControl;
     private CustomPIDOutput gyroPIDOutput;
 
     private EncoderAdapter leftRioEncoder, rightRioEncoder;
 
+    private AnalogInput distanceSensor;
+
     private Camera camera;
-    public Drive(EncoderTransmission left, EncoderTransmission right, AHRS gyro, DoubleSolenoid shifter, EncoderAdapter leftEnc, EncoderAdapter rightEnc){
+    public Drive(EncoderTransmission left, EncoderTransmission right, AHRS gyro, DoubleSolenoid shifter, EncoderAdapter leftEnc, EncoderAdapter rightEnc, AnalogInput distanceSensor){
         super(left, right);
         camera = Robot.camera;
         leftRioEncoder = leftEnc;
         rightRioEncoder = rightEnc;
-        
+        this.distanceSensor = distanceSensor;
 
     	
 		//Hardware
@@ -112,19 +121,40 @@ public class Drive extends Drivetrain implements Subsystem {
             maxDeccel = Constants.kMaxDeccelerationLowGear;
 
         }
+        gryoAngleHistory[gyroAngleHistoryStoreIndex] = getAngle();
+        gyroAngleHistoryStoreIndex++;
+        gyroAngleHistoryStoreIndex %= 199;
+        gyroAngleGetIndex = gyroAngleHistoryStoreIndex - 4;
+        if(gyroAngleGetIndex < 0)
+            gyroAngleGetIndex += 200;
         if(camera.isTargetInView()) {
-            cameraTurnAngle = getAngle() + camera.getTargetHorizError();
+            cameraTurnAngle = getDelayedGyroAngle() + camera.getTargetHorizError();
             cameraDistance = camera.getRawDistance();
             targetDistance = getAverageRioPosition() + cameraDistance;
         }
         calculatedVelocity = (Math.sqrt(Constants.kSafeImpactSpeed * Constants.kSafeImpactSpeed - 2 * maxDeccel * (getDistanceToTarget() - 12)));
+        if(Double.isNaN(calculatedVelocity)) {
+            calculatedVelocity = 0;
+        }
         tickToInConversion = neoInchesPerRev / Constants.kNEODriveEncoderCodesPerRev;
+        distanceSensorTriggered = getDistanceSensor();
+        if(distanceSensorTriggered && !lastDistanceSensorTriggered) {
+            distanceSensorBookmark = getAverageRioPosition();
+        }
         if(velocityControl) {
             controlMode = SpeedControllerMode.kVelocity;
         }
         else {
+
             controlMode = SpeedControllerMode.kDutyCycle;
         }
+        if(gyroControl.getError() < 5) {
+            gyroControl.setI(Constants.kGyroLock_kI);
+        }  
+        else {
+            gyroControl.setI(0);
+        }
+        atTarget = (getAverageRioPosition() - distanceSensorBookmark) >= 10;
         updateSpeedAndPosition();
         switch(currentDriveMode) {
             case IDLE:
@@ -188,8 +218,13 @@ public class Drive extends Drivetrain implements Subsystem {
                     rawRightSpeed = speedCap;
                 }
             }
+            else {
+                setOpenLoopRampTime(Constants.kDriveRampRate);
+                setClosedLoopRampTime(Constants.kDriveRampRate);
+            }
         rightDrive.set(rawRightSpeed, controlMode);
         leftDrive.set(rawLeftSpeed, controlMode);
+        lastDistanceSensorTriggered = distanceSensorTriggered;
     }
 
     public void setIdleMode(IdleMode mode) {
@@ -212,7 +247,12 @@ public class Drive extends Drivetrain implements Subsystem {
     public double getAngle() {
     	return -navx.getYaw();
     }
-    
+    public double getDelayedGyroAngle() {
+        int index = gyroAngleHistoryStoreIndex - 1;
+        if(index < 0)
+            index += 200;
+        return gryoAngleHistory[index];
+    }
     public double getAcceleration(){
         return Math.round(100* navx.getWorldLinearAccelY());
     }
@@ -238,7 +278,7 @@ public class Drive extends Drivetrain implements Subsystem {
     }
 
     public double getLeftRioPositionTicks() {
-        return leftRioEncoder.getEncoderCounts();
+        return -leftRioEncoder.getEncoderCounts();
     }
 
     public double getRightRioPositionTicks() {
@@ -254,7 +294,7 @@ public class Drive extends Drivetrain implements Subsystem {
     }
     
     public double getAverageRioPosition() {
-    	return (leftRioDrivePositionInches-rightRioDrivePositionInches)/2;
+    	return (leftRioDrivePositionInches + rightRioDrivePositionInches)/2;
     }
 
     public double getAverageRioSpeed() {
@@ -292,7 +332,7 @@ public class Drive extends Drivetrain implements Subsystem {
         leftNeoDrivePositionInches = leftNeoInchesHighGear + leftNeoInchesLowGear;
         rightNeoDrivePositionInches = rightNeoInchesHighGear + rightNeoInchesLowGear;
         leftNeoDriveSpeedInches = leftDrive.getVelocity();
-        rightNeoDriveSpeedInches = rightDrive.getVelocity();
+        rightNeoDriveSpeedInches = -rightDrive.getVelocity();
         leftRioDrivePositionTicks = getLeftRioPositionTicks();
         rightRioDrivePositionTicks = getRightRioPositionTicks();
         leftRioDrivePositionInches = leftRioDrivePositionTicks * Constants.kDriveTicksToInches;
@@ -332,7 +372,9 @@ public class Drive extends Drivetrain implements Subsystem {
     	SmartDashboard.putString("Drive Mode", String.valueOf(currentDriveMode));
     	SmartDashboard.putString("Neutral Mode", String.valueOf(idleMode));
     	SmartDashboard.putNumber("Raw Left Speed", rawLeftSpeed);
-    	SmartDashboard.putNumber("Raw Right Speed", rawRightSpeed);
+        SmartDashboard.putNumber("Raw Right Speed", rawRightSpeed);
+        SmartDashboard.putNumber("Left Velocity Difference", leftNeoDriveSpeedInches - (rawLeftSpeed * neoInchesPerRev / 60));
+        SmartDashboard.putNumber("Right Velocity Difference", rightNeoDriveSpeedInches - (rawRightSpeed * neoInchesPerRev / 60));
     	SmartDashboard.putNumber("Desired Angle", getDesiredAngle());
     	SmartDashboard.putNumber("Current angle", getAngle());
         SmartDashboard.putNumber("Gyro adjustment", gyroPIDOutput.getOutput());
@@ -343,8 +385,14 @@ public class Drive extends Drivetrain implements Subsystem {
         SmartDashboard.putBoolean("Elevator Up", elevatorUp);
         SmartDashboard.putBoolean("high Gear", mIsHighGear);
         SmartDashboard.putNumber("Stopping Distance", stoppingDistance);
-        SmartDashboard.putNumber("Distance To Target", targetDistance);
+        SmartDashboard.putNumber("Distance To Target", getDistanceToTarget());
         SmartDashboard.putNumber("Calculated Velocity", calculatedVelocity);
+        SmartDashboard.putBoolean("Distace Sensor", getDistanceSensor());
+        SmartDashboard.putBoolean("At Target", getAtTarget());
+        SmartDashboard.putNumber("Distance Sensor Bookmark", distanceSensorBookmark);
+        SmartDashboard.putNumber("Delayed Gyro", getDelayedGyroAngle());
+        SmartDashboard.putNumber("Nav X Roll", navx.getRoll());
+        SmartDashboard.putNumber("Nav X Pitch", navx.getPitch());
     }
   
     public void resetDriveEncoders() {
@@ -353,6 +401,7 @@ public class Drive extends Drivetrain implements Subsystem {
         leftRioEncoder.zero();
         rightRioEncoder.zero();
         leftNeoInchesHighGear = 0;
+        
         leftNeoInchesLowGear = 0;
         rightNeoInchesHighGear = 0;
         rightNeoInchesLowGear = 0;
@@ -393,5 +442,11 @@ public class Drive extends Drivetrain implements Subsystem {
     }
     public double getDistanceToTarget() {
         return targetDistance - getAverageRioPosition();
+    } 
+    public boolean getDistanceSensor() {
+        return distanceSensor.getVoltage() <= Constants.kCargoSensorVoltageThreshold;
+    }
+    public boolean getAtTarget() {
+        return atTarget && getDistanceSensor();
     }
 }

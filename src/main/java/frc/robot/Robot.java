@@ -11,9 +11,9 @@ import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Drive;
+import frc.robot.autos.AutoTwoHatchRocketClose;
 import frc.robot.autos.Autonomous;
 import frc.robot.statemachines.GamePieceStateMachine;
-import frc.robot.statemachines.TrackingStateMachine;
 import frc.robot.statemachines.GamePieceStateMachine.GamePieceStateMachineMode;
 import frc.robot.subsystems.Camera;
 import frc.robot.subsystems.CargoIntake;
@@ -38,16 +38,16 @@ public class Robot extends TimedRobot {
   public static RobotMap map = new RobotMap();
   public static HumanInput HI = new HumanInput();
   public static Camera camera = new Camera(map.leftLightRing, map.rightLightRing);
-  public static Drive drive = new Drive(map.leftDrive, map.rightDrive, map.navx, map.shifter, map.leftDriveEncoder, map.rightDriveEncoder);
+  public static Drive drive = new Drive(map.leftDrive, map.rightDrive, map.navx, map.shifter, map.leftDriveEncoder, map.rightDriveEncoder, map.distanceSensor);
   public static Elevator elevator = new Elevator(map.elevatorTransmission);
   public static CargoIntake cargoIntake = new CargoIntake(map.intakeTransmission, map.outtakeTransmission, map.intakePiston);
   public static HatchMechanism hatch = new HatchMechanism(map.gripperPiston, map.sliderPiston);
   public static Superstructure superstructure = new Superstructure(map.compressor);
   public static Climber climber = new Climber(map.climberPiston, map.intakePiston, map.intakeToGroundPiston, map.highPressure);
-  public static TrackingStateMachine trackingStateMacahine = new TrackingStateMachine(map.distanceSensor);
   public static GamePieceStateMachine gamePieceStateMachine = new GamePieceStateMachine();
 
   public Autonomous autoMode = null;
+  public AutoTwoHatchRocketClose auto = new AutoTwoHatchRocketClose();
 
   public Runnable smartDashboardRunnable = new Runnable(){
   
@@ -72,6 +72,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     drive.resetDriveEncoders();
+    cargoIntake.stopLoadingBall();
   }
 
   @Override
@@ -127,10 +128,13 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    SmartDashboard.putNumber("POV",HI.gamepad.getPOV());
     allPeriodic();
-    //Switches between control of robot between action queue and manual 
+
     drive.setVelocityControl(HI.getVelocityControl());
+    if(HI.getAuto()) {
+      auto.update();
+    } else{
+      auto.reset();
     if(cargoIntake.getCargoInCarriage()) {
       if(HI.getStoreElevatorLevel1()) {
         gamePieceStateMachine.setMode(GamePieceStateMachineMode.BALL_LEVEL1);
@@ -158,7 +162,8 @@ public class Robot extends TimedRobot {
     }
     if(HI.getAutoGamePiece()) {
       gamePieceStateMachine.setRequest(true);
-      drive.setTank(HI.getLeftThrottle(),HI.getLeftThrottle(), 2);
+      if(HI.getGyrolock())
+        drive.setTank(HI.getLeftThrottle(),HI.getLeftThrottle(), 2);
     }
     else {
       gamePieceStateMachine.setRequest(false);
@@ -167,6 +172,9 @@ public class Robot extends TimedRobot {
       }
       else if(HI.getAbortClimb()) {
         climber.setClimbRequest(false);
+      }
+      if(HI.getResetGyro()) {
+        drive.resetSensors();
       }
       // Drive Controls
       if(HI.getGyrolock()) {
@@ -208,6 +216,7 @@ public class Robot extends TimedRobot {
         cargoIntake.stopLoadingBall();
       }
       hatch.setPlaceRequest(HI.getAutoHatchPlace());
+      hatch.setRetractRequest(HI.getAutoHatchRetract());
       if(!elevator.isHoming()) {
         if(!HI.getElevatorManual()) {
           cargoIntake.setIntakeRequest(HI.getAutoCargoIntake()); 
@@ -290,6 +299,7 @@ public class Robot extends TimedRobot {
       }
     }
    }
+  }
   }
 
   @Override

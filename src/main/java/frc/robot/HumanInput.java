@@ -29,6 +29,9 @@ public class HumanInput {
 	public boolean getAutoGamePiece() {
 		return rightStick.getRawButton(2);
 	}
+	public boolean getAuto() {
+		return leftStick.getRawButton(2);
+	}
 //Drive Controls
     public double getLeftThrottle() {
 		return -leftStick.getRawAxis(1);
@@ -56,6 +59,9 @@ public class HumanInput {
 	}
 	public boolean getLightRingsOn() {
 		return leftStick.getRawButton(10);
+	}
+	public boolean getResetGyro() {
+		return buttonBox.getRawButton(9);
 	}
 	//Elevator Controls
 	public boolean getElevatorPickup() {
@@ -110,6 +116,9 @@ public class HumanInput {
 		return gamepad.getRawButton(9);
 	}
 	public boolean getAutoHatchPlace() {
+		return gamepad.getRawButton(10);
+	}
+	public boolean getAutoHatchRetract() {
 		return gamepad.getRawButton(10);
 	}
 	public boolean getGripperUp() {
