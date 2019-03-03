@@ -34,6 +34,8 @@ public class Drive extends Drivetrain implements Subsystem {
 		IDLE,
 		TANK,
         GYROLOCK,
+        GYROLOCK_LEFT,
+        GYROLOCK_RIGHT,
         POSITION,
         VISION_CONTROL, 
         MOTION_PROFILE
@@ -169,6 +171,18 @@ public class Drive extends Drivetrain implements Subsystem {
                 break;
             case GYROLOCK:
                 rawLeftSpeed = leftDemand + gyroPIDOutput.getOutput();
+                rawRightSpeed = rightDemand - gyroPIDOutput.getOutput();
+                gyroControl.setSetpoint(desiredAngle);
+                setIdleMode(IdleMode.kBrake);
+                break;
+            case GYROLOCK_LEFT:
+                rawLeftSpeed = leftDemand + gyroPIDOutput.getOutput();
+                rawRightSpeed = 0;
+                gyroControl.setSetpoint(desiredAngle);
+                setIdleMode(IdleMode.kBrake);
+                break;
+            case GYROLOCK_RIGHT:
+                rawLeftSpeed = 0;
                 rawRightSpeed = rightDemand - gyroPIDOutput.getOutput();
                 gyroControl.setSetpoint(desiredAngle);
                 setIdleMode(IdleMode.kBrake);
@@ -310,7 +324,7 @@ public class Drive extends Drivetrain implements Subsystem {
     
     public void setDriveMode(DriveMode mode) {
         if(mode != currentDriveMode) {
-            if(mode == DriveMode.GYROLOCK) {
+            if(mode == DriveMode.GYROLOCK || mode == DriveMode.GYROLOCK_LEFT || mode == DriveMode.GYROLOCK_RIGHT) {
                 gyroControl.enable();
                 setDesiredAngle(getAngle());
             }

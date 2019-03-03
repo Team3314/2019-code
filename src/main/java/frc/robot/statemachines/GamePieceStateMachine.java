@@ -16,7 +16,7 @@ import frc.robot.subsystems.Elevator.ElevatorControlMode;
 
 public class GamePieceStateMachine {
 
-    public enum State {
+    public enum GamePieceState {
         WAITING,
         ALIGNING,
         DRIVING,
@@ -39,7 +39,7 @@ public class GamePieceStateMachine {
     }
 
 
-    private State currentState = State.WAITING, nextState;
+    private GamePieceState currentState = GamePieceState.WAITING, nextState;
     private GamePieceStateMachineMode mode = GamePieceStateMachineMode.HATCH_LEVEL1;
     private Drive drive = Robot.drive;
     private Elevator elevator = Robot.elevator;
@@ -53,13 +53,15 @@ public class GamePieceStateMachine {
     private boolean lastRequest;
     private boolean hasCollided = false;
 
+    private double driveSpeed = .6;
+
 
     private int desiredElevatorHeight = 0;
 
     
     public void update() {
         if(!request && lastRequest) {
-            currentState = State.WAITING;
+            currentState = GamePieceState.WAITING;
             timer.stop();
             timer.reset();
 
@@ -68,46 +70,47 @@ public class GamePieceStateMachine {
             case WAITING:   
                 hasCollided = false;
                 if(request) {
+                    driveSpeed = .6;
                     drive.setDriveMode(DriveMode.VISION_CONTROL);
                     elevator.setElevatorState(ElevatorControlMode.MOTION_MAGIC);
-                    currentState = State.ALIGNING;
+                    currentState = GamePieceState.ALIGNING;
                 }
                 break;
             case ALIGNING:
                 if(drive.gyroInPosition()) {
-                    currentState = State.DRIVING;
+                    currentState = GamePieceState.DRIVING;
                 }
                 break;
             case DRIVING:
-                    drive.set(.5, .5);
+                drive.set(driveSpeed, driveSpeed);
                 switch(mode) { 
                     case HATCH_LEVEL1:
                         desiredElevatorHeight = Constants.kElevatorHatchLevel1;
-                        nextState = State.PLACING_HATCH;
+                        nextState = GamePieceState.PLACING_HATCH;
                         break;
                     case HATCH_LEVEL2:
                         desiredElevatorHeight = Constants.kElevatorHatchLevel2;
-                        nextState = State.PLACING_HATCH;
+                        nextState = GamePieceState.PLACING_HATCH;
                         break;
                     case HATCH_LEVEL3:
                         desiredElevatorHeight = Constants.kElevatorHatchLevel3;
-                        nextState = State.PLACING_HATCH;
+                        nextState = GamePieceState.PLACING_HATCH;
                         break;
                     case BALL_LEVEL1:
                         desiredElevatorHeight = Constants.kElevatorBallLevel1;
-                        nextState = State.PLACING_BALL;
+                        nextState = GamePieceState.PLACING_BALL;
                         break;
                     case BALL_LEVEL2:
                         desiredElevatorHeight = Constants.kElevatorBallLevel2;
-                        nextState = State.PLACING_BALL;
+                        nextState = GamePieceState.PLACING_BALL;
                         break;
                     case BALL_LEVEL3:
                         desiredElevatorHeight = Constants.kElevatorBallLevel3;
-                        nextState = State.PLACING_BALL;
+                        nextState = GamePieceState.PLACING_BALL;
                         break;
                     case HATCH_PICKUP:
                         desiredElevatorHeight = Constants.kElevatorHatchPickup;
-                        nextState = State.GRABBING_HATCH;
+                        nextState = GamePieceState.GRABBING_HATCH;
                         break;
                 }
                 if(drive.collision()) {
@@ -127,7 +130,7 @@ public class GamePieceStateMachine {
                 hatch.setIntakeRequest(true);
                 if(hatch.isDone()) {
                     hatch.setIntakeRequest(false);
-                    currentState = State.BACKUP;
+                    currentState = GamePieceState.BACKUP;
                     drive.resetDriveEncoders();
                 }
                 break;
@@ -135,14 +138,14 @@ public class GamePieceStateMachine {
                 cargoIntake.setIntakeState(IntakeState.PLACE);
                 if(!cargoIntake.getCargoInCarriage()) {
                     drive.resetDriveEncoders();
-                    currentState = State.BACKUP;
+                    currentState = GamePieceState.BACKUP;
                 }
                 break;
             case PLACING_HATCH:
                 hatch.setPlaceRequest(true);
                 if(hatch.isDone()) {
                     hatch.setPlaceRequest(false);
-                    currentState = State.BACKUP;
+                    currentState = GamePieceState.BACKUP;
                     drive.resetDriveEncoders();
                 }
                 break;
@@ -152,13 +155,13 @@ public class GamePieceStateMachine {
                 if(drive.getAverageRioPosition() <= -12) {
                     hatch.setRetractRequest(true);
                     drive.set(0, 0);
-                    currentState = State.RETRACT;
+                    currentState = GamePieceState.RETRACT;
                 }
                 break;
             case RETRACT:
                 elevator.set(Constants.kElevatorHatchPickup);
                 hatch.setRetractRequest(false);
-                currentState = State.DONE;
+                currentState = GamePieceState.DONE;
                 break;
             case DONE:
                 break;
@@ -175,7 +178,11 @@ public class GamePieceStateMachine {
 
     
     public boolean isDone() {
-        return currentState == State.DONE;
+        return currentState == GamePieceState.DONE;
+    }
+
+    public GamePieceState getCurrentState() {
+        return currentState;
     }
 
     public void setRequest(boolean request) {
@@ -184,5 +191,9 @@ public class GamePieceStateMachine {
 
     public void setMode(GamePieceStateMachineMode mode) {
         this.mode = mode;
+    }
+
+    public void setDriveSpeed(double speed) {
+        driveSpeed = speed;
     }
 }

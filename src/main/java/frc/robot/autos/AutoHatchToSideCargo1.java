@@ -8,6 +8,7 @@
 package frc.robot.autos;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.subsystems.Drive.DriveMode;
 
 /**
  * Add your docs here.
@@ -47,10 +48,10 @@ public class AutoHatchToSideCargo1 extends Autonomous{
             if(getAveragePosition() > 204){
                 currentState = states.ROTATE_TO_CARGO;
                 if(getStartPos().equals("StartR")){
-                    driveGyrolock(0, -90);
+                    driveGyrolock(0, -90, DriveMode.GYROLOCK);
                 }
                 else if(getStartPos().equals("StartL")){
-                    driveGyrolock(0, 90);
+                    driveGyrolock(0, 90, DriveMode.GYROLOCK);
                 }
             }
               break;

@@ -204,7 +204,7 @@ public class Constants {
 	
 //Gyro
 		public static double kGyroOutputRange = 1;
-		public static double kAbsoluteGyroTolerance = 5;
+		public static double kAbsoluteGyroTolerance = 10;
 
 //Pneumatics
     //Gears

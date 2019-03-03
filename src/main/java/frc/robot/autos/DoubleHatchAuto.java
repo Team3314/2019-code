@@ -8,6 +8,7 @@
 package frc.robot.autos;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.subsystems.Drive.DriveMode;
 
 /**
  * Add your docs here.
@@ -74,9 +75,9 @@ public class DoubleHatchAuto extends Autonomous {
         currentState = states.ROTATE1_TO_ROCKET1;
         resetDriveEncoders();
         if(getStartPos().equals("StartR"))
-            driveGyrolock(0, -30);
+            driveGyrolock(0, -30, DriveMode.GYROLOCK);
         else if(getStartPos().equals("StartL"))
-            driveGyrolock(0, 30);
+            driveGyrolock(0, 30, DriveMode.GYROLOCK);
       }
       waitingFor = "Go forward 48 Inches";
       break;
@@ -125,9 +126,9 @@ public class DoubleHatchAuto extends Autonomous {
       if (getAveragePosition() <= -30) {
         currentState = states.TURN_AROUND;
         if(getStartPos().equals("StartR"))
-            driveGyrolock(0, -180);
+            driveGyrolock(0, -180, DriveMode.GYROLOCK);
         else if(getStartPos().equals("StartL"))
-            driveGyrolock(0, 180);
+            driveGyrolock(0, 180, DriveMode.GYROLOCK);
         // resetDriveEncoders();
       }
       waitingFor = "Back up 30 inches";
@@ -168,9 +169,9 @@ public class DoubleHatchAuto extends Autonomous {
         currentState = states.ROTATE2_TO_ROCKET;
         resetDriveEncoders();
         if(getStartPos().equals("StartR"))
-            driveGyrolock(0, -150);
+            driveGyrolock(0, -150, DriveMode.GYROLOCK);
         else if(getStartPos().equals("StartL"))
-            driveGyrolock(0, 150);
+            driveGyrolock(0, 150, DriveMode.GYROLOCK);
       }
       waitingFor = "Go back 255 inches";
       break;

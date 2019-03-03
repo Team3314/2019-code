@@ -9,13 +9,15 @@ import frc.robot.motion.PathList;
 import frc.robot.statemachines.GamePieceStateMachine;
 import frc.robot.subsystems.Camera;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.HatchMechanism;
 import frc.robot.subsystems.Drive.DriveMode;
 
 public abstract class Autonomous {
 
-    private Drive drive = Robot.drive;
-	private HumanInput HI = Robot.HI;
-	private Camera camera = Robot.camera;
+	protected Drive drive = Robot.drive;
+	protected HatchMechanism hatch = Robot.hatch;
+	protected HumanInput HI = Robot.HI;
+	protected Camera camera = Robot.camera;
 	protected GamePieceStateMachine gamePieceStateMachine = Robot.gamePieceStateMachine;
 	
 	private PathFollower pathFollower = new PathFollower();
@@ -66,8 +68,8 @@ public abstract class Autonomous {
 		return drive.getAngle();
 	}
 	
-	protected void driveGyrolock(double desiredSpeed, double desiredAngle) {
-		drive.setDriveMode(DriveMode.GYROLOCK);
+	protected void driveGyrolock(double desiredSpeed, double desiredAngle, DriveMode mode) {
+		drive.setDriveMode(mode);
 		drive.set(desiredSpeed, desiredSpeed);
 		drive.setDesiredAngle(desiredAngle);
 	}
