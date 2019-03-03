@@ -18,7 +18,6 @@ public class HatchMechanism implements Subsystem {
         RAISE,
         GRAB,
         EXTEND,
-        RELEASE,
         RETRACT,
         DONE
     }

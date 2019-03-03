@@ -9,7 +9,6 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Drive;
 import frc.robot.autos.AutoTwoHatchRocketClose;
 import frc.robot.autos.Autonomous;
@@ -81,8 +80,10 @@ public class Robot extends TimedRobot {
   }
   @Override
   public void robotPeriodic() {
-    HI.setHasGamepad(HI.getHasGamepad());
-
+    if(HI.getHasGamepad()) {
+      HI.setHasGamepad(true);
+    }
+    
     if(HI.getForwardCamera())
       camera.setDSView(DSCamera.FRONT);
     else if(HI.getRightCamera())
@@ -116,6 +117,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    HI.setHasGamepad(HI.getHasGamepad());
     superstructure.startCompressor();
     if(elevator.getElevatorState() == ElevatorControlMode.MOTION_MAGIC) {
       elevator.set(elevator.getPosition());

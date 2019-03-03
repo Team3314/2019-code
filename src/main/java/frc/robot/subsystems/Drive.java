@@ -60,10 +60,6 @@ public class Drive extends Drivetrain implements Subsystem {
 
     private double stoppingDistance, calculatedVelocity, targetDistance;
 
-    private double[] gryoAngleHistory = new double[200];
-    private int gyroAngleHistoryStoreIndex = 0;
-    private int gyroAngleGetIndex;
-
     private PIDController gyroControl;
     private CustomPIDOutput gyroPIDOutput;
 
@@ -123,14 +119,9 @@ public class Drive extends Drivetrain implements Subsystem {
             maxDeccel = Constants.kMaxDeccelerationLowGear;
 
         }
-        gryoAngleHistory[gyroAngleHistoryStoreIndex] = getAngle();
-        gyroAngleHistoryStoreIndex++;
-        gyroAngleHistoryStoreIndex %= 199;
-        gyroAngleGetIndex = gyroAngleHistoryStoreIndex - 4;
-        if(gyroAngleGetIndex < 0)
-            gyroAngleGetIndex += 200;
+        
         if(camera.isTargetInView()) {
-            cameraTurnAngle = getDelayedGyroAngle() + camera.getTargetHorizError();
+            cameraTurnAngle = getAngle() + camera.getTargetHorizError();
             cameraDistance = camera.getRawDistance();
             targetDistance = getAverageRioPosition() + cameraDistance;
         }
@@ -261,12 +252,7 @@ public class Drive extends Drivetrain implements Subsystem {
     public double getAngle() {
     	return -navx.getYaw();
     }
-    public double getDelayedGyroAngle() {
-        int index = gyroAngleHistoryStoreIndex - 1;
-        if(index < 0)
-            index += 200;
-        return gryoAngleHistory[index];
-    }
+
     public double getAcceleration(){
         return Math.round(100* navx.getWorldLinearAccelY());
     }
@@ -403,8 +389,6 @@ public class Drive extends Drivetrain implements Subsystem {
         SmartDashboard.putNumber("Calculated Velocity", calculatedVelocity);
         SmartDashboard.putBoolean("Distace Sensor", getDistanceSensor());
         SmartDashboard.putBoolean("At Target", getAtTarget());
-        SmartDashboard.putNumber("Distance Sensor Bookmark", distanceSensorBookmark);
-        SmartDashboard.putNumber("Delayed Gyro", getDelayedGyroAngle());
         SmartDashboard.putNumber("Nav X Roll", navx.getRoll());
         SmartDashboard.putNumber("Nav X Pitch", navx.getPitch());
     }

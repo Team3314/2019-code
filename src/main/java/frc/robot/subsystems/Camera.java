@@ -35,7 +35,6 @@ public class Camera implements Subsystem {
 	private Solenoid leftLightRing, rightLightRing;
     
     private double rawDistance;
-	private double targetHeight = 0; //31.40 or 39.25 inches off the carpet
 	
 	public Camera(Solenoid leftLightRing, Solenoid rightLightRing) {
 		this.leftLightRing = leftLightRing;
@@ -56,7 +55,7 @@ public class Camera implements Subsystem {
 		rawDistance = table.getEntry("Distance").getDouble(1337.254);
 		validLeftTargetsInView = table.getEntry("Left targetsFound").getDouble(0);
 		validRightTargetsInView = table.getEntry("Right targetsFound").getDouble(0);
-		targetInView = (validLeftTargetsInView >= 1  && validRightTargetsInView >= 1) && targetHorizError != -1.0;
+		targetInView = (validLeftTargetsInView >= 1  && validRightTargetsInView >= 1) && targetHorizError != -1.0 && rawDistance > 0;
     }
 
 	/**

@@ -1,7 +1,5 @@
 package frc.robot.statemachines;
 
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
@@ -45,13 +43,11 @@ public class GamePieceStateMachine {
     private Elevator elevator = Robot.elevator;
     private CargoIntake cargoIntake = Robot.cargoIntake;
     private HatchMechanism hatch = Robot.hatch;
-    private DriverStation ds = DriverStation.getInstance();
 
     private Timer timer = new Timer();
 
     private boolean request;
     private boolean lastRequest;
-    private boolean hasCollided = false;
 
     private double driveSpeed = .6;
 
@@ -67,8 +63,7 @@ public class GamePieceStateMachine {
 
         }
         switch(currentState) {
-            case WAITING:   
-                hasCollided = false;
+            case WAITING:
                 if(request) {
                     driveSpeed = .6;
                     drive.setDriveMode(DriveMode.VISION_CONTROL);
@@ -112,9 +107,6 @@ public class GamePieceStateMachine {
                         desiredElevatorHeight = Constants.kElevatorHatchPickup;
                         nextState = GamePieceState.GRABBING_HATCH;
                         break;
-                }
-                if(drive.collision()) {
-                    hasCollided = true;
                 }
                 if(drive.getDistanceToTarget() <= 36) {
                     //if(mode == GamePieceStateMachineMode.HATCH_PICKUP)

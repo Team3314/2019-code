@@ -43,7 +43,7 @@ public class AutoTwoHatchRocketClose extends Autonomous {
                 }
                 break;
             case PLACE_HATCH1:
-                gamePieceStateMachine.setDriveSpeed(.75);
+                gamePieceStateMachine.setDriveSpeed(5);
                 gamePieceStateMachine.setMode(GamePieceStateMachineMode.HATCH_LEVEL1);
                 if(gamePieceStateMachine.getCurrentState() == GamePieceState.BACKUP) {
                     hatch.setSliderOut(false);
@@ -60,7 +60,7 @@ public class AutoTwoHatchRocketClose extends Autonomous {
                 }
                 break;
             case PICKUP_HATCH:
-                gamePieceStateMachine.setDriveSpeed(.6);
+                gamePieceStateMachine.setDriveSpeed(.5);
                 if(gamePieceStateMachine.isDone()) {
                     setGamePieceRequest(false);
                     currentState = State.TURN_TO_ROCKET2;
@@ -75,7 +75,7 @@ public class AutoTwoHatchRocketClose extends Autonomous {
                 }
                 break;
             case PLACE_HATCH2:
-                gamePieceStateMachine.setDriveSpeed(.6);
+                gamePieceStateMachine.setDriveSpeed(.5);
                 if(gamePieceStateMachine.isDone()) {
                     setGamePieceRequest(false);
                     currentState = State.TURN_TO_STATION2;

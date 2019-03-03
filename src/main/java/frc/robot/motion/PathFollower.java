@@ -22,14 +22,14 @@ public class PathFollower {
 	private EncoderFollower left, right;
 	private double leftVIntercept, rightVIntercept, lastHeading = 0, lastHeadingChange = 0, lastHeadingError = 0;
 	private int direction;
-	private int encoderCodesPerRev;
+	private int encoderCodesPerRev, leftOffset, rightOffset;
 	private boolean pathFinished = false;
 	
 	class PeriodicRunnable implements java.lang.Runnable {
 		@Override
 		public void run() {
-		    double leftSpeed = left.calculate((int)drive.getLeftNeoPositionTicks() * direction) * direction + leftVIntercept; 
-			double rightSpeed = right.calculate((int)drive.getRightNeoPositionTicks() * direction) * direction + rightVIntercept;
+		    double leftSpeed = left.calculate((int)drive.getLeftRioPositionTicks() * direction) * direction + leftVIntercept; 
+			double rightSpeed = right.calculate((int)drive.getRightRioPositionTicks() * direction) * direction + rightVIntercept;
 			double gyroHeading = -drive.getAngle();
 			double desiredHeading = Pathfinder.r2d(left.getHeading());
 			double angleDifference = Pathfinder.boundHalfDegrees(desiredHeading - gyroHeading);
@@ -99,12 +99,14 @@ public class PathFollower {
 			direction = 1;
 			break;
 		}
-		if(Constants.kNEOEncoders)
+		if(Constants.kNEOEncoders) {
 			encoderCodesPerRev = Constants.kNEODriveEncoderCodesPerRev;
-		else
+		}
+		else {
 			encoderCodesPerRev = Constants.kDriveEncoderCodesPerRev;
-   		left.configureEncoder((int)drive.getLeftNeoPositionTicks(), encoderCodesPerRev, Constants.kWheelDiameter / 12);
-		right.configureEncoder((int)drive.getRightNeoPositionTicks(), encoderCodesPerRev, Constants.kWheelDiameter / 12);
+		}
+		left.configureEncoder((int)drive.getLeftRioPositionTicks(), encoderCodesPerRev, Constants.kWheelDiameter / 12);
+		right.configureEncoder((int)drive.getRightRioPositionTicks(), encoderCodesPerRev, Constants.kWheelDiameter / 12);
 		pathFinished = false;
 		
 		drive.set(0, 0);

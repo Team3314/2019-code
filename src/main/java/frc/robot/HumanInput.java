@@ -74,7 +74,7 @@ public class HumanInput {
 		return gamepad.getPOV() == 90;
 	}
 	public boolean getElevatorLevel3() {
-		return gamepad.getPOV() == 0;
+		return gamepad.getPOV() == 0 && getHasGamepad();
 	}
 	public boolean getStoreElevatorLevel1() {
 		return buttonBox.getRawButton(1);
