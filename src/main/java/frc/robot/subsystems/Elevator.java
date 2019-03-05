@@ -31,6 +31,9 @@ public class Elevator extends Lift implements Subsystem {
             }
             homed = true;
         }
+        if(!homed) {
+            currentElevatorMode = ElevatorControlMode.HOMING;
+        }
         switch(currentElevatorMode) {
             case MOTION_MAGIC:
                 controlMode = SpeedControllerMode.kMotionMagic;
@@ -44,8 +47,10 @@ public class Elevator extends Lift implements Subsystem {
                 if(transmission.getOutputCurrent(0) > 1 && transmission.getVelocity() < 100) {
                     homed = true;
                 }
-                if(homed)
+                if(homed) {
                     currentElevatorMode = ElevatorControlMode.MOTION_MAGIC;
+                    set(getPosition());
+                }
                 break;
         }
         transmission.set(demand, controlMode);
@@ -95,17 +100,19 @@ public class Elevator extends Lift implements Subsystem {
     }
 
     public void setElevatorState(ElevatorControlMode mode) {
-        if(currentElevatorMode != mode) {
-            switch(mode) {
-                case MOTION_MAGIC:
-                    set(getPosition());
-                    break;
-                case MANUAL:
-                    break;
-                case HOMING:
-                    break;
+        if(homed) {
+            if(currentElevatorMode != mode) {
+                switch(mode) {
+                    case MOTION_MAGIC:
+                        set(getPosition());
+                        break;
+                    case MANUAL:
+                        break;
+                    case HOMING:
+                        break;
+                }
+                    currentElevatorMode = mode;
             }
-            currentElevatorMode = mode;
         }
     }
     public ElevatorControlMode getElevatorState() {

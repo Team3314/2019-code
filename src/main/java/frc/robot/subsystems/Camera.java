@@ -1,6 +1,9 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants;
+
+import java.util.Arrays;
+
 import edu.wpi.first.networktables.*;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -20,9 +23,8 @@ public class Camera implements Subsystem {
 	private NetworkTable table = NetworkTableInstance.getDefault().getTable("SmartDashboard").getSubTable("jetson");
 	private NetworkTableEntry expectedTargetAngle = new NetworkTableEntry(NetworkTableInstance.getDefault(), 420), 
 		driveStationCamera = new NetworkTableEntry(NetworkTableInstance.getDefault(), 420);
-
-	private double validLeftTargetsInView, validRightTargetsInView;
-	private boolean targetInView;
+		
+	private boolean targetInView, leftHasLeft, rightHasRight;
 	private double targetHorizError, targetVertError, targetArea, targetSkew, targetLatency;
 	
 	private double camMode, snapshot;
@@ -53,9 +55,9 @@ public class Camera implements Subsystem {
 		}
 
 		rawDistance = table.getEntry("Distance").getDouble(1337.254);
-		validLeftTargetsInView = table.getEntry("Left targetsFound").getDouble(0);
-		validRightTargetsInView = table.getEntry("Right targetsFound").getDouble(0);
-		targetInView = (validLeftTargetsInView >= 1  && validRightTargetsInView >= 1) && targetHorizError != -1.0 && rawDistance > 0;
+		rightHasRight = table.getEntry("Right hasRight").getBoolean(false);
+		leftHasLeft = table.getEntry("Left hasLeft").getBoolean(false);
+		targetInView = rightHasRight && leftHasLeft && targetHorizError != -1.0 && rawDistance > 0;
     }
 
 	/**
@@ -79,7 +81,7 @@ public class Camera implements Subsystem {
 	/**
      * @return the rawDistance
      */
-    public double getRawDistance() {
+    public double getDistance() {
         return rawDistance;
 	}
 
@@ -143,7 +145,7 @@ public class Camera implements Subsystem {
 		SmartDashboard.putNumber("Target area", targetArea);
 		SmartDashboard.putNumber("Target skew", targetSkew);
 		SmartDashboard.putNumber("Target latency", targetLatency);
-		SmartDashboard.putNumber("Raw distance", getRawDistance());
+		SmartDashboard.putNumber("Distance", getDistance());
 		SmartDashboard.putBoolean("Light Rings On", getLightRingsOn());
 		SmartDashboard.putString("Camera mode", getCamMode());
 		SmartDashboard.putString("Snapshot mode", getSnapshot());

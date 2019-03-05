@@ -5,7 +5,7 @@ import frc.robot.statemachines.GamePieceStateMachine.GamePieceState;
 import frc.robot.statemachines.GamePieceStateMachine.GamePieceStateMachineMode;
 import frc.robot.subsystems.Drive.DriveMode;
 
-public class AutoTwoHatchRocketClose extends Autonomous {
+public class AutoTwoHatchRocketCloseSlow extends Autonomous {
 
     public enum State {
         START,
@@ -39,11 +39,12 @@ public class AutoTwoHatchRocketClose extends Autonomous {
             case TURN_TO_ROCKET1:
                 if(gyroTurnDone()) {
                     setGamePieceRequest(true);
+                    gamePieceStateMachine.setVisionOffset(-10);
                     currentState = State.PLACE_HATCH1;
                 }
                 break;
             case PLACE_HATCH1:
-                gamePieceStateMachine.setDriveSpeed(5);
+                gamePieceStateMachine.setDriveSpeed(.5);
                 gamePieceStateMachine.setMode(GamePieceStateMachineMode.HATCH_LEVEL1);
                 if(gamePieceStateMachine.getCurrentState() == GamePieceState.BACKUP) {
                     hatch.setSliderOut(false);
@@ -70,6 +71,7 @@ public class AutoTwoHatchRocketClose extends Autonomous {
             case TURN_TO_ROCKET2: 
                 if(gyroTurnDone()) {
                     setGamePieceRequest(true);
+                    gamePieceStateMachine.setVisionOffset(15);
                     gamePieceStateMachine.setMode(GamePieceStateMachineMode.HATCH_LEVEL2);
                     currentState = State.PLACE_HATCH2;
                 }

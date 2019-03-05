@@ -10,7 +10,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.robot.subsystems.Drive;
-import frc.robot.autos.AutoTwoHatchRocketClose;
+import frc.robot.autos.AutoTwoHatchRocketCloseFast;
 import frc.robot.autos.Autonomous;
 import frc.robot.statemachines.GamePieceStateMachine;
 import frc.robot.statemachines.GamePieceStateMachine.GamePieceStateMachineMode;
@@ -42,11 +42,11 @@ public class Robot extends TimedRobot {
   public static CargoIntake cargoIntake = new CargoIntake(map.intakeTransmission, map.outtakeTransmission, map.intakePiston);
   public static HatchMechanism hatch = new HatchMechanism(map.gripperPiston, map.sliderPiston);
   public static Superstructure superstructure = new Superstructure(map.compressor);
-  public static Climber climber = new Climber(map.climberPiston, map.intakePiston, map.intakeToGroundPiston, map.highPressure);
+  public static Climber climber = new Climber(map.climberPiston, map.intakePiston, map.intakeToGroundPiston, map.highPressure, map.intakeTransmission);
   public static GamePieceStateMachine gamePieceStateMachine = new GamePieceStateMachine();
 
   public Autonomous autoMode = null;
-  public AutoTwoHatchRocketClose auto = new AutoTwoHatchRocketClose();
+  public AutoTwoHatchRocketCloseFast auto = new AutoTwoHatchRocketCloseFast();
 
   public Runnable smartDashboardRunnable = new Runnable(){
   
@@ -137,171 +137,168 @@ public class Robot extends TimedRobot {
       auto.update();
     } else{
       auto.reset();
-    if(cargoIntake.getCargoInCarriage()) {
-      if(HI.getStoreElevatorLevel1()) {
-        gamePieceStateMachine.setMode(GamePieceStateMachineMode.BALL_LEVEL1);
-      }
-      else if(HI.getStoreElevatorLevel2()) {
-        gamePieceStateMachine.setMode(GamePieceStateMachineMode.BALL_LEVEL2);
-      }
-      else if(HI.getStoreElevatorLevel3()) {
-        gamePieceStateMachine.setMode(GamePieceStateMachineMode.BALL_LEVEL3);
-      }
-    }
-    else {
-      if(HI.getStoreElevatorLevel1()) {
-        gamePieceStateMachine.setMode(GamePieceStateMachineMode.HATCH_LEVEL1);
-      }
-      else if(HI.getStoreElevatorLevel2()) {
-        gamePieceStateMachine.setMode(GamePieceStateMachineMode.HATCH_LEVEL2);
-      }
-      else if(HI.getStoreElevatorLevel3()) {
-        gamePieceStateMachine.setMode(GamePieceStateMachineMode.HATCH_LEVEL3);
-      }
-    }
-    if(HI.getStoreElevatorPickup()) {
-      gamePieceStateMachine.setMode(GamePieceStateMachineMode.HATCH_PICKUP);
-    }
-    if(HI.getAutoGamePiece()) {
-      gamePieceStateMachine.setRequest(true);
-      if(HI.getGyrolock())
-        drive.setTank(HI.getLeftThrottle(),HI.getLeftThrottle(), 2);
-    }
-    else {
-      gamePieceStateMachine.setRequest(false);
-      if(HI.getClimbMode()) {
-        climber.setClimbRequest(true);
-      }
-      else if(HI.getAbortClimb()) {
-        climber.setClimbRequest(false);
-      }
-      if(HI.getResetGyro()) {
-        drive.resetSensors();
-      }
-      // Drive Controls
-      if(HI.getGyrolock()) {
-        drive.setDriveMode(DriveMode.GYROLOCK);
-        drive.setTank(HI.getLeftThrottle(), HI.getLeftThrottle(), 2);
-        if(HI.turnToZero())
-          drive.setDesiredAngle(0);
-        else if(HI.turnToRight())
-          drive.setDesiredAngle((-90));
-        else if(HI.turnBack())
-          drive.setDesiredAngle(180);
-        else if(HI.turnToLeft())
-          drive.setDesiredAngle(90);
-      }
-      else if(HI.getVision()) {
-        drive.setDriveMode(DriveMode.VISION_CONTROL);
-        drive.setTank(HI.getRightThrottle(), HI.getRightThrottle(), 2);
-      }
-      else {  
-        drive.setDriveMode(DriveMode.TANK);
-        drive.setTank(HI.getLeftThrottle(), HI.getRightThrottle(), 2);
-      }
-      if(HI.getHighGear()) {
-        drive.setHighGear(true);
-      }
-      else if(HI.getLowGear()) {
-        drive.setHighGear(false);
-      }
-      if(HI.getLightRingsOn())
-        camera.setLightRings(true);
-      else if(HI.getLightRingsOff()) 
-        camera.setLightRings(false);
-      drive.setElevatorUp(elevator.getPosition() >= Constants.kElevatorLowAccelerationThreshold);
-
-      /**
-       * ELEVATOR CONTROLS
-      */
-      if(HI.getCargoEject()) {
-        cargoIntake.stopLoadingBall();
-      }
-      hatch.setPlaceRequest(HI.getAutoHatchPlace());
-      hatch.setRetractRequest(HI.getAutoHatchRetract());
-      if(!elevator.isHoming()) {
-        if(!HI.getElevatorManual()) {
-          cargoIntake.setIntakeRequest(HI.getAutoCargoIntake()); 
-          hatch.setIntakeRequest(HI.getAutoHatchIntake());
+      climber.setStopClimb(HI.getAbortClimb());
+      if(cargoIntake.getCargoInCarriage()) {
+        if(HI.getStoreElevatorLevel1()) {
+          gamePieceStateMachine.setMode(GamePieceStateMachineMode.BALL_LEVEL1);
         }
-        if(!cargoIntake.getLoadingBall() && !HI.getAutoHatchIntake() && !HI.getAutoHatchPlace()) {
-          if(HI.getElevatorManual()) {
-            elevator.setElevatorState(ElevatorControlMode.MANUAL);
-            elevator.set(HI.getElevatorSpeed());
-          }
-          else if(HI.getHome()) {
-            elevator.setElevatorState(ElevatorControlMode.HOMING);
-          }
-          else {
-            elevator.setElevatorState(ElevatorControlMode.MOTION_MAGIC);
-            if(HI.getElevatorLevel1()) {
-              if(cargoIntake.getCargoInCarriage()) {
-                elevator.set(Constants.kElevatorBallLevel1);
-              }
-              else {
-                elevator.set(Constants.kElevatorHatchLevel1);
-              }
-            }
-            else if (HI.getElevatorLevel2()) {
-              if(cargoIntake.getCargoInCarriage()) {
-                elevator.set(Constants.kElevatorBallLevel2);
-              }
-              else {
-                elevator.set(Constants.kElevatorHatchLevel2);
-              }
-            }
-            else if(HI.getElevatorLevel3()) {
-              if(cargoIntake.getCargoInCarriage()) {
-                elevator.set(Constants.kElevatorBallLevel3);
-              }
-              else {
-                elevator.set(Constants.kElevatorHatchLevel3);
-              }
-            }
-            
-          }
+        else if(HI.getStoreElevatorLevel2()) {
+          gamePieceStateMachine.setMode(GamePieceStateMachineMode.BALL_LEVEL2);
+        }
+        else if(HI.getStoreElevatorLevel3()) {
+          gamePieceStateMachine.setMode(GamePieceStateMachineMode.BALL_LEVEL3);
+        }
+      }
+      else {
+        if(HI.getStoreElevatorLevel1()) {
+          gamePieceStateMachine.setMode(GamePieceStateMachineMode.HATCH_LEVEL1);
+        }
+        else if(HI.getStoreElevatorLevel2()) {
+          gamePieceStateMachine.setMode(GamePieceStateMachineMode.HATCH_LEVEL2);
+        }
+        else if(HI.getStoreElevatorLevel3()) {
+          gamePieceStateMachine.setMode(GamePieceStateMachineMode.HATCH_LEVEL3);
+        }
+      }
+      if(HI.getStoreElevatorPickup()) {
+        gamePieceStateMachine.setMode(GamePieceStateMachineMode.HATCH_PICKUP);
+      }
+      if(HI.getAutoGamePiece()) {
+        gamePieceStateMachine.setRequest(true);
+        if(HI.getGyrolock())
+          drive.setTank(HI.getLeftThrottle(),HI.getLeftThrottle(), 2);
+      }
+      else {
+        gamePieceStateMachine.setRequest(false);
+        climber.setClimbRequest(HI.getClimbMode());
+        climber.setPreviousStateRequest(HI.getPrevious());
+        if(HI.getResetGyro()) {
+          drive.resetSensors();
+        }
+        // Drive Controls
+        if(HI.getGyrolock()) {
+          drive.setDriveMode(DriveMode.GYROLOCK);
+          drive.setTank(HI.getLeftThrottle(), HI.getLeftThrottle(), 2);
+          if(HI.turnToZero())
+            drive.setDesiredAngle(0 / 30);
+          else if(HI.turnToRight())
+            drive.setDesiredAngle((-90 / 30));
+          else if(HI.turnBack())
+            drive.setDesiredAngle(180 / 30);
+          else if(HI.turnToLeft())
+            drive.setDesiredAngle(90 / 30);
+        }
+        else if(HI.getVision()) {
+          drive.setDriveMode(DriveMode.VISION_CONTROL);
+          drive.setTank(HI.getRightThrottle(), HI.getRightThrottle(), 2);
+        }
+        else {  
+          drive.setDriveMode(DriveMode.TANK);
+          drive.setTank(HI.getLeftThrottle(), HI.getRightThrottle(), 2);
+        }
+        if(HI.getHighGear()) {
+          drive.setHighGear(true);
+        }
+        else if(HI.getLowGear()) {
+          drive.setHighGear(false);
+        }
+        if(HI.getLightRingsOn())
+          camera.setLightRings(true);
+        else if(HI.getLightRingsOff()) 
+          camera.setLightRings(false);
+        drive.setElevatorUp(elevator.getPosition() >= Constants.kElevatorLowAccelerationThreshold);
 
         /**
-         * CARGO INTAKE CONTROLS
+         * ELEVATOR CONTROLS
         */
-          if (HI.getCargoIntake()) {
-            cargoIntake.setIntakeState(IntakeState.INTAKING);
+        if(HI.getCargoEject()) {
+          cargoIntake.stopLoadingBall();
+        }
+        hatch.setPlaceRequest(HI.getAutoHatchPlace());
+        hatch.setRetractRequest(HI.getAutoHatchRetract());
+        if(!elevator.isHoming()) {
+          if(!HI.getElevatorManual()) {
+            cargoIntake.setIntakeRequest(HI.getAutoCargoIntake()); 
+            hatch.setIntakeRequest(HI.getAutoHatchIntake());
           }
-          else if (HI.getCargoPlace()) {
-            cargoIntake.setIntakeState(IntakeState.PLACE);
-          }
-          else if (HI.getCargoTransfer()) {
-            cargoIntake.setIntakeState(IntakeState.TRANSFERRING);
-          }
-          else if(HI.getCargoEject()) {
-            cargoIntake.setIntakeState(IntakeState.VOMIT);
-          }
-          else {
-            cargoIntake.setIntakeState(IntakeState.WAITING);
-          }
+          if(!cargoIntake.getLoadingBall() && !HI.getAutoHatchIntake() && !HI.getAutoHatchPlace()) {
+            if(HI.getElevatorManual()) {
+              elevator.setElevatorState(ElevatorControlMode.MANUAL);
+              elevator.set(HI.getElevatorSpeed());
+            }
+            else if(HI.getHome()) {
+              elevator.setElevatorState(ElevatorControlMode.HOMING);
+            }
+            else {
+              elevator.setElevatorState(ElevatorControlMode.MOTION_MAGIC);
+              if(HI.getElevatorLevel1()) {
+                if(cargoIntake.getCargoInCarriage()) {
+                  elevator.set(Constants.kElevatorBallLevel1);
+                }
+                else {
+                  elevator.set(Constants.kElevatorHatchLevel1);
+                }
+              }
+              else if (HI.getElevatorLevel2()) {
+                if(cargoIntake.getCargoInCarriage()) {
+                  elevator.set(Constants.kElevatorBallLevel2);
+                }
+                else {
+                  elevator.set(Constants.kElevatorHatchLevel2);
+                }
+              }
+              else if(HI.getElevatorLevel3()) {
+                if(cargoIntake.getCargoInCarriage()) {
+                  elevator.set(Constants.kElevatorBallLevel3);
+                }
+                else {
+                  elevator.set(Constants.kElevatorHatchLevel3);
+                }
+              }
+              
+            }
+
           /**
-           * HATCH MECH CONTROLS
+           * CARGO INTAKE CONTROLS
           */
-    
-          if (HI.getGripperDown()) {
-            hatch.setGripperDown(true);
+            if (HI.getCargoIntake()) {
+              cargoIntake.setIntakeState(IntakeState.INTAKING);
+            }
+            else if (HI.getCargoPlace()) {
+              cargoIntake.setIntakeState(IntakeState.PLACE);
+            }
+            else if (HI.getCargoTransfer()) {
+              cargoIntake.setIntakeState(IntakeState.TRANSFERRING);
+            }
+            else if(HI.getCargoEject()) {
+              cargoIntake.setIntakeState(IntakeState.VOMIT);
+            }
+            else {
+              cargoIntake.setIntakeState(IntakeState.WAITING);
+            }
+            /**
+             * HATCH MECH CONTROLS
+            */
+      
+            if (HI.getGripperDown()) {
+              hatch.setGripperDown(true);
+            }
+            else if (HI.getGripperUp()) {
+              hatch.setGripperDown(false);
+            }
+            if (HI.getSliderOut()) {
+              hatch.setSliderOut(true);
+            }
+            else if (HI.getSliderIn()) {
+              hatch.setSliderOut(false);
+            }
+            /**
+             * CLIMBER CONTROLS
+             */
           }
-          else if (HI.getGripperUp()) {
-            hatch.setGripperDown(false);
-          }
-          if (HI.getSliderOut()) {
-            hatch.setSliderOut(true);
-          }
-          else if (HI.getSliderIn()) {
-            hatch.setSliderOut(false);
-          }
-          /**
-           * CLIMBER CONTROLS
-           */
       }
     }
    }
-  }
   }
 
   @Override
@@ -332,12 +329,14 @@ public class Robot extends TimedRobot {
   public void allPeriodic() {
     drive.update();
     camera.update();
-    cargoIntake.update();
     elevator.update();  
     superstructure.update();
     hatch.update();
     climber.update();
     gamePieceStateMachine.update();
+    if(!climber.isClimbing()) {
+      cargoIntake.update();
+    }
   }
 
 }

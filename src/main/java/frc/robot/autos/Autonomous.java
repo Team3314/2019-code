@@ -73,6 +73,12 @@ public abstract class Autonomous {
 		drive.set(desiredSpeed, desiredSpeed);
 		drive.setDesiredAngle(desiredAngle);
 	}
+	protected void driveGyrolock(double desiredSpeed, double desiredAngle, double distance) {
+		drive.setDriveMode(DriveMode.GYROLOCK);
+		drive.setGyroDriveDistance(distance);
+		drive.set(desiredSpeed, desiredSpeed);
+		drive.setDesiredAngle(desiredAngle);
+	}
 
 	protected void driveVision(double desiredSpeed) {
 		drive.setDriveMode(DriveMode.VISION_CONTROL);
@@ -86,7 +92,7 @@ public abstract class Autonomous {
 		return camera.isTargetInView();
 	}
 	protected double getCameraDistance() {
-		return camera.getRawDistance();
+		return camera.getDistance();
 	}
 	//motion profiling
 	protected void startPathFollower(Path path) {

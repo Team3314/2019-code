@@ -74,7 +74,7 @@ public class HumanInput {
 		return gamepad.getPOV() == 90;
 	}
 	public boolean getElevatorLevel3() {
-		return gamepad.getPOV() == 0 && getHasGamepad();
+		return gamepad.getPOV() == 0 && hasGamepad;
 	}
 	public boolean getStoreElevatorLevel1() {
 		return buttonBox.getRawButton(1);
@@ -166,11 +166,15 @@ public class HumanInput {
 		return 0;
 	}
 	public boolean getClimbMode() {
-		return false;
+		return buttonBox.getRawButton(5);
+	}
+
+	public boolean getPrevious() {
+		return buttonBox.getRawButton(6);
 	}
 
 	public boolean getAbortClimb() {
-		return true;
+		return buttonBox.getRawButton(8);
 	}
 
 //Camera

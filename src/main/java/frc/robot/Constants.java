@@ -12,7 +12,7 @@ public class Constants {
 
 
 //Conversions	
-		public static int kDriveEncoderCodesPerRev = 2048;// AMT-102v = 2048;
+		public static int kDriveEncoderCodesPerRev = 2048;// AMT-102v = vel2048;
 		public static int kNEODriveEncoderCodesPerRev = 42;
 		
 		public static double kDegToTicksConvFactor = .038888888888888;
@@ -103,7 +103,7 @@ public class Constants {
 		public static double kGyroLock_kD = 0;
 		public static double kGyroLock_kF = 0;
 	//Velocity
-		public static double kVelocity_kP = 8e-6;
+		public static double kVelocity_kP = 1.6e-5;
 		public static double kVelocity_kI = 0;
 		public static double kVelocity_kD = 0;
 		public static double kVelocity_kF = 1.9e-4;
@@ -204,7 +204,7 @@ public class Constants {
 	
 //Gyro
 		public static double kGyroOutputRange = 1;
-		public static double kAbsoluteGyroTolerance = 10;
+		public static double kAbsoluteGyroTolerance = 5;
 
 //Pneumatics
     //Gears
@@ -220,8 +220,8 @@ public class Constants {
 	//Cargo Intake	
 		public static final Value kIntakeDown = Value.kReverse;
 		public static final Value kIntakeUp = Value.kForward; 
-		public static final Value kIntakeClimberUp = Value.kForward;
-		public static final Value kIntakeClimberDown = Value.kReverse;
+		public static final Value kIntakeClimberUp = Value.kReverse;
+		public static final Value kIntakeClimberDown = Value.kForward;
 		public static final double kCargoSensorVoltageThreshold = 3;
 
 

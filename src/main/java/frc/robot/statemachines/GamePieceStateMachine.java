@@ -49,7 +49,7 @@ public class GamePieceStateMachine {
     private boolean request;
     private boolean lastRequest;
 
-    private double driveSpeed = .6;
+    private double driveSpeed = .6, visionOffset = 0;
 
 
     private int desiredElevatorHeight = 0;
@@ -65,14 +65,19 @@ public class GamePieceStateMachine {
         switch(currentState) {
             case WAITING:
                 if(request) {
-                    driveSpeed = .6;
                     drive.setDriveMode(DriveMode.VISION_CONTROL);
+                    drive.setVisionOffset(visionOffset);
                     elevator.setElevatorState(ElevatorControlMode.MOTION_MAGIC);
                     currentState = GamePieceState.ALIGNING;
+                }
+                else {  
+                    drive.setVisionOffset(0);
+                    driveSpeed = .6;
                 }
                 break;
             case ALIGNING:
                 if(drive.gyroInPosition()) {
+                    drive.setVisionOffset(0);
                     currentState = GamePieceState.DRIVING;
                 }
                 break;
@@ -111,6 +116,10 @@ public class GamePieceStateMachine {
                 if(drive.getDistanceToTarget() <= 36) {
                     //if(mode == GamePieceStateMachineMode.HATCH_PICKUP)
                         //hatch.setGripperDown(true);
+                    if(drive.getDistanceSensor()) {
+                        drive.setDriveMode(DriveMode.GYROLOCK);
+                        drive.setGyroDriveDistance(drive.getDistanceToTarget());
+                    }
                     elevator.set(desiredElevatorHeight);
                     if(drive.getAtTarget() && elevator.inPosition()) {
                         currentState = nextState;
@@ -187,5 +196,8 @@ public class GamePieceStateMachine {
 
     public void setDriveSpeed(double speed) {
         driveSpeed = speed;
+    }
+    public void setVisionOffset(double offset) {
+        visionOffset = offset;
     }
 }
