@@ -27,7 +27,7 @@ public class HumanInput {
 
 //Actions
 	public boolean getAutoGamePiece() {
-		return rightStick.getRawButton(2);
+		return leftStick.getRawButton(1);
 	}
 	public boolean getAuto() {
 		return leftStick.getRawButton(2);
@@ -68,70 +68,70 @@ public class HumanInput {
 		return false;
 	}
 	public boolean getElevatorLevel1() {
-		return gamepad.getPOV() == 180;
+		return gamepad.getRawAxis(3) > .5 && gamepad.getPOV() == 180;
 	}
 	public boolean getElevatorLevel2() {
-		return gamepad.getPOV() == 90;
+		return gamepad.getRawAxis(3) > .5 && gamepad.getPOV() == 90;
 	}
 	public boolean getElevatorLevel3() {
-		return gamepad.getPOV() == 0;
+		return gamepad.getRawAxis(3) > .5 && gamepad.getPOV() == 0;
 	}
 	public boolean getStoreElevatorLevel1() {
-		return buttonBox.getRawButton(1);
+		return gamepad.getPOV() == 180;
 	}
 	public boolean getStoreElevatorLevel2() {
-		return buttonBox.getRawButton(4);
+		return gamepad.getPOV() == 90;
 	}
 	public boolean getStoreElevatorLevel3() {
-		return buttonBox.getRawButton(7);
+		return gamepad.getPOV() == 0;
 	}
 	public boolean getStoreElevatorPickup() {
-		return buttonBox.getRawButton(10);
+		return gamepad.getPOV() == 270;
 	}
 	public boolean getElevatorManual() {
-		return leftStick.getRawAxis(3) >.75;//buttonBox.getRawButton(1);
+		return buttonBox.getRawButton(11); // left switch on button box
 	}
 	public double getElevatorSpeed() {
 		return -gamepad.getRawAxis(1);
 	}
 	//Cargo Intake Controls
 	public boolean getAutoCargoIntake() {
-		return gamepad.getRawButton(1);
+		return gamepad.getRawButton(1); // a
 	}
 	public boolean getCargoIntake() {
-		return gamepad.getRawButton(4); // a
+		return buttonBox.getRawButton(1); // button box 1 
 	}
 
 	public boolean getCargoTransfer(){
-		return gamepad.getRawButton(2); // b
+	return buttonBox.getRawButton(2); // button box 2
 	}
 	public boolean getCargoPlace() {
-		return gamepad.getRawButton(3); // x
+		return gamepad.getRawButton(2); // b
 	}
 	public boolean getCargoEject() {
-		return gamepad.getRawButton(6); // rb
+		return buttonBox.getRawButton(3); // Button Box 3 shoots cargo backwards towards intake
 	}
 	//Hatch Intake Controls
-	public boolean getAutoHatchIntake() {
-		return gamepad.getRawButton(9);
+	public boolean getAutoHatchIntake() { //Loading Station (x)
+		return gamepad.getRawButton(3);
 	}
 	public boolean getAutoHatchPlace() {
-		return gamepad.getRawButton(10);
-	}
-	public boolean getAutoHatchRetract() {
-		return gamepad.getRawButton(10);
-	}
-	public boolean getGripperUp() {
-		return gamepad.getRawButton(7); //start
-	}
-	public boolean getGripperDown() {
-		return gamepad.getRawButton(8); //select
-	}
-	public boolean getSliderIn() {
 		return gamepad.getRawButton(5); //lb
 	}
-	public boolean getSliderOut() {
+	public boolean getAutoHatchRetract() {
 		return gamepad.getRawAxis(2) > .5; //lt
+	}
+	public boolean getGripperUp() {
+		return gamepad.getRawButton(4) && buttonBox.getRawButton(11); //First switch on button box and y
+	}
+	public boolean getGripperDown() {
+		return gamepad.getRawButton(1) && buttonBox.getRawButton(11); //First switch on button box and a
+	}
+	public boolean getSliderIn() {
+		return gamepad.getRawButton(3) && buttonBox.getRawButton(11); //First switch on button box and x
+	}
+	public boolean getSliderOut() {
+		return gamepad.getRawButton(2) && buttonBox.getRawButton(11); //First switch on button boc and b
 	}
 
 	public boolean getHome() {
@@ -140,7 +140,7 @@ public class HumanInput {
 
 	//
 	public boolean getClearQueue() {
-		return buttonBox.getRawButton(16);
+		return false;				//buttonBox.getRawButton(16);
 	}
 	//Double Hatch Auto 
 	public String getLeftRightCenter() {
@@ -166,11 +166,11 @@ public class HumanInput {
 		return 0;
 	}
 	public boolean getClimbMode() {
-		return false;
+		return leftStick.getRawButton(5);
 	}
 
 	public boolean getAbortClimb() {
-		return true;
+		return gamepad.getRawButton(7);
 	}
 
 //Camera
