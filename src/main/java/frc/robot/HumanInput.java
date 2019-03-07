@@ -94,9 +94,9 @@ public class HumanInput {
 	public boolean getStoreElevatorPickup() {
 		return buttonBox.getRawButton(10);
 	}
-	public boolean getElevatorManual() {
-		return leftStick.getRawAxis(3) >.75;//buttonBox.getRawButton(1);
-	}
+	public boolean getElevatorManual() { 
+		return leftStick.getRawAxis(3) >.75;
+	
 	public double getElevatorSpeed() {
 		return -gamepad.getRawAxis(1);
 	}

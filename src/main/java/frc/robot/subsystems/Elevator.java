@@ -44,7 +44,7 @@ public class Elevator extends Lift implements Subsystem {
             case HOMING:
                 controlMode = SpeedControllerMode.kDutyCycle;
                 set(-.3);
-                if(Math.abs(transmission.getOutputCurrent(0)) > 5 && transmission.getVelocity() < 1) {
+                if(Math.abs(transmission.getOutputCurrent(0)) > 10 && Math.abs(transmission.getVelocity()) < 10) {
                     homed = true;
                     transmission.reset();
                 }

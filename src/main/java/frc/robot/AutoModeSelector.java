@@ -8,7 +8,7 @@ public class AutoModeSelector {
 	private static int autoModeDecimal;
 	private static Autonomous autoMode;
 	private static Autonomous auto0 = null,
-						auto1 = new AutoHatchToSideCargo1(),
+						auto1 = new AutoTwoHatchRocketClose(),
 						auto2 = null,
 						auto3 = null,
 						auto4 = null,

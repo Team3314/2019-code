@@ -49,8 +49,8 @@ public class Drive extends Drivetrain implements Subsystem {
     private boolean mIsHighGear, elevatorUp, velocityControl = false, distanceSensorTriggered, lastDistanceSensorTriggered, atTarget = false, driveDistance;
 
     private IdleMode idleMode;
-    private double rawLeftSpeed, rawRightSpeed, arbFFLeft = 0, arbFFRight = 0, desiredAngle, cameraTurnAngle, tickToInConversion, speedCap, neoOffsetL, 
-    neoOffsetR, maxDeccel, maxSpeed, cameraDistance, distanceSensorBookmark = 0, gyroDriveDistance;
+    private double rawLeftSpeed, rawRightSpeed, arbFFLeft = 0, arbFFRight = 0, desiredAngle, cameraTurnAngle, tickToInConversion, speedCap,
+     maxDeccel, maxSpeed, cameraDistance, distanceSensorBookmark = 0, gyroDriveDistance;
     
     private double leftRioDrivePositionInches, rightRioDrivePositionInches, leftRioDrivePositionTicks, rightRioDrivePositionTicks, leftRioDriveSpeedTicks, rightRioDriveSpeedTicks, 
         leftRioDriveSpeedInches, rightRioDriveSpeedInches;
@@ -443,8 +443,6 @@ public class Drive extends Drivetrain implements Subsystem {
     }
   
     public void resetDriveEncoders() {
-        neoOffsetL = leftDrive.getPosition();   
-        neoOffsetR = rightDrive.getPosition();
         leftRioEncoder.zero();
         rightRioEncoder.zero();
         leftNeoInchesHighGear = 0;

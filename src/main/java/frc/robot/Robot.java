@@ -101,6 +101,7 @@ public class Robot extends TimedRobot {
     drive.resetSensors();
     superstructure.stopCompressor();
     autoMode = AutoModeSelector.getSelectedAutoMode();
+    elevator.setElevatorState(ElevatorControlMode.MOTION_MAGIC);
     stopAuto = false;
   }
 
