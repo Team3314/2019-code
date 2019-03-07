@@ -7,16 +7,25 @@ public class AutoModeSelector {
 	private static String autoModeBinary;
 	private static int autoModeDecimal;
 	private static Autonomous autoMode;
-	private static Autonomous auto0 = new DoubleHatchAuto(),
-						auto1 = new AutoHatchToSideCargo1();
+	private static Autonomous auto0 = null,
+						auto1 = new AutoHatchToSideCargo1(),
+						auto2 = null,
+						auto3 = null,
+						auto4 = null,
+						auto5 = null,
+						auto6 = null,
+						auto7 = null,
+						auto8 = null,
+						auto9 = null;
 
-	private static Autonomous[] autos = {auto0, auto1};
+	private static Autonomous[] autos = {auto0, auto1, auto2, auto3, auto4, auto5, auto6, auto7, auto8, auto9};
 
 	public static Autonomous getSelectedAutoMode() {
-		autoModeBinary = "" + hi.getBinaryFour() + hi.getBinaryTwo() + hi.getBinaryOne();
+		autoModeBinary = "" + hi.getBinaryEight() + hi.getBinaryFour() + hi.getBinaryTwo() + hi.getBinaryOne();
 		autoModeDecimal = Integer.parseInt(autoModeBinary, 2);
 		autoMode = autos[autoModeDecimal];
-		autoMode.reset();
+		if(autoMode != null)
+			autoMode.reset();
  		return autoMode;
 	}
 }

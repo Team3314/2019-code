@@ -113,9 +113,11 @@ public class GamePieceStateMachine {
                         nextState = GamePieceState.GRABBING_HATCH;
                         break;
                 }
-                if(drive.getDistanceToTarget() <= 36) {
-                    //if(mode == GamePieceStateMachineMode.HATCH_PICKUP)
-                        //hatch.setGripperDown(true);
+                if(drive.getDistanceToTarget() <= 48) {
+                    if(mode == GamePieceStateMachineMode.HATCH_PICKUP) {
+                        hatch.setGripperDown(true);
+                        hatch.setSliderOut(true);
+                    }
                     if(drive.getDistanceSensor()) {
                         drive.setDriveMode(DriveMode.GYROLOCK);
                         drive.setGyroDriveDistance(drive.getDistanceToTarget());

@@ -9,12 +9,14 @@ import frc.robot.motion.PathList;
 import frc.robot.statemachines.GamePieceStateMachine;
 import frc.robot.subsystems.Camera;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.HatchMechanism;
 import frc.robot.subsystems.Drive.DriveMode;
 
 public abstract class Autonomous {
 
 	protected Drive drive = Robot.drive;
+	protected Elevator elevator = Robot.elevator;
 	protected HatchMechanism hatch = Robot.hatch;
 	protected HumanInput HI = Robot.HI;
 	protected Camera camera = Robot.camera;

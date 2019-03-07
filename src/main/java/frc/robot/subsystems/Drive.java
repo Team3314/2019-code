@@ -49,7 +49,7 @@ public class Drive extends Drivetrain implements Subsystem {
     private boolean mIsHighGear, elevatorUp, velocityControl = false, distanceSensorTriggered, lastDistanceSensorTriggered, atTarget = false, driveDistance;
 
     private IdleMode idleMode;
-    private double rawLeftSpeed, rawRightSpeed, desiredAngle, cameraTurnAngle, tickToInConversion, speedCap, neoOffsetL, 
+    private double rawLeftSpeed, rawRightSpeed, arbFFLeft = 0, arbFFRight = 0, desiredAngle, cameraTurnAngle, tickToInConversion, speedCap, neoOffsetL, 
     neoOffsetR, maxDeccel, maxSpeed, cameraDistance, distanceSensorBookmark = 0, gyroDriveDistance;
     
     private double leftRioDrivePositionInches, rightRioDrivePositionInches, leftRioDrivePositionTicks, rightRioDrivePositionTicks, leftRioDriveSpeedTicks, rightRioDriveSpeedTicks, 
@@ -62,7 +62,6 @@ public class Drive extends Drivetrain implements Subsystem {
 
     private double[] gryoAngleHistory = new double[200];
     private int gyroAngleHistoryStoreIndex = 0;
-    private int gyroAngleGetIndex;
 
     private PIDController gyroControl;
     private CustomPIDOutput gyroPIDOutput;
@@ -110,7 +109,22 @@ public class Drive extends Drivetrain implements Subsystem {
             speedCap = Constants.kRaisedElevatorDriveSpeedCap / Constants.kMaxSpeedHighGear;
             neoInchesPerRev = Constants.kRevToInConvFactorHighGear;
             maxSpeed = Constants.kMaxSpeedHighGear;
-            maxDeccel = Constants.kMaxDeccelerationHighGear;
+            maxDeccel = Constants.kMaxDeccelerationHighGear;    
+            if(leftDemand > 0) 
+                arbFFLeft = Constants.kMotionProfileLeftForeHigh_Intercept;
+            else if(leftDemand < 0)
+                arbFFLeft = Constants.kMotionProfileLeftBackHigh_Intercept;
+            else {
+                arbFFLeft = 0;
+            }
+            if(rightDemand > 0) 
+                arbFFRight = Constants.kMotionProfileRightForeHigh_Intercept;
+            else if(rightDemand < 0)
+                arbFFRight = Constants.kMotionProfileRightBackHigh_Intercept;
+            else {
+                arbFFRight = 0;
+            }
+
 
     	}
     	else {
@@ -123,6 +137,20 @@ public class Drive extends Drivetrain implements Subsystem {
             neoInchesPerRev = Constants.kRevToInConvFactorLowGear;
             maxSpeed = Constants.kMaxSpeedLowGear;
             maxDeccel = Constants.kMaxDeccelerationLowGear;
+            if(leftDemand > 0) 
+                arbFFLeft = Constants.kMotionProfileLeftForeLow_Intercept;
+            else if(leftDemand < 0)
+                arbFFLeft = Constants.kMotionProfileLeftBackLow_Intercept;
+            else {
+                arbFFLeft = 0;
+            }
+            if(rightDemand > 0) 
+                arbFFRight = Constants.kMotionProfileRightForeLow_Intercept;
+            else if(rightDemand < 0)
+                arbFFRight = Constants.kMotionProfileRightBackLow_Intercept;
+            else {
+                arbFFRight = 0;
+            }
 
         }
         
@@ -143,7 +171,6 @@ public class Drive extends Drivetrain implements Subsystem {
         gryoAngleHistory[gyroAngleHistoryStoreIndex] = getAngle();
         gyroAngleHistoryStoreIndex++;
         gyroAngleHistoryStoreIndex %= 199;
-        gyroAngleGetIndex = gyroAngleHistoryStoreIndex - 4;
 
         if(camera.isTargetInView()) {
             cameraTurnAngle = getDelayedGyroAngle() + camera.getTargetHorizError();
@@ -244,8 +271,8 @@ public class Drive extends Drivetrain implements Subsystem {
                 setOpenLoopRampTime(Constants.kDriveRampRate);
                 setClosedLoopRampTime(Constants.kDriveRampRate);
             }
-        rightDrive.set(rawRightSpeed, controlMode);
-        leftDrive.set(rawLeftSpeed, controlMode);
+        rightDrive.set(rawRightSpeed, controlMode, arbFFRight);
+        leftDrive.set(rawLeftSpeed, controlMode, arbFFLeft);
         lastDistanceSensorTriggered = distanceSensorTriggered;
     }
 
@@ -280,14 +307,6 @@ public class Drive extends Drivetrain implements Subsystem {
     public double getAcceleration(){
         return Math.round(100* navx.getWorldLinearAccelY());
     }
-
-    public double getLeftNeoPositionTicks() {
-        return leftDrive.getPosition() - neoOffsetL;
-    }
-
-    public double getRightNeoPositionTicks() {
-        return rightDrive.getPosition() - neoOffsetR;
-    }
     
     public double getLeftNeoPosition() {
     	return leftNeoDrivePositionInches;
@@ -296,9 +315,17 @@ public class Drive extends Drivetrain implements Subsystem {
     public double getRightNeoPosition() {
     	return rightNeoDrivePositionInches;
     }
-    
+
     public double getAverageNeoPosition() {
     	return (leftNeoDrivePositionInches-rightNeoDrivePositionInches)/2;
+    }
+
+    public double getLeftNeoVelocity() {
+        return leftDrive.getVelocity();
+    }
+
+    public double getRightNeoVelocity() {
+        return -rightDrive.getVelocity();
     }
 
     public double getLeftRioPositionTicks() {
@@ -356,8 +383,6 @@ public class Drive extends Drivetrain implements Subsystem {
     public void updateSpeedAndPosition() {
         leftNeoDrivePositionInches = leftNeoInchesHighGear + leftNeoInchesLowGear;
         rightNeoDrivePositionInches = rightNeoInchesHighGear + rightNeoInchesLowGear;
-        leftNeoDriveSpeedInches = leftDrive.getVelocity();
-        rightNeoDriveSpeedInches = -rightDrive.getVelocity();
         leftRioDrivePositionTicks = getLeftRioPositionTicks();
         rightRioDrivePositionTicks = getRightRioPositionTicks();
         leftRioDrivePositionInches = leftRioDrivePositionTicks * Constants.kDriveTicksToInches;
@@ -376,8 +401,8 @@ public class Drive extends Drivetrain implements Subsystem {
     public void outputToSmartDashboard() {
     	SmartDashboard.putNumber("Left NEO Encoder Inches", getLeftNeoPosition());
     	SmartDashboard.putNumber("Right NEO Encoder Inches", getRightNeoPosition());
-        SmartDashboard.putNumber("Left NEO Encoder Speed Inches", leftNeoDriveSpeedInches);
-        SmartDashboard.putNumber("Right NEO Encoder Speed Inches", rightNeoDriveSpeedInches);
+        SmartDashboard.putNumber("Left NEO Encoder Speed Inches", getLeftNeoVelocity());
+        SmartDashboard.putNumber("Right NEO Encoder Speed Inches", getRightNeoVelocity());
         SmartDashboard.putNumber("Avg. NEO Position", getAverageNeoPosition());
     	SmartDashboard.putNumber("Left Rio Encoder Position Ticks", leftRioDrivePositionTicks);
     	SmartDashboard.putNumber("Right Rio Encoder Position Ticks", rightRioDrivePositionTicks);
@@ -494,7 +519,7 @@ public class Drive extends Drivetrain implements Subsystem {
     }
     
     public double getDelayedGyroAngle() {
-        int index = gyroAngleHistoryStoreIndex - 1;
+        int index = gyroAngleHistoryStoreIndex - 8;
         if(index < 0)
             index += 200;
         return gryoAngleHistory[index];

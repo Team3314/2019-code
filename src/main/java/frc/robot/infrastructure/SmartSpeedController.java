@@ -70,6 +70,8 @@ public abstract class SmartSpeedController implements SpeedController, CustomEnc
 
     public abstract void set(double speed, SpeedControllerMode mode);
 
+    public abstract void set(double speed, SpeedControllerMode mode, double arbitraryFeedForward);
+
     public abstract double getOutputCurrent();
 
     public abstract double getOutputVoltage();

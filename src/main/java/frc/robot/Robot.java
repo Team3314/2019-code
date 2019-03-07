@@ -10,7 +10,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.robot.subsystems.Drive;
-import frc.robot.autos.AutoTwoHatchRocketCloseFast;
+import frc.robot.autos.AutoTwoHatchRocketClose;
 import frc.robot.autos.Autonomous;
 import frc.robot.statemachines.GamePieceStateMachine;
 import frc.robot.statemachines.GamePieceStateMachine.GamePieceStateMachineMode;
@@ -42,11 +42,11 @@ public class Robot extends TimedRobot {
   public static CargoIntake cargoIntake = new CargoIntake(map.intakeTransmission, map.outtakeTransmission, map.intakePiston);
   public static HatchMechanism hatch = new HatchMechanism(map.gripperPiston, map.sliderPiston);
   public static Superstructure superstructure = new Superstructure(map.compressor);
-  public static Climber climber = new Climber(map.climberPiston, map.intakePiston, map.intakeToGroundPiston, map.highPressure, map.intakeTransmission);
+  public static Climber climber = new Climber(map.climberPiston, map.intakeToGroundPiston, map.highPressure);
   public static GamePieceStateMachine gamePieceStateMachine = new GamePieceStateMachine();
 
   public Autonomous autoMode = null;
-  public AutoTwoHatchRocketCloseFast auto = new AutoTwoHatchRocketCloseFast();
+  public AutoTwoHatchRocketClose auto = new AutoTwoHatchRocketClose();
 
   public Runnable smartDashboardRunnable = new Runnable(){
   
@@ -56,6 +56,8 @@ public class Robot extends TimedRobot {
     }
   };
   public Notifier smartDashboardNotifier = new Notifier(smartDashboardRunnable);
+
+  public boolean stopAuto = false;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -99,13 +101,17 @@ public class Robot extends TimedRobot {
     drive.resetSensors();
     superstructure.stopCompressor();
     autoMode = AutoModeSelector.getSelectedAutoMode();
+    stopAuto = false;
   }
 
   @Override
   public void autonomousPeriodic() { 
     if(!elevator.getHomed())
       elevator.setElevatorState(ElevatorControlMode.HOMING);
-    if(autoMode == null) {
+    if(HI.getStopAuto()) {
+      stopAuto = true;
+    }
+    if(autoMode == null || stopAuto) {
       teleopPeriodic();
     } 
     else {
@@ -135,6 +141,7 @@ public class Robot extends TimedRobot {
     drive.setVelocityControl(HI.getVelocityControl());
     if(HI.getAuto()) {
       auto.update();
+      elevator.setElevatorState(ElevatorControlMode.MOTION_MAGIC);
     } else{
       auto.reset();
       climber.setStopClimb(HI.getAbortClimb());
@@ -179,14 +186,16 @@ public class Robot extends TimedRobot {
         if(HI.getGyrolock()) {
           drive.setDriveMode(DriveMode.GYROLOCK);
           drive.setTank(HI.getLeftThrottle(), HI.getLeftThrottle(), 2);
+          /*  XXX GYRO TEST CODE
           if(HI.turnToZero())
-            drive.setDesiredAngle(0 / 30);
+            drive.setDesiredAngle(0);
           else if(HI.turnToRight())
-            drive.setDesiredAngle((-90 / 30));
+            drive.setDesiredAngle((-90));
           else if(HI.turnBack())
-            drive.setDesiredAngle(180 / 30);
+            drive.setDesiredAngle(180);
           else if(HI.turnToLeft())
-            drive.setDesiredAngle(90 / 30);
+            drive.setDesiredAngle(90);
+            */
         }
         else if(HI.getVision()) {
           drive.setDriveMode(DriveMode.VISION_CONTROL);
@@ -329,14 +338,12 @@ public class Robot extends TimedRobot {
   public void allPeriodic() {
     drive.update();
     camera.update();
+    cargoIntake.update();
     elevator.update();  
     superstructure.update();
     hatch.update();
     climber.update();
     gamePieceStateMachine.update();
-    if(!climber.isClimbing()) {
-      cargoIntake.update();
-    }
   }
 
 }

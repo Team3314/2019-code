@@ -19,12 +19,21 @@ public class Transmission extends SendableBase implements SpeedController {
         motors[0].set(speed);
     }
 
+
     public void set(double speed, SpeedControllerMode mode) {
         if(m_isInverted)
             motors[0].set(-speed, mode);
         else
             motors[0].set(speed,mode);
 
+    }
+
+    
+    public void set(double speed, SpeedControllerMode mode, double arbitraryFeedForward) {
+        if(m_isInverted)
+            motors[0].set(-speed, mode, -arbitraryFeedForward);
+        else
+            motors[0].set(speed,mode, arbitraryFeedForward);
     }
 
     @Override

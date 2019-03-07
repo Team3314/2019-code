@@ -50,10 +50,6 @@ public class Camera implements Subsystem {
 
         
 		targetHorizError = -table.getEntry("Angle To Target").getDouble(0);
-		if(Math.abs(targetHorizError) > 15) {
-			targetHorizError = Math.copySign(15, targetHorizError);
-		}
-
 		rawDistance = table.getEntry("Distance").getDouble(1337.254);
 		rightHasRight = table.getEntry("Right hasRight").getBoolean(false);
 		leftHasLeft = table.getEntry("Left hasLeft").getBoolean(false);

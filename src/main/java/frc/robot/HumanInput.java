@@ -34,10 +34,16 @@ public class HumanInput {
 	}
 //Drive Controls
     public double getLeftThrottle() {
-		return -leftStick.getRawAxis(1);
+		double throttle = -leftStick.getRawAxis(1);
+		if(Math.abs(throttle) < Constants.kJoystickDeadband)
+			throttle = 0;
+		return throttle;
 	}
 	public double getRightThrottle() {
-		return -rightStick.getRawAxis(1);
+		double throttle = -rightStick.getRawAxis(1);
+		if(Math.abs(throttle) < Constants.kJoystickDeadband)
+			throttle = 0;
+		return throttle;
 	}
 	public boolean getLowGear() {
 		return leftStick.getRawButton(4);
@@ -151,17 +157,22 @@ public class HumanInput {
 		return "StartC"; // Start Right
 	}
 	public int getBinaryOne() {
-		if(autoSelector.getRawButton(1))
+		if(buttonBox.getRawButton(13))
 			return 1;
 		return 0;
 	}
 	public int getBinaryTwo() {
-		if(autoSelector.getRawButton(2))
+		if(buttonBox.getRawButton(14))
 			return 1;
 		return 0;
 	}
 	public int getBinaryFour() {
-		if(autoSelector.getRawButton(3))
+		if(buttonBox.getRawButton(15))
+			return 1;
+		return 0;
+	}
+	public int getBinaryEight() {
+		if(buttonBox.getRawButton(16))
 			return 1;
 		return 0;
 	}
@@ -208,5 +219,9 @@ public class HumanInput {
 	}
 	public void setHasGamepad(boolean gamepad) {
 		hasGamepad = gamepad;
+	}
+
+	public boolean getStopAuto() {
+		return buttonBox.getRawButton(2); // TODO REPLACE PLACEHOLDER NUMBER
 	}
 }

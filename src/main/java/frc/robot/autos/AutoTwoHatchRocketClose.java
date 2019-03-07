@@ -1,11 +1,12 @@
 package frc.robot.autos;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants;
 import frc.robot.statemachines.GamePieceStateMachine.GamePieceState;
 import frc.robot.statemachines.GamePieceStateMachine.GamePieceStateMachineMode;
 import frc.robot.subsystems.Drive.DriveMode;
 
-public class AutoTwoHatchRocketCloseSlow extends Autonomous {
+public class AutoTwoHatchRocketClose extends Autonomous {
 
     public enum State {
         START,
@@ -13,6 +14,7 @@ public class AutoTwoHatchRocketCloseSlow extends Autonomous {
         PLACE_HATCH1, // Places hatch on first level of rocket
         TURN_TO_STATION1, // Turns to 180 degrees to face loading station
         PICKUP_HATCH, // Grabs hatch from loading station
+        BACKUP,
         TURN_TO_ROCKET2, // Turns to 0 degrees to face rocket
         PLACE_HATCH2, // Places hatch on second level of rocket
         TURN_TO_STATION2, // Turns to 180 degrees to face loading station
@@ -34,21 +36,21 @@ public class AutoTwoHatchRocketCloseSlow extends Autonomous {
             case START:
                 driveGyrolock(0, -33, DriveMode.GYROLOCK);
                 setHighGear(false);
+                elevator.set(Constants.kElevatorHatchLevel1);
                 currentState = State.TURN_TO_ROCKET1;
                 break;
             case TURN_TO_ROCKET1:
                 if(gyroTurnDone()) {
                     setGamePieceRequest(true);
-                    gamePieceStateMachine.setVisionOffset(-10);
                     currentState = State.PLACE_HATCH1;
                 }
                 break;
             case PLACE_HATCH1:
-                gamePieceStateMachine.setDriveSpeed(.5);
+                gamePieceStateMachine.setDriveSpeed(.75);
                 gamePieceStateMachine.setMode(GamePieceStateMachineMode.HATCH_LEVEL1);
                 if(gamePieceStateMachine.getCurrentState() == GamePieceState.BACKUP) {
                     hatch.setSliderOut(false);
-                    driveGyrolock(0, -168, DriveMode.GYROLOCK_RIGHT);
+                    driveGyrolock(0, -180, DriveMode.GYROLOCK_RIGHT);
                     setGamePieceRequest(false);
                     currentState = State.TURN_TO_STATION1;
                 }
@@ -61,23 +63,29 @@ public class AutoTwoHatchRocketCloseSlow extends Autonomous {
                 }
                 break;
             case PICKUP_HATCH:
-                gamePieceStateMachine.setDriveSpeed(.5);
-                if(gamePieceStateMachine.isDone()) {
+                gamePieceStateMachine.setDriveSpeed(.6);
+                if(gamePieceStateMachine.getCurrentState() == GamePieceState.BACKUP) {
                     setGamePieceRequest(false);
+                    currentState = State.BACKUP;
+                    drive.resetDriveEncoders();
+                    driveGyrolock(-1, 180, -54);
+                }
+                break;
+            case BACKUP:
+                if(drive.getGyroDriveDone()) {
                     currentState = State.TURN_TO_ROCKET2;
-                    driveGyrolock(0, 0, DriveMode.GYROLOCK);
+                    driveGyrolock(0, -15, DriveMode.GYROLOCK);
                 }
                 break;
             case TURN_TO_ROCKET2: 
                 if(gyroTurnDone()) {
                     setGamePieceRequest(true);
-                    gamePieceStateMachine.setVisionOffset(15);
                     gamePieceStateMachine.setMode(GamePieceStateMachineMode.HATCH_LEVEL2);
                     currentState = State.PLACE_HATCH2;
                 }
                 break;
             case PLACE_HATCH2:
-                gamePieceStateMachine.setDriveSpeed(.5);
+                gamePieceStateMachine.setDriveSpeed(.6);
                 if(gamePieceStateMachine.isDone()) {
                     setGamePieceRequest(false);
                     currentState = State.TURN_TO_STATION2;

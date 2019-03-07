@@ -22,6 +22,16 @@ public class TalonSRX extends SmartSpeedController {
     }
 
     @Override
+    public void set(double speed, SpeedControllerMode mode, double arbitraryFeedForward) {
+        setControlMode(mode);
+        if(isInverted)
+            ((WPI_TalonSRX)controller).set(this.mode,-speed, -arbitraryFeedForward);
+        else
+            ((WPI_TalonSRX)controller).set(this.mode,speed, arbitraryFeedForward);
+
+    }
+
+    @Override
     public void pidWrite(double output) {
         ((WPI_TalonSRX)controller).set(output);
     }
@@ -104,6 +114,8 @@ public class TalonSRX extends SmartSpeedController {
     public boolean getReverseLimit() {
         return ((WPI_TalonSRX)controller).getSensorCollection().isRevLimitSwitchClosed();
     }
+
+    
 
     
 

@@ -35,7 +35,7 @@ public class Constants {
 		public static int kTalonDrivePeakCurrentDuration = 0;
 		public static int kNEODriveStallCurrentLimit = 80;
 		public static int kNEODriveFreeCurrentLimit = 20;
-		public static double kSafeImpactSpeed = 6; //inches/sec
+		public static double kSafeImpactSpeed = 2; //inches/sec
 		public static double kSafeImpactRevsHighGear = kSafeImpactSpeed / kRevToInConvFactorHighGear * 60;
 		public static double kSafeImpactRevsLowGear = kSafeImpactSpeed / kRevToInConvFactorLowGear * 60;
 		public static double kDriveDeadband = .1;
@@ -98,7 +98,7 @@ public class Constants {
 		public static final int kIntakeCurrentDuration = 0; //last year 100ms
 //PID Constants
 	//Gyrolock
-		public static double kGyroLock_kP = .005;
+		public static double kGyroLock_kP = .007;
 		public static double kGyroLock_kI = 0;
 		public static double kGyroLock_kD = 0;
 		public static double kGyroLock_kF = 0;
@@ -140,12 +140,10 @@ public class Constants {
 	//Motion Profile Heading
 		public static double kMotionProfileHeading_kP =  .025;
 		public static double kMotionProfileHeading_kI = 0;
-		public static double kMotionProfileHeading_kD =0;
+		public static double kMotionProfileHeading_kD = 0;
 		public static double kMotionProfileHeading_kF = 0;
 		public static double kMotionProfileHeading_kA = 0;
 
-	//Elevator
-		
 //Drive Motion Profile
 		public static int kDriveMotionControlFramePeriod = 5; //ms
 		public static int kDriveMotionControlTrajectoryPeriod = 10; //ms
@@ -157,36 +155,36 @@ public class Constants {
 
 
 	//Backward High
-		public static final int kMotionProfileLeftBackHigh_kV = 0;
-		public static final int kMotionProfileLeftBackHigh_kA = 0;
-		public static final int kMotionProfileRightBackHigh_kV = 0;
-		public static final int kMotionProfileRightBackHigh_kA = 0;
-		public static final int kMotionProfileLeftBackHigh_Intercept = 0;
-		public static final int kMotionProfileRightBackHigh_Intercept = 0;
+		public static final double kMotionProfileLeftBackHigh_kV = 0.405300;
+		public static final double kMotionProfileLeftBackHigh_kA = 0.116836;
+		public static final double kMotionProfileRightBackHigh_kV = 0.404891;
+		public static final double kMotionProfileRightBackHigh_kA = 0.112193;
+		public static final double kMotionProfileLeftBackHigh_Intercept = -0.224794;
+		public static final double kMotionProfileRightBackHigh_Intercept = -0.224633;
 	
 	//Backward Low
-		public static final int kMotionProfileLeftBackLow_kV = 0;
-		public static final int kMotionProfileLeftBackLow_kA = 0;
-		public static final int kMotionProfileRightBackLow_kV = 0;
-		public static final int kMotionProfileRightBackLow_kA = 0;
-		public static final int kMotionProfileLeftBackLow_Intercept = 0;
-		public static final int kMotionProfileRightBackLow_Intercept = 0;
+		public static final double kMotionProfileLeftBackLow_kV = 1.155675;
+		public static final double kMotionProfileLeftBackLow_kA = 0.073760;
+		public static final double kMotionProfileRightBackLow_kV = 1.152577;
+		public static final double kMotionProfileRightBackLow_kA = 0.070087;
+		public static final double kMotionProfileLeftBackLow_Intercept = -0.153507;
+		public static final double kMotionProfileRightBackLow_Intercept = -0.153590;
 
 	//Forward High
-		public static final int kMotionProfileLeftForeHigh_kV = 0;
-		public static final int kMotionProfileLeftForeHigh_kA = 0;
-		public static final int kMotionProfileRightForeHigh_kV = 0;
-		public static final int kMotionProfileRightForeHigh_kA = 0;
-		public static final int kMotionProfileLeftForeHigh_Intercept = 0;
-		public static final int kMotionProfileRightForeHigh_Intercept = 0;
+		public static final double kMotionProfileLeftForeHigh_kV = 0.406833;
+		public static final double kMotionProfileLeftForeHigh_kA = 0.111773;
+		public static final double kMotionProfileRightForeHigh_kV = 0.404819;
+		public static final double kMotionProfileRightForeHigh_kA = 0.111560;
+		public static final double kMotionProfileLeftForeHigh_Intercept = 0.208396;
+		public static final double kMotionProfileRightForeHigh_Intercept = 0.209398;
 
 	//Forward Low
-		public static final int kMotionProfileLeftForeLow_kV = 0;
-		public static final int kMotionProfileLeftForeLow_kA = 0;
-		public static final int kMotionProfileRightForeLow_kA = 0;
-		public static final int kMotionProfileRightForeLow_kV = 0;
-		public static final int kMotionProfileLeftForeLow_Intercept = 0;
-		public static final int kMotionProfileRightForeLow_Intercept = 0;
+		public static final double kMotionProfileLeftForeLow_kV = 1.156284;
+		public static final double kMotionProfileLeftForeLow_kA = 0.079620;
+		public static final double kMotionProfileRightForeLow_kA = 1.153209;
+		public static final double kMotionProfileRightForeLow_kV = 0.078809;
+		public static final double kMotionProfileLeftForeLow_Intercept = 0.143938;
+		public static final double kMotionProfileRightForeLow_Intercept = 0.143260;
 		
 //camera
 		public static int kLEDDefault = 0;
@@ -244,6 +242,9 @@ public class Constants {
 
 
 		public static final int kGyroDelay = 0;
+
+		//Controls
+		public static final double kJoystickDeadband = .15;
 
 
 }

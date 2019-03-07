@@ -19,6 +19,9 @@ public class CargoIntake implements Subsystem {
         TRANSFERRING,
         VOMIT,
         PLACE,
+        INTAKE_DOWN,
+        CLIMB,
+        DRIVE_BACK,
         OVERRIDE
     }
 
@@ -104,6 +107,13 @@ public class CargoIntake implements Subsystem {
                 break;
             case VOMIT:
                 setIntakeSpeed(-1);
+                break;
+            case INTAKE_DOWN:
+                setIntakeDown(true);
+                break;
+            case DRIVE_BACK:
+                setIntakeDown(true);
+                setIntakeSpeed(1);
                 break;
             case OVERRIDE:
                 setIntakeDown(true);
