@@ -68,6 +68,7 @@ public class HatchMechanism implements Subsystem {
             case LOWER:
                 if(elevator.inPosition()) {
                     setGripperDown(true);
+                    setSliderOut(true);
                     timer.start();
                     elevator.set(Constants.kElevatorHatchPickup);
                     currentState = State.GRAB;
@@ -75,7 +76,8 @@ public class HatchMechanism implements Subsystem {
                 break;
             case GRAB:
                 if(timer.get() > .1 && elevator.inPosition()) {
-                    setGripperDown(false);    
+                    setGripperDown(false);
+                    setSliderOut(false);
                     timer.stop();
                     timer.reset();
                     currentState = State.RAISE;
@@ -171,6 +173,11 @@ public class HatchMechanism implements Subsystem {
 
     public void setRetractRequest(boolean request) {
         retractRequest = request;
+    }
+
+    @Override
+    public void debug() {
+
     }
 
 }

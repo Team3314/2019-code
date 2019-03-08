@@ -33,4 +33,9 @@ public class Superstructure implements Subsystem {
         compressor.setClosedLoopControl(false);
     }
 
+    @Override
+    public void debug() {
+
+    }
+
 }

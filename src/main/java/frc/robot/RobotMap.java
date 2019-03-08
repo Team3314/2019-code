@@ -94,7 +94,7 @@ public class RobotMap {
         Solenoid leftLightRing;
         Solenoid rightLightRing;
 
-        AnalogInput distanceSensor;
+        AnalogInput distanceSensor, atTargetSensor;
 
         Compressor compressor;
     
@@ -258,5 +258,6 @@ public class RobotMap {
         climberPiston = new DoubleSolenoid(0, 4, 5);
 
         distanceSensor = new AnalogInput(2);
+        atTargetSensor = new AnalogInput(3);
     }
 }

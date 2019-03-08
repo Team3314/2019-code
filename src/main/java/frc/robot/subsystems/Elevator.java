@@ -109,6 +109,7 @@ public class Elevator extends Lift implements Subsystem {
                     case MANUAL:
                         break;
                     case HOMING:
+                        homed = false;
                         break;
                 }
                     currentElevatorMode = mode;
@@ -120,6 +121,11 @@ public class Elevator extends Lift implements Subsystem {
     }
     public boolean inPosition() {
         return Math.abs(transmission.getPosition() - demand) <= Constants.kElevatorTolerance;
+    }
+
+    @Override
+    public void debug() {
+
     }
 
 }

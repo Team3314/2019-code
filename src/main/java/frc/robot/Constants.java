@@ -220,7 +220,7 @@ public class Constants {
 		public static final Value kIntakeUp = Value.kForward; 
 		public static final Value kIntakeClimberUp = Value.kReverse;
 		public static final Value kIntakeClimberDown = Value.kForward;
-		public static final double kCargoSensorVoltageThreshold = 3;
+		public static final double kOpticalSensorVoltageThreshold = 3;
 
 
 		public static final double kRightStopUpAngle = 82;

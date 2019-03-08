@@ -37,7 +37,7 @@ public class Robot extends TimedRobot {
   public static RobotMap map = new RobotMap();
   public static HumanInput HI = new HumanInput();
   public static Camera camera = new Camera(map.leftLightRing, map.rightLightRing);
-  public static Drive drive = new Drive(map.leftDrive, map.rightDrive, map.navx, map.shifter, map.leftDriveEncoder, map.rightDriveEncoder, map.distanceSensor);
+  public static Drive drive = new Drive(map.leftDrive, map.rightDrive, map.navx, map.shifter, map.leftDriveEncoder, map.rightDriveEncoder, map.distanceSensor, map.atTargetSensor);
   public static Elevator elevator = new Elevator(map.elevatorTransmission);
   public static CargoIntake cargoIntake = new CargoIntake(map.intakeTransmission, map.outtakeTransmission, map.intakePiston);
   public static HatchMechanism hatch = new HatchMechanism(map.gripperPiston, map.sliderPiston);
@@ -53,6 +53,9 @@ public class Robot extends TimedRobot {
     @Override
     public void run() {
       outputToSmartDashboard();
+      if(HI.getDebugMode()) {
+        debug();
+      }
     }
   };
   public Notifier smartDashboardNotifier = new Notifier(smartDashboardRunnable);
@@ -139,14 +142,18 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     allPeriodic();
 
-    drive.setVelocityControl(HI.getVelocityControl());
     if(HI.getAuto()) {
       auto.update();
       elevator.setElevatorState(ElevatorControlMode.MOTION_MAGIC);
-    } else{
-      auto.reset();
+    } 
+    else if(climber.isClimbing()) {
       climber.setStopClimb(HI.getAbortClimb());
-      if(cargoIntake.getCargoInCarriage()) {
+      climber.setClimbRequest(HI.getClimbMode());
+      climber.setPreviousStateRequest(HI.getPrevious());
+    }
+    else {
+      auto.reset();
+      if(cargoIntake.getCargoCarriageSensor()) {
         if(HI.getStoreElevatorLevel1()) {
           gamePieceStateMachine.setMode(GamePieceStateMachineMode.BALL_LEVEL1);
         }
@@ -173,8 +180,7 @@ public class Robot extends TimedRobot {
       }
       if(HI.getAutoGamePiece()) {
         gamePieceStateMachine.setRequest(true);
-        if(HI.getGyrolock())
-          drive.setTank(HI.getLeftThrottle(),HI.getLeftThrottle(), 2);
+        gamePieceStateMachine.setDriveSpeed(HI.getRightThrottle());
       }
       else {
         gamePieceStateMachine.setRequest(false);
@@ -224,14 +230,14 @@ public class Robot extends TimedRobot {
         if(HI.getCargoEject()) {
           cargoIntake.stopLoadingBall();
         }
-        hatch.setPlaceRequest(HI.getAutoHatchPlace());
-        hatch.setRetractRequest(HI.getAutoHatchRetract());
+        hatch.setPlaceRequest(HI.getHatchPlace());
+        hatch.setRetractRequest(HI.getHatchRetract());
         if(!elevator.isHoming()) {
           if(!HI.getElevatorManual()) {
             cargoIntake.setIntakeRequest(HI.getAutoCargoIntake()); 
-            hatch.setIntakeRequest(HI.getAutoHatchIntake());
+            hatch.setIntakeRequest(HI.getHatchIntake());
           }
-          if(!cargoIntake.getLoadingBall() && !HI.getAutoHatchIntake() && !HI.getAutoHatchPlace()) {
+          if(!cargoIntake.getLoadingBall() && !HI.getHatchIntake() && !HI.getHatchPlace()) {
             if(HI.getElevatorManual()) {
               elevator.setElevatorState(ElevatorControlMode.MANUAL);
               elevator.set(HI.getElevatorSpeed());
@@ -242,7 +248,7 @@ public class Robot extends TimedRobot {
             else {
               elevator.setElevatorState(ElevatorControlMode.MOTION_MAGIC);
               if(HI.getElevatorLevel1()) {
-                if(cargoIntake.getCargoInCarriage()) {
+                if(cargoIntake.getCargoCarriageSensor()) {
                   elevator.set(Constants.kElevatorBallLevel1);
                 }
                 else {
@@ -250,7 +256,7 @@ public class Robot extends TimedRobot {
                 }
               }
               else if (HI.getElevatorLevel2()) {
-                if(cargoIntake.getCargoInCarriage()) {
+                if(cargoIntake.getCargoCarriageSensor()) {
                   elevator.set(Constants.kElevatorBallLevel2);
                 }
                 else {
@@ -258,7 +264,7 @@ public class Robot extends TimedRobot {
                 }
               }
               else if(HI.getElevatorLevel3()) {
-                if(cargoIntake.getCargoInCarriage()) {
+                if(cargoIntake.getCargoCarriageSensor()) {
                   elevator.set(Constants.kElevatorBallLevel3);
                 }
                 else {
@@ -282,6 +288,9 @@ public class Robot extends TimedRobot {
             }
             else if(HI.getCargoEject()) {
               cargoIntake.setIntakeState(IntakeState.VOMIT);
+            }
+            else if(HI.getCargoReverseOuttake()) {
+              cargoIntake.setIntakeState(IntakeState.REVERSE_OUTTAKE);
             }
             else {
               cargoIntake.setIntakeState(IntakeState.WAITING);
@@ -334,6 +343,16 @@ public class Robot extends TimedRobot {
     superstructure.outputToSmartDashboard();
     climber.outputToSmartDashboard();
     gamePieceStateMachine.outputToSmartDashboard();
+  }
+
+  public void debug() {
+    cargoIntake.debug();
+    drive.debug();
+    hatch.debug();
+    elevator.debug();
+    camera.debug();
+    superstructure.debug();
+    gamePieceStateMachine.debug();
   }
 
   public void allPeriodic() {

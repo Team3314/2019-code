@@ -19,8 +19,8 @@ public class CargoIntake implements Subsystem {
         TRANSFERRING,
         VOMIT,
         PLACE,
+        REVERSE_OUTTAKE,
         INTAKE_DOWN,
-        CLIMB,
         DRIVE_BACK,
         OVERRIDE
     }
@@ -36,6 +36,7 @@ public class CargoIntake implements Subsystem {
     private boolean lastIntakeRequest, lastPlaceRequest, lastVomitRequest;
 
     private boolean loadingBall = false;
+    private boolean hasCargo = false;
 
     private AnalogInput intakeCargoSensor = new AnalogInput(0), elevatorCargoSensor = new AnalogInput(1);
     private DigitalInput raisedSensor = new DigitalInput(4);
@@ -69,7 +70,10 @@ public class CargoIntake implements Subsystem {
                     currentIntakeState = IntakeState.PLACE;
                 }
                 if(intakeRequest && !lastIntakeRequest) {
-                    if(getCargoInCarriage()) {
+                    if(getCargoIntakeSensor()) {
+                        currentIntakeState = IntakeState.TRANSFERRING;
+                    }
+                    if(getCargoCarriageSensor()) {
                         currentIntakeState = IntakeState.WAITING;
                         break;
                     }
@@ -83,7 +87,7 @@ public class CargoIntake implements Subsystem {
                 setIntakeDown(true);
                 setIntakeSpeed(1);
                 elevator.set(Constants.kElevatorBallLevel1);
-                if(getCargoInIntake() && intakeRequest) {
+                if(getCargoIntakeSensor() && intakeRequest) {
                     currentIntakeState = IntakeState.RAISING;
                 }
                 break;
@@ -98,9 +102,12 @@ public class CargoIntake implements Subsystem {
                 setIntakeDown(false);
                 setOuttakeSpeed(.25);
                 setIntakeSpeed(1);
-                if(getCargoInCarriage()) {
+                if(getCargoCarriageSensor()) {
                     currentIntakeState = IntakeState.WAITING;
                 }
+                break;
+            case REVERSE_OUTTAKE:
+                setOuttakeSpeed(-.25);
                 break;
             case PLACE:
                 setOuttakeSpeed(1);
@@ -188,8 +195,8 @@ public class CargoIntake implements Subsystem {
         SmartDashboard.putString("Cargo Intake IntakeState", getIntakeState().toString());
         SmartDashboard.putNumber("Cargo intake sensor voltage", intakeCargoSensor.getVoltage());
         SmartDashboard.putNumber("Elevator Cargo sensor Voltage", elevatorCargoSensor.getVoltage());
-        SmartDashboard.putBoolean("Ball in Intake", getCargoInIntake());
-        SmartDashboard.putBoolean("Ball in Carriage", getCargoInCarriage());
+        SmartDashboard.putBoolean("Ball in Intake", getCargoIntakeSensor());
+        SmartDashboard.putBoolean("Ball in Carriage", getCargoCarriageSensor());
         SmartDashboard.putBoolean("Cargo Intake Raised", getIsUp());
     }
 
@@ -198,12 +205,12 @@ public class CargoIntake implements Subsystem {
         setIntakeState(IntakeState.WAITING);
     }
 
-    public boolean getCargoInIntake() {
-        return intakeCargoSensor.getVoltage() < Constants.kCargoSensorVoltageThreshold && intakeCargoSensor.getVoltage() != 0;
+    public boolean getCargoIntakeSensor() {
+        return intakeCargoSensor.getVoltage() < Constants.kOpticalSensorVoltageThreshold && intakeCargoSensor.getVoltage() != 0;
     }
 
-    public boolean getCargoInCarriage() {
-        return elevatorCargoSensor.getVoltage() < Constants.kCargoSensorVoltageThreshold && elevatorCargoSensor.getVoltage() != 0;
+    public boolean getCargoCarriageSensor() {
+        return elevatorCargoSensor.getVoltage() < Constants.kOpticalSensorVoltageThreshold && elevatorCargoSensor.getVoltage() != 0;
     }
     public boolean getIsUp() {
         return !raisedSensor.get();
@@ -213,5 +220,12 @@ public class CargoIntake implements Subsystem {
     }
     public void stopLoadingBall() {
         loadingBall = false;
+    }
+
+
+
+    @Override
+    public void debug() {
+
     }
 }

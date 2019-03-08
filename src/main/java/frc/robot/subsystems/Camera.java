@@ -25,7 +25,7 @@ public class Camera implements Subsystem {
 		driveStationCamera = new NetworkTableEntry(NetworkTableInstance.getDefault(), 420);
 		
 	private boolean targetInView, leftHasLeft, rightHasRight;
-	private double targetHorizError, targetVertError, targetArea, targetSkew, targetLatency;
+	private double targetHorizError;
 	
 	private double camMode, snapshot;
 	private String camString, snapshotString;
@@ -135,21 +135,17 @@ public class Camera implements Subsystem {
 	
 	@Override
 	public void outputToSmartDashboard() {
-		SmartDashboard.putBoolean("Targets in view", isTargetInView());
-		SmartDashboard.putNumber("Target horizontal error", getTargetHorizError());
-		SmartDashboard.putNumber("Target vertical error", targetVertError);
-		SmartDashboard.putNumber("Target area", targetArea);
-		SmartDashboard.putNumber("Target skew", targetSkew);
-		SmartDashboard.putNumber("Target latency", targetLatency);
-		SmartDashboard.putNumber("Distance", getDistance());
-		SmartDashboard.putBoolean("Light Rings On", getLightRingsOn());
-		SmartDashboard.putString("Camera mode", getCamMode());
-		SmartDashboard.putString("Snapshot mode", getSnapshot());
-		SmartDashboard.putNumber("Correction", correction);
-		SmartDashboard.putNumber("Angle Offset", SmartDashboard.getNumber("Angle offset", 0));
 	}
 
 	@Override
 	public void resetSensors() {
+	}
+
+	@Override
+	public void debug() {
+		SmartDashboard.putBoolean("Targets in view", isTargetInView());
+		SmartDashboard.putNumber("Target horizontal error", getTargetHorizError());
+		SmartDashboard.putNumber("Distance", getDistance());
+		SmartDashboard.putBoolean("Light Rings On", getLightRingsOn());
 	}
 }

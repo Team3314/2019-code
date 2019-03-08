@@ -6,6 +6,8 @@ public interface Subsystem {
 
     public void outputToSmartDashboard();
 
+    public void debug();
+
     public void resetSensors();
 
 }

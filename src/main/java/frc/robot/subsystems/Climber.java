@@ -47,11 +47,13 @@ public class Climber implements Subsystem {
         }
         switch(currentState) {
             case WAITING:
+                climberPiston.set(Constants.kClimberUp);
+                intakeClimbPiston.set(Constants.kIntakeClimberUp);
                 if(climbRequest && !lastClimbRequest) {
                     currentState = State.INTAKE_DOWN;
                 }
                 break;
-            case INTAKE_DOWN:
+            case INTAKE_DOWN:    
                     highPressure.set(true);
                     climberPiston.set(Constants.kClimberUp);
                     cargoIntake.setIntakeState(IntakeState.INTAKE_DOWN);
@@ -88,7 +90,7 @@ public class Climber implements Subsystem {
                     currentState = State.CLIMBER_DOWN;
                 }
                 if(climbRequest && !lastClimbRequest) {
-                    currentState = State.WAITING;
+                    currentState = State.RAISE_CLIMBER;
                 }
                 break;
             case DRIVE:
@@ -142,6 +144,11 @@ public class Climber implements Subsystem {
 
     @Override
     public void resetSensors() {
+
+    }
+
+    @Override
+    public void debug() {
 
     }
 
