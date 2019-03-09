@@ -48,12 +48,14 @@ public class HumanInput {
 		return gamepad.getRawButton(10); // right stick in
 	}
 //Drive Controls
+	// TODO: getLeftThrottle() should come out of deadband near zero, not at the deadband value
    public double getLeftThrottle() {
 		double throttle = -leftStick.getRawAxis(1);
 		if(Math.abs(throttle) < Constants.kJoystickDeadband)
 			throttle = 0;
 		return throttle;
 	}
+	// TODO: getRightThrottle() should come out of deadband near zero, not at the deadband value
 	public double getRightThrottle() {
 		double throttle = -rightStick.getRawAxis(1);
 		if(Math.abs(throttle) < Constants.kJoystickDeadband)
