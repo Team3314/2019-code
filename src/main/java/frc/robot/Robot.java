@@ -36,7 +36,7 @@ public class Robot extends TimedRobot {
   
   public static RobotMap map = new RobotMap();
   public static HumanInput HI = new HumanInput();
-  public static Camera camera = new Camera(map.leftLightRing, map.rightLightRing);
+  public static Camera camera = new Camera(map.leftLightRing, map.rightLightRing, map.targetsLight);
   public static Drive drive = new Drive(map.leftDrive, map.rightDrive, map.navx, map.shifter, map.leftDriveEncoder, map.rightDriveEncoder, map.distanceSensor, map.atTargetSensor);
   public static Elevator elevator = new Elevator(map.elevatorTransmission);
   public static CargoIntake cargoIntake = new CargoIntake(map.intakeTransmission, map.outtakeTransmission, map.intakePiston);
@@ -192,7 +192,7 @@ public class Robot extends TimedRobot {
         // Drive Controls
         if(HI.getGyrolock()) {
           drive.setDriveMode(DriveMode.GYROLOCK);
-          drive.setTank(HI.getLeftThrottle(), HI.getLeftThrottle(), 2);
+          drive.setTank(HI.getLeftThrottle(), HI.getLeftThrottle(), Constants.kJoystickPower);
           /*  XXX GYRO TEST CODE
           if(HI.turnToZero())
             drive.setDesiredAngle(0);
@@ -206,11 +206,11 @@ public class Robot extends TimedRobot {
         }
         else if(HI.getVision()) {
           drive.setDriveMode(DriveMode.VISION_CONTROL);
-          drive.setTank(HI.getRightThrottle(), HI.getRightThrottle(), 2);
+          drive.setTank(HI.getRightThrottle(), HI.getRightThrottle(), Constants.kJoystickPower);
         }
         else {  
           drive.setDriveMode(DriveMode.TANK);
-          drive.setTank(HI.getLeftThrottle(), HI.getRightThrottle(), 2);
+          drive.setTank(HI.getLeftThrottle(), HI.getRightThrottle(), Constants.kJoystickPower);
         }
         if(HI.getHighGear()) {
           drive.setHighGear(true);
@@ -235,9 +235,10 @@ public class Robot extends TimedRobot {
         if(!elevator.isHoming()) {
           if(!HI.getElevatorManual()) {
             cargoIntake.setIntakeRequest(HI.getAutoCargoIntake()); 
+            cargoIntake.setPickupFromStationRequest(HI.getCargoStationPickup());
             hatch.setIntakeRequest(HI.getHatchIntake());
           }
-          if(!cargoIntake.getLoadingBall() && !HI.getHatchIntake() && !HI.getHatchPlace()) {
+          if(!cargoIntake.getLoadingBall() && !HI.getHatchIntake() && !HI.getHatchPlace() && !HI.getCargoStationPickup()) {
             if(HI.getElevatorManual()) {
               elevator.setElevatorState(ElevatorControlMode.MANUAL);
               elevator.set(HI.getElevatorSpeed());
@@ -290,7 +291,7 @@ public class Robot extends TimedRobot {
               cargoIntake.setIntakeState(IntakeState.VOMIT);
             }
             else if(HI.getCargoReverseOuttake()) {
-              cargoIntake.setIntakeState(IntakeState.REVERSE_OUTTAKE);
+              cargoIntake.setIntakeState(IntakeState.PICKUP_FROM_STATION);
             }
             else {
               cargoIntake.setIntakeState(IntakeState.WAITING);

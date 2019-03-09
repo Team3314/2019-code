@@ -19,6 +19,7 @@ public class GamePieceStateMachine {
         ALIGNING,
         DRIVING,
         GRABBING_HATCH,
+        GRABBING_BALL,
         PLACING_HATCH,
         PLACING_BALL,
         BACKUP_HATCH,
@@ -34,7 +35,8 @@ public class GamePieceStateMachine {
         BALL_LEVEL1,
         BALL_LEVEL2,
         BALL_LEVEL3,
-        HATCH_PICKUP
+        HATCH_PICKUP,
+        BALL_PICKUP
     }
 
 
@@ -116,6 +118,10 @@ public class GamePieceStateMachine {
                         desiredElevatorHeight = Constants.kElevatorHatchPickup;
                         nextState = GamePieceState.GRABBING_HATCH;
                         break;
+                    case BALL_PICKUP:
+                        desiredElevatorHeight = Constants.kElevatorBallStationPickup;
+                        nextState = GamePieceState.GRABBING_BALL;
+                        break;
                 }
                 if(drive.getDistanceToTarget() <= 48) {
                     if(mode == GamePieceStateMachineMode.HATCH_PICKUP) {
@@ -130,23 +136,33 @@ public class GamePieceStateMachine {
                     }*/
                     elevator.set(desiredElevatorHeight);   
                     
-                    if(drive.getDistanceSensor() && elevator.inPosition()) {
+                    if(drive.getStationSensor() && elevator.inPosition() && (nextState == GamePieceState.GRABBING_HATCH || nextState == GamePieceState.GRABBING_BALL)) {
                         currentState = nextState;
                         drive.set(0,0);
                     }
-
+                    else if(drive.getRocketSensor() && elevator.inPosition()) {
+                        currentState = nextState;
+                        drive.set(0,0);
+                    }
                 }
                 break;
             case GRABBING_HATCH:
                 hatch.setIntakeRequest(true);
                 if(hatch.isDone()) {
                     hatch.setIntakeRequest(false);
+                    mode = GamePieceStateMachineMode.HATCH_LEVEL1;
                     currentState = GamePieceState.BACKUP_HATCH;
                     drive.resetDriveEncoders();
                 }
                 break;
+            case GRABBING_BALL:
+                cargoIntake.setPickupFromStationRequest(true);
+                if(cargoIntake.isDone()) {
+                    cargoIntake.setPickupFromStationRequest(false);
+                }
+                break;
             case PLACING_BALL:
-                cargoIntake.setIntakeState(IntakeState.PLACE);
+                cargoIntake.setPlaceRequest(true);
                 if(!cargoIntake.getCargoCarriageSensor()) {
                     drive.resetDriveEncoders();
                     currentState = GamePieceState.BACKUP_BALL;
@@ -172,6 +188,7 @@ public class GamePieceStateMachine {
             case BACKUP_BALL:
                 drive.setDriveMode(DriveMode.GYROLOCK);
                 elevator.set(Constants.kElevatorHatchPickup);
+                cargoIntake.setPlaceRequest(false);
                 drive.set(-.25, -.25);
                 if(drive.getAverageRioPosition() <= -12) {
                     hatch.setRetractRequest(true);

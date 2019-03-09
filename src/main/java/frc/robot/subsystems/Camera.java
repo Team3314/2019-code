@@ -34,13 +34,14 @@ public class Camera implements Subsystem {
 
 	private double correction;
 
-	private Solenoid leftLightRing, rightLightRing;
+	private Solenoid leftLightRing, rightLightRing, targetsLight;
     
     private double rawDistance;
 	
-	public Camera(Solenoid leftLightRing, Solenoid rightLightRing) {
+	public Camera(Solenoid leftLightRing, Solenoid rightLightRing, Solenoid targetsLight) {
 		this.leftLightRing = leftLightRing;
 		this.rightLightRing = rightLightRing;
+		this.targetsLight = targetsLight;
 	}	
 
 	@Override
@@ -54,6 +55,8 @@ public class Camera implements Subsystem {
 		rightHasRight = table.getEntry("Right hasRight").getBoolean(false);
 		leftHasLeft = table.getEntry("Left hasLeft").getBoolean(false);
 		targetInView = rightHasRight && leftHasLeft && targetHorizError != -1.0 && rawDistance > 0;
+
+		targetsLight.set(targetInView);
     }
 
 	/**

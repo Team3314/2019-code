@@ -40,13 +40,27 @@ public class HumanInput {
 		double throttle = -leftStick.getRawAxis(1);
 		if(Math.abs(throttle) < Constants.kJoystickDeadband)
 			throttle = 0;
+		else if(throttle < 0) {
+			throttle += Constants.kJoystickDeadband;
+		}
+		else if(throttle > 0) {
+			throttle -= Constants.kJoystickDeadband;
+		}
+		throttle *= Constants.kJoystickThrottleScale;
 		return throttle;
 	}
 	public double getRightThrottle() {
 		double throttle = -rightStick.getRawAxis(1);
 		if(Math.abs(throttle) < Constants.kJoystickDeadband)
 			throttle = 0;
-		return throttle;
+		else if(throttle < 0) {
+			throttle += Constants.kJoystickDeadband;
+		}
+		else if(throttle > 0) {
+			throttle -= Constants.kJoystickDeadband;
+		}
+		throttle *= Constants.kJoystickThrottleScale;
+		return (throttle);
 	}
 	public boolean getLowGear() {
 		return leftStick.getRawButton(4);
@@ -117,8 +131,11 @@ public class HumanInput {
 	public boolean getCargoEject() {
 		return buttonBox.getRawButton(3); // Button Box 3 shoots cargo backwards towards intake
 	}
-	public boolean getCargoReverseOuttake() {
+	public boolean getCargoStationPickup() {
 		return gamepad.getRawButton(4);
+	}
+	public boolean getCargoReverseOuttake() {
+		return buttonBox.getRawButton(4);
 	}
 	//Hatch Intake Controls
 	public boolean getHatchIntake() { //Loading Station (x)
@@ -184,11 +201,11 @@ public class HumanInput {
 	}
 
 	public boolean getPrevious() {
-		return buttonBox.getRawButton(6);
+		return gamepad.getRawButton(7) && gamepad.getRawButton(6);
 	}
 
 	public boolean getAbortClimb() {
-		return gamepad.getRawButton(7) && gamepad.getRawButton(6);
+		return buttonBox.getRawButton(6);
 	}
 
 //Camera

@@ -68,7 +68,7 @@ public class HatchMechanism implements Subsystem {
             case LOWER:
                 if(elevator.inPosition()) {
                     setGripperDown(true);
-                    setSliderOut(true);
+                    //setSliderOut(true);
                     timer.start();
                     elevator.set(Constants.kElevatorHatchPickup);
                     currentState = State.GRAB;

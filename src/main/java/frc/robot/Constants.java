@@ -52,7 +52,7 @@ public class Constants {
 		public static MotorType kSparkMotorType = CANSparkMaxLowLevel.MotorType.kBrushless;
 		public static double kDrivePIDPeriod = .02;
 		public static double kRaisedElevatorDriveRampRate = .5;
-		public static double kRaisedElevatorDriveSpeedCap = kMaxSpeedLowGear;
+		public static double kRaisedElevatorDriveSpeedCap = 50; // in/s
 		
 
 //Elevator
@@ -78,11 +78,12 @@ public class Constants {
 	
 		public static final int kElevatorHatchPickup = (int)(5 / kElevatorInchesPerTick);
 		public static final int kElevatorRaisedHatchPickup = (int)(7.5 / kElevatorInchesPerTick);
+		public static final int kElevatorBallStationPickup = (int)(25/ kElevatorInchesPerTick);
 		public static final int kElevatorBallLevel1 = (int)(2.5 / kElevatorInchesPerTick);
-		public static final int kElevatorBallLevel2 = (int)(27 / kElevatorInchesPerTick);
+		public static final int kElevatorBallLevel2 = (int)(28 / kElevatorInchesPerTick);
 		public static final int kElevatorBallLevel3 = (int)(55 / kElevatorInchesPerTick);
 		public static final int kElevatorHatchLevel1 = (int)(5 / kElevatorInchesPerTick);
-		public static final int kElevatorHatchLevel2 = (int)(32 / kElevatorInchesPerTick);
+		public static final int kElevatorHatchLevel2 = (int)(33 / kElevatorInchesPerTick);
 		public static final int kElevatorHatchLevel3 = (int)(62 / kElevatorInchesPerTick);
 
 		public static double kElevator_kP = .1;
@@ -95,7 +96,7 @@ public class Constants {
 //Cargo Intake
 		public static final int kIntakeContinuousCurrentLimit = 0; //last year 15a
 		public static final int kIntakePeakCurrentLimit = 0; //last year 15a
-		public static final int kIntakeCurrentDuration = 0; //last year 100ms
+		public static final int kIntakeCurrentDuration = 0; //last year 100 ms
 //PID Constants
 	//Gyrolock
 		public static double kGyroLock_kP = .007;
@@ -245,6 +246,10 @@ public class Constants {
 
 		//Controls
 		public static final double kJoystickDeadband = .15;
+
+		public static final double kJoystickThrottleScale = 1/ (1-kJoystickDeadband);
+
+		public static final int kJoystickPower = 1;
 
 
 }

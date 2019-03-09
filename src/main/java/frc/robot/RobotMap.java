@@ -93,6 +93,7 @@ public class RobotMap {
 
         Solenoid leftLightRing;
         Solenoid rightLightRing;
+        Solenoid targetsLight;
 
         AnalogInput distanceSensor, atTargetSensor;
 
@@ -246,6 +247,7 @@ public class RobotMap {
         highPressure = new Solenoid(2, 2);
         leftLightRing = new Solenoid(2, 0);
         rightLightRing = new Solenoid(2, 1);
+        targetsLight = new Solenoid(2, 3);
 
     //Hatch mechanism
         gripperPiston = new DoubleSolenoid(1, 0, 1);

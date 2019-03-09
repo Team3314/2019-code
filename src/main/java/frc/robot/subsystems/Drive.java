@@ -70,7 +70,7 @@ public class Drive extends Drivetrain implements Subsystem {
 
     private EncoderAdapter leftRioEncoder, rightRioEncoder;
 
-    private AnalogInput distanceSensor, atTargetSensor;
+    private AnalogInput rocktSensor, stationSensor;
 
     private Camera camera;
     public Drive(EncoderTransmission left, EncoderTransmission right, AHRS gyro, DoubleSolenoid shifter, EncoderAdapter leftEnc, EncoderAdapter rightEnc, AnalogInput distanceSensor, AnalogInput atTargetSensor){
@@ -78,8 +78,8 @@ public class Drive extends Drivetrain implements Subsystem {
         camera = Robot.camera;
         leftRioEncoder = leftEnc;
         rightRioEncoder = rightEnc;
-        this.distanceSensor = distanceSensor;
-        this.atTargetSensor = atTargetSensor;
+        this.rocktSensor = distanceSensor;
+        this.stationSensor = atTargetSensor;
 
     	
 		//Hardware
@@ -157,7 +157,7 @@ public class Drive extends Drivetrain implements Subsystem {
         
 
         tickToInConversion = neoInchesPerRev / Constants.kNEODriveEncoderCodesPerRev;
-        distanceSensorTriggered = getDistanceSensor();
+        distanceSensorTriggered = getRocketSensor();
         if(distanceSensorTriggered && !lastDistanceSensorTriggered) {
             distanceSensorBookmark = getAverageRioPosition();
         }
@@ -173,7 +173,7 @@ public class Drive extends Drivetrain implements Subsystem {
         gyroAngleHistoryStoreIndex++;
         gyroAngleHistoryStoreIndex %= 199;
 
-        if(camera.isTargetInView()) {
+        if(camera.isTargetInView()&&cameraDistance>=24) {
             cameraTurnAngle = getDelayedGyroAngle() + camera.getTargetHorizError();
             cameraDistance = camera.getDistance();
             targetDistance = getAverageRioPosition() + cameraDistance;
@@ -184,7 +184,6 @@ public class Drive extends Drivetrain implements Subsystem {
         else {
             gyroControl.setI(0);
         }
-        atTarget = (getAverageRioPosition() - distanceSensorBookmark) >= 10;
         updateSpeedAndPosition();
         switch(currentDriveMode) {
             case IDLE:
@@ -395,7 +394,8 @@ public class Drive extends Drivetrain implements Subsystem {
     
     
     public void outputToSmartDashboard() {
-    	
+        SmartDashboard.putBoolean("Rocket Sensor", getRocketSensor());
+        SmartDashboard.putBoolean("Station Sensor", getStationSensor());
     }
   
     public void resetDriveEncoders() {
@@ -443,14 +443,11 @@ public class Drive extends Drivetrain implements Subsystem {
     public double getDistanceToTarget() {
         return targetDistance - getAverageRioPosition() - 12;
     } 
-    public boolean getDistanceSensor() {
-        return distanceSensor.getVoltage() <= Constants.kOpticalSensorVoltageThreshold;
+    public boolean getRocketSensor() {
+        return rocktSensor.getVoltage() <= Constants.kOpticalSensorVoltageThreshold;
     }
-    public boolean getAtTargetSensor() {
-        return atTargetSensor.getVoltage() <= Constants.kOpticalSensorVoltageThreshold;
-    }
-    public boolean getAtTarget() {
-        return atTarget && getDistanceSensor();
+    public boolean getStationSensor() {
+        return stationSensor.getVoltage() <= Constants.kOpticalSensorVoltageThreshold;
     }
 
     private double calcVelocity(double speed, double distance) {

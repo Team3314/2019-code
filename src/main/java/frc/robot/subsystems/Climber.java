@@ -15,7 +15,10 @@ public class Climber implements Subsystem {
         CLIMBER_DOWN,
         INTAKE_FURTHER_DOWN,
         DRIVE,
-        RAISE_CLIMBER
+        RAISE_CLIMBER,
+        KEEP_DRIVING,
+        STOP
+
     }
 
     private DoubleSolenoid climberPiston, intakeClimbPiston;
@@ -45,6 +48,8 @@ public class Climber implements Subsystem {
             intakeClimbPiston.set(Constants.kIntakeClimberUp);
             currentState = State.WAITING;
         }
+        
+        drive.set(.0, .0);
         switch(currentState) {
             case WAITING:
                 climberPiston.set(Constants.kClimberUp);
@@ -90,11 +95,12 @@ public class Climber implements Subsystem {
                     currentState = State.CLIMBER_DOWN;
                 }
                 if(climbRequest && !lastClimbRequest) {
-                    currentState = State.RAISE_CLIMBER;
+                    currentState = State.DRIVE;
                 }
                 break;
             case DRIVE:
                 cargoIntake.setIntakeState(IntakeState.DRIVE_BACK);
+                drive.set(-.1, -.1);
                 if(previousStateRequest && !lastPreviousStateRequest) {
                     currentState = State.INTAKE_FURTHER_DOWN;
                 }
@@ -109,10 +115,28 @@ public class Climber implements Subsystem {
                     currentState = State.DRIVE;
                 }
                 if(climbRequest && !lastClimbRequest) {
+                    currentState = State.KEEP_DRIVING;
+                }
+                break;
+            case KEEP_DRIVING:
+                cargoIntake.setIntakeState(IntakeState.DRIVE_BACK);
+                drive.set(-.1, -.1);
+                if(previousStateRequest && !lastPreviousStateRequest) {
+                    currentState = State.RAISE_CLIMBER;
+                }
+                if(climbRequest && !lastClimbRequest) {
+                    currentState = State.STOP;
+                }
+                break;
+            case STOP:
+                cargoIntake.setIntakeState(IntakeState.INTAKE_DOWN);
+                if(previousStateRequest && !lastPreviousStateRequest) {
+                    currentState = State.KEEP_DRIVING;
+                }
+                if(climbRequest && !lastClimbRequest) {
                     currentState = State.WAITING;
                 }
                 break;
-            
         }
 
         lastClimbRequest = climbRequest;
