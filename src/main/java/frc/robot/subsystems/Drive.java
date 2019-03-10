@@ -4,8 +4,10 @@ package frc.robot.subsystems;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.robot.Constants;
@@ -70,17 +72,22 @@ public class Drive extends Drivetrain implements Subsystem {
 
     private EncoderAdapter leftRioEncoder, rightRioEncoder;
 
-    private AnalogInput distanceSensor, atTargetSensor;
+    private AnalogInput rightRocketSensor, leftRocketSensor;
+
+    private DigitalInput laserStationSensor;
+
+    private boolean lastHighGear;
 
     private Camera camera;
-    public Drive(EncoderTransmission left, EncoderTransmission right, AHRS gyro, DoubleSolenoid shifter, EncoderAdapter leftEnc, EncoderAdapter rightEnc, AnalogInput distanceSensor, AnalogInput atTargetSensor){
+    public Drive(EncoderTransmission left, EncoderTransmission right, AHRS gyro, DoubleSolenoid shifter, 
+        EncoderAdapter leftEnc, EncoderAdapter rightEnc, AnalogInput rightRocketSensor, AnalogInput leftRocketSensor, DigitalInput laserStationSensor){
         super(left, right);
         camera = Robot.camera;
         leftRioEncoder = leftEnc;
         rightRioEncoder = rightEnc;
-        this.distanceSensor = distanceSensor;
-        this.atTargetSensor = atTargetSensor;
-
+        this.rightRocketSensor = rightRocketSensor;
+        this.leftRocketSensor = leftRocketSensor;
+        this.laserStationSensor = laserStationSensor;
     	
 		//Hardware
     	this.shifter = shifter;
@@ -101,7 +108,9 @@ public class Drive extends Drivetrain implements Subsystem {
     }
 
     public void update(){
-       if(mIsHighGear) {
+       if((!mIsHighGear && !lastHighGear) ||(mIsHighGear && lastHighGear))
+            shifter.set(Value.kOff);
+       else if(mIsHighGear) {
             leftDrive.setEncoderDistancePerPulse(Constants.kNeoTicksToInHighGear);
             rightDrive.setEncoderDistancePerPulse(Constants.kNeoTicksToInHighGear);
             shifter.set(Constants.kHighGear);
@@ -154,10 +163,9 @@ public class Drive extends Drivetrain implements Subsystem {
             }
 
         }
-        
 
         tickToInConversion = neoInchesPerRev / Constants.kNEODriveEncoderCodesPerRev;
-        distanceSensorTriggered = getDistanceSensor();
+        distanceSensorTriggered = getAtRocket();
         if(distanceSensorTriggered && !lastDistanceSensorTriggered) {
             distanceSensorBookmark = getAverageRioPosition();
         }
@@ -184,7 +192,6 @@ public class Drive extends Drivetrain implements Subsystem {
         else {
             gyroControl.setI(0);
         }
-        atTarget = (getAverageRioPosition() - distanceSensorBookmark) >= 10;
         updateSpeedAndPosition();
         switch(currentDriveMode) {
             case IDLE:
@@ -269,6 +276,7 @@ public class Drive extends Drivetrain implements Subsystem {
         rightDrive.set(rawRightSpeed, controlMode, arbFFRight);
         leftDrive.set(rawLeftSpeed, controlMode, arbFFLeft);
         lastDistanceSensorTriggered = distanceSensorTriggered;
+        lastHighGear = mIsHighGear;
     }
 
     public void setIdleMode(IdleMode mode) {
@@ -359,6 +367,7 @@ public class Drive extends Drivetrain implements Subsystem {
             if(mode == DriveMode.GYROLOCK || mode == DriveMode.GYROLOCK_LEFT || mode == DriveMode.GYROLOCK_RIGHT) {
                 gyroControl.enable();
                 setGyroDriveDistance(0);
+                driveDistance = false;
                 setDesiredAngle(getAngle());
             }
             else if(mode == DriveMode.VISION_CONTROL) {
@@ -395,7 +404,11 @@ public class Drive extends Drivetrain implements Subsystem {
     
     
     public void outputToSmartDashboard() {
-    	
+        SmartDashboard.putBoolean("Rocket Sensor", getAtRocket());
+        SmartDashboard.putBoolean("Station Sensor", getStationSensor());
+        SmartDashboard.putNumber("Distance To Target", getDistanceToTarget());
+        SmartDashboard.putNumber("Left Rio Encoder Position", leftRioDrivePositionInches);
+        SmartDashboard.putNumber("Right Rio Encoder Position", rightRioDrivePositionInches);
     }
   
     public void resetDriveEncoders() {
@@ -441,16 +454,22 @@ public class Drive extends Drivetrain implements Subsystem {
         this.velocityControl = velocityControl;
     }
     public double getDistanceToTarget() {
-        return targetDistance - getAverageRioPosition() - 12;
+        return targetDistance - getAverageRioPosition() - 24;
     } 
-    public boolean getDistanceSensor() {
-        return distanceSensor.getVoltage() <= Constants.kOpticalSensorVoltageThreshold;
+
+    public boolean getRightRocketSensor() {
+        return rightRocketSensor.getVoltage() <= Constants.kOpticalSensorVoltageThreshold;
     }
-    public boolean getAtTargetSensor() {
-        return atTargetSensor.getVoltage() <= Constants.kOpticalSensorVoltageThreshold;
+
+    public boolean getLeftRocketSensor() {
+        return leftRocketSensor.getVoltage() <= Constants.kOpticalSensorVoltageThreshold;
     }
-    public boolean getAtTarget() {
-        return atTarget && getDistanceSensor();
+
+    public boolean getAtRocket() {
+        return getLeftRocketSensor() || getRightRocketSensor();
+    }
+    public boolean getStationSensor() {
+        return !laserStationSensor.get();
     }
 
     private double calcVelocity(double speed, double distance) {

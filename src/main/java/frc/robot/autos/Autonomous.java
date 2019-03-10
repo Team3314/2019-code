@@ -117,6 +117,7 @@ public abstract class Autonomous {
 		timer.reset();
 	}
 	public void startTimer() {
+		timer.reset();
 		timer.start();
 	}
 	public double getTime() {

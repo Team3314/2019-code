@@ -20,9 +20,11 @@ public class CargoIntake implements Subsystem {
         TRANSFERRING,
         VOMIT,
         PLACE,
+        PICKUP_FROM_STATION,
         REVERSE_OUTTAKE,
         INTAKE_DOWN,
         DRIVE_BACK,
+        DONE,
         OVERRIDE
     }
 
@@ -33,11 +35,10 @@ public class CargoIntake implements Subsystem {
 
     private Value pivotState = Constants.kIntakeUp;
 
-    private boolean intakeRequest, placeRequest, vomitRequest;
-    private boolean lastIntakeRequest, lastPlaceRequest, lastVomitRequest;
+    private boolean intakeRequest, placeRequest, vomitRequest, pickupFromStationRequest;
+    private boolean lastIntakeRequest, lastPlaceRequest, lastVomitRequest, lastPickupFromStationRequest;
 
     private boolean loadingBall = false;
-    private boolean hasCargo = false;
 
     private AnalogInput intakeCargoSensor = new AnalogInput(0), elevatorCargoSensor = new AnalogInput(1);
     private DigitalInput raisedSensor = new DigitalInput(4);
@@ -55,7 +56,8 @@ public class CargoIntake implements Subsystem {
     @Override
     public void update() {
         if((!placeRequest && lastPlaceRequest) || 
-         (!vomitRequest && lastVomitRequest)) {
+         (!vomitRequest && lastVomitRequest) ||
+         (!pickupFromStationRequest && lastPickupFromStationRequest)) {
             currentIntakeState = IntakeState.WAITING;
         }
         setIntakeSpeed(0);
@@ -63,7 +65,7 @@ public class CargoIntake implements Subsystem {
         switch (currentIntakeState) {
             case WAITING:
                 loadingBall = false;
-                setIntakeDown(false);
+                pivotState = Value.kOff;
                 if(vomitRequest && !lastVomitRequest) {
                     currentIntakeState = IntakeState.VOMIT;
                 }
@@ -81,19 +83,24 @@ public class CargoIntake implements Subsystem {
                     currentIntakeState = IntakeState.INTAKING;
                     loadingBall = true;
                 }
+                if(pickupFromStationRequest && !lastPickupFromStationRequest) {
+                    elevator.set(Constants.kElevatorBallStationPickup);
+                    currentIntakeState = IntakeState.PICKUP_FROM_STATION;
+                }
                 break;
             case INTAKING:
                 if(!intakeRequest)
-                    currentIntakeState = IntakeState.WAITING;
+                    currentIntakeState = IntakeState.DONE;
                 setIntakeDown(true);
                 setIntakeSpeed(1);
                 elevator.set(Constants.kElevatorBallLevel1);
                 if(getCargoIntakeSensor() && intakeRequest) {
+                    setIntakeDown(false);
                     currentIntakeState = IntakeState.RAISING;
                 }
                 break;
             case RAISING:
-                setIntakeDown(false);
+                pivot.set(Value.kOff);
                 setIntakeSpeed(0);
                 if(elevator.inPosition() && getIsUp()) {
                     currentIntakeState = IntakeState.TRANSFERRING;
@@ -101,17 +108,24 @@ public class CargoIntake implements Subsystem {
                 break;
             case TRANSFERRING:
                 setIntakeDown(false);
-                setOuttakeSpeed(.25);
+                setOuttakeSpeed(.5);
                 setIntakeSpeed(1);
                 if(getCargoCarriageSensor()) {
-                    currentIntakeState = IntakeState.WAITING;
+                    currentIntakeState = IntakeState.DONE;
                 }
                 break;
-            case REVERSE_OUTTAKE:
+            case PICKUP_FROM_STATION:
                 setOuttakeSpeed(-.25);
+                if(getCargoCarriageSensor()) {
+                    elevator.set(Constants.kElevatorHatchPickup);
+                    currentIntakeState = IntakeState.DONE;
+                }
                 break;
             case PLACE:
                 setOuttakeSpeed(1);
+                break;
+            case REVERSE_OUTTAKE:
+                setOuttakeSpeed(-.25);
                 break;
             case VOMIT:
                 setIntakeSpeed(-1);
@@ -121,7 +135,11 @@ public class CargoIntake implements Subsystem {
                 break;
             case DRIVE_BACK:
                 setIntakeDown(true);
-                setIntakeSpeed(1);
+                setIntakeSpeed(.5);
+                break;
+            case DONE:
+                setIntakeDown(false);
+                currentIntakeState = IntakeState.WAITING;
                 break;
             case OVERRIDE:
                 setIntakeDown(true);
@@ -132,6 +150,7 @@ public class CargoIntake implements Subsystem {
         lastIntakeRequest = intakeRequest;
         lastPlaceRequest = placeRequest;
         lastVomitRequest = vomitRequest;
+        lastPickupFromStationRequest = pickupFromStationRequest;
 
         pivot.set(pivotState);
         intake.set(intakeSpeed, intakeControlMode);
@@ -189,6 +208,13 @@ public class CargoIntake implements Subsystem {
         this.vomitRequest = vomitRequest;
     }
 
+    /**
+     * @param pickupFromStationRequest the pickupFromStationRequest to set
+     */
+    public void setPickupFromStationRequest(boolean pickupFromStationRequest) {
+        this.pickupFromStationRequest = pickupFromStationRequest;
+    }
+
     @Override
     public void outputToSmartDashboard() {
         SmartDashboard.putNumber("Cargo Intake current", intake.getOutputCurrent(0));
@@ -223,7 +249,9 @@ public class CargoIntake implements Subsystem {
         loadingBall = false;
     }
 
-
+    public boolean isDone() {
+        return currentIntakeState == IntakeState.DONE;
+    }
 
     @Override
     public void debug() {

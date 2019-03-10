@@ -34,13 +34,14 @@ public class Camera implements Subsystem {
 
 	private double correction;
 
-	private Solenoid leftLightRing, rightLightRing;
+	private Solenoid leftLightRing, rightLightRing, targetsLight;
     
     private double rawDistance;
 	
-	public Camera(Solenoid leftLightRing, Solenoid rightLightRing) {
+	public Camera(Solenoid leftLightRing, Solenoid rightLightRing, Solenoid targetsLight) {
 		this.leftLightRing = leftLightRing;
 		this.rightLightRing = rightLightRing;
+		this.targetsLight = targetsLight;
 	}	
 
 	@Override
@@ -53,8 +54,8 @@ public class Camera implements Subsystem {
 		rawDistance = table.getEntry("Distance").getDouble(1337.254);
 		rightHasRight = table.getEntry("Right hasRight").getBoolean(false);
 		leftHasLeft = table.getEntry("Left hasLeft").getBoolean(false);
-		// TODO: Why "&& targetHorizError != -1.0" why bug out if ATT = 1?
-		targetInView = rightHasRight && leftHasLeft && targetHorizError != -1.0 && rawDistance > 0;
+		
+		targetInView = rightHasRight && leftHasLeft &&  rawDistance >= 24;
     }
 
 	/**

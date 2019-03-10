@@ -36,8 +36,8 @@ public class Robot extends TimedRobot {
   
   public static RobotMap map = new RobotMap();
   public static HumanInput HI = new HumanInput();
-  public static Camera camera = new Camera(map.leftLightRing, map.rightLightRing);
-  public static Drive drive = new Drive(map.leftDrive, map.rightDrive, map.navx, map.shifter, map.leftDriveEncoder, map.rightDriveEncoder, map.distanceSensor, map.atTargetSensor);
+  public static Camera camera = new Camera(map.leftLightRing, map.rightLightRing, map.targetsLight);
+  public static Drive drive = new Drive(map.leftDrive, map.rightDrive, map.navx, map.shifter, map.leftDriveEncoder, map.rightDriveEncoder, map.distanceSensor, map.atTargetSensor, map.laserStationSensor);
   public static Elevator elevator = new Elevator(map.elevatorTransmission);
   public static CargoIntake cargoIntake = new CargoIntake(map.intakeTransmission, map.outtakeTransmission, map.intakePiston);
   public static HatchMechanism hatch = new HatchMechanism(map.gripperPiston, map.sliderPiston);
@@ -153,30 +153,17 @@ public class Robot extends TimedRobot {
     }
     else {
       auto.reset();
-      if(cargoIntake.getCargoCarriageSensor()) {
-        if(HI.getStoreElevatorLevel1()) {
-          gamePieceStateMachine.setMode(GamePieceStateMachineMode.BALL_LEVEL1);
-        }
-        else if(HI.getStoreElevatorLevel2()) {
-          gamePieceStateMachine.setMode(GamePieceStateMachineMode.BALL_LEVEL2);
-        }
-        else if(HI.getStoreElevatorLevel3()) {
-          gamePieceStateMachine.setMode(GamePieceStateMachineMode.BALL_LEVEL3);
-        }
+      if(HI.getStoreElevatorLevel1()) {
+        gamePieceStateMachine.setMode(GamePieceStateMachineMode.LEVEL1);
       }
-      else {
-        if(HI.getStoreElevatorLevel1()) {
-          gamePieceStateMachine.setMode(GamePieceStateMachineMode.HATCH_LEVEL1);
-        }
-        else if(HI.getStoreElevatorLevel2()) {
-          gamePieceStateMachine.setMode(GamePieceStateMachineMode.HATCH_LEVEL2);
-        }
-        else if(HI.getStoreElevatorLevel3()) {
-          gamePieceStateMachine.setMode(GamePieceStateMachineMode.HATCH_LEVEL3);
-        }
+      else if(HI.getStoreElevatorLevel2()) {
+        gamePieceStateMachine.setMode(GamePieceStateMachineMode.LEVEL2);
+      }
+      else if(HI.getStoreElevatorLevel3()) {
+        gamePieceStateMachine.setMode(GamePieceStateMachineMode.LEVEL3);
       }
       if(HI.getStoreElevatorPickup()) {
-        gamePieceStateMachine.setMode(GamePieceStateMachineMode.HATCH_PICKUP);
+        gamePieceStateMachine.setMode(GamePieceStateMachineMode.PICKUP);
       }
       if(HI.getAutoGamePiece()) {
         gamePieceStateMachine.setRequest(true);
@@ -192,7 +179,7 @@ public class Robot extends TimedRobot {
         // Drive Controls
         if(HI.getGyrolock()) {
           drive.setDriveMode(DriveMode.GYROLOCK);
-          drive.setTank(HI.getLeftThrottle(), HI.getLeftThrottle(), 2);
+          drive.setTank(HI.getLeftThrottle(), HI.getLeftThrottle(), Constants.kJoystickPower);
           /*  XXX GYRO TEST CODE
           if(HI.turnToZero())
             drive.setDesiredAngle(0);
@@ -203,14 +190,15 @@ public class Robot extends TimedRobot {
           else if(HI.turnToLeft())
             drive.setDesiredAngle(90);
             */
+            drive.setGyroDriveDistance(0);
         }
         else if(HI.getVision()) {
           drive.setDriveMode(DriveMode.VISION_CONTROL);
-          drive.setTank(HI.getRightThrottle(), HI.getRightThrottle(), 2);
+          drive.setTank(HI.getRightThrottle(), HI.getRightThrottle(), Constants.kJoystickPower);
         }
         else {  
           drive.setDriveMode(DriveMode.TANK);
-          drive.setTank(HI.getLeftThrottle(), HI.getRightThrottle(), 2);
+          drive.setTank(HI.getLeftThrottle(), HI.getRightThrottle(), Constants.kJoystickPower);
         }
         if(HI.getHighGear()) {
           drive.setHighGear(true);
@@ -235,9 +223,10 @@ public class Robot extends TimedRobot {
         if(!elevator.isHoming()) {
           if(!HI.getElevatorManual()) {
             cargoIntake.setIntakeRequest(HI.getAutoCargoIntake()); 
+            cargoIntake.setPickupFromStationRequest(HI.getCargoStationPickup());
             hatch.setIntakeRequest(HI.getHatchIntake());
           }
-          if(!cargoIntake.getLoadingBall() && !HI.getHatchIntake() && !HI.getHatchPlace()) {
+          if(!cargoIntake.getLoadingBall() && !HI.getHatchIntake() && !HI.getHatchPlace() && !HI.getCargoStationPickup()) {
             if(HI.getElevatorManual()) {
               elevator.setElevatorState(ElevatorControlMode.MANUAL);
               elevator.set(HI.getElevatorSpeed());
@@ -290,7 +279,7 @@ public class Robot extends TimedRobot {
               cargoIntake.setIntakeState(IntakeState.VOMIT);
             }
             else if(HI.getCargoReverseOuttake()) {
-              cargoIntake.setIntakeState(IntakeState.REVERSE_OUTTAKE);
+              cargoIntake.setIntakeState(IntakeState.PICKUP_FROM_STATION);
             }
             else {
               cargoIntake.setIntakeState(IntakeState.WAITING);
