@@ -11,6 +11,7 @@ import com.revrobotics.CANSparkMaxLowLevel.ConfigParameter;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SPI;
@@ -96,6 +97,8 @@ public class RobotMap {
         Solenoid targetsLight;
 
         AnalogInput distanceSensor, atTargetSensor;
+
+        DigitalInput laserStationSensor;
 
         Compressor compressor;
     
@@ -261,5 +264,7 @@ public class RobotMap {
 
         distanceSensor = new AnalogInput(2);
         atTargetSensor = new AnalogInput(3);
+
+        laserStationSensor = new DigitalInput(9);
     }
 }

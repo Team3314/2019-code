@@ -35,6 +35,9 @@ public class HumanInput {
 	public boolean getStopAuto() {
 		return gamepad.getRawButton(10); // right stick in
 	}
+	public boolean getGamePieceInteract() {
+		return gamepad.getRawButton(6);
+	}
 //Drive Controls
     public double getLeftThrottle() {
 		double throttle = -leftStick.getRawAxis(1);

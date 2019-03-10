@@ -52,8 +52,6 @@ public class GamePieceStateMachine {
     private boolean request;
     private boolean lastRequest;
 
-    private boolean hasCollided = false;
-
     private double driveSpeed = .6, visionOffset = 0;
 
 
@@ -70,7 +68,6 @@ public class GamePieceStateMachine {
         switch(currentState) {
             case WAITING:
                 if(request) {
-                    hasCollided = false;
                     drive.setDriveMode(DriveMode.VISION_CONTROL);
                     drive.setVisionOffset(visionOffset);
                     elevator.setElevatorState(ElevatorControlMode.MOTION_MAGIC);
@@ -134,23 +131,22 @@ public class GamePieceStateMachine {
                             hasCollided = true;
                         }
                     }*/
+                    
                     elevator.set(desiredElevatorHeight);   
                     
                     if(drive.getStationSensor() && elevator.inPosition() && (nextState == GamePieceState.GRABBING_HATCH || nextState == GamePieceState.GRABBING_BALL)) {
                         currentState = nextState;
                         drive.set(0,0);
                     }
-                    else if(drive.getRocketSensor() && elevator.inPosition()) {
+                    else if(drive.getAtRocket() && elevator.inPosition() && !(nextState == GamePieceState.GRABBING_HATCH || nextState == GamePieceState.GRABBING_BALL)) {
                         currentState = nextState;
                         drive.set(0,0);
                     }
                 }
-                break;
             case GRABBING_HATCH:
                 hatch.setIntakeRequest(true);
                 if(hatch.isDone()) {
                     hatch.setIntakeRequest(false);
-                    mode = GamePieceStateMachineMode.HATCH_LEVEL1;
                     currentState = GamePieceState.BACKUP_HATCH;
                     drive.resetDriveEncoders();
                 }
@@ -164,8 +160,10 @@ public class GamePieceStateMachine {
             case PLACING_BALL:
                 cargoIntake.setPlaceRequest(true);
                 if(!cargoIntake.getCargoCarriageSensor()) {
+                    cargoIntake.setPlaceRequest(false);
                     drive.resetDriveEncoders();
                     currentState = GamePieceState.BACKUP_BALL;
+
                 }
                 break;
             case PLACING_HATCH:

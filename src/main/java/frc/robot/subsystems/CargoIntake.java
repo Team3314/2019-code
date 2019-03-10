@@ -64,7 +64,7 @@ public class CargoIntake implements Subsystem {
         switch (currentIntakeState) {
             case WAITING:
                 loadingBall = false;
-                setIntakeDown(false);
+                pivotState = Value.kOff;
                 if(vomitRequest && !lastVomitRequest) {
                     currentIntakeState = IntakeState.VOMIT;
                 }
@@ -94,11 +94,12 @@ public class CargoIntake implements Subsystem {
                 setIntakeSpeed(1);
                 elevator.set(Constants.kElevatorBallLevel1);
                 if(getCargoIntakeSensor() && intakeRequest) {
+                    setIntakeDown(false);
                     currentIntakeState = IntakeState.RAISING;
                 }
                 break;
             case RAISING:
-                setIntakeDown(false);
+                pivot.set(Value.kOff);
                 setIntakeSpeed(0);
                 if(elevator.inPosition() && getIsUp()) {
                     currentIntakeState = IntakeState.TRANSFERRING;
@@ -136,6 +137,7 @@ public class CargoIntake implements Subsystem {
                 setIntakeSpeed(.5);
                 break;
             case DONE:
+                setIntakeDown(false);
                 currentIntakeState = IntakeState.WAITING;
                 break;
             case OVERRIDE:

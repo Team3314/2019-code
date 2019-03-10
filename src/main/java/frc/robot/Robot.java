@@ -37,7 +37,7 @@ public class Robot extends TimedRobot {
   public static RobotMap map = new RobotMap();
   public static HumanInput HI = new HumanInput();
   public static Camera camera = new Camera(map.leftLightRing, map.rightLightRing, map.targetsLight);
-  public static Drive drive = new Drive(map.leftDrive, map.rightDrive, map.navx, map.shifter, map.leftDriveEncoder, map.rightDriveEncoder, map.distanceSensor, map.atTargetSensor);
+  public static Drive drive = new Drive(map.leftDrive, map.rightDrive, map.navx, map.shifter, map.leftDriveEncoder, map.rightDriveEncoder, map.distanceSensor, map.atTargetSensor, map.laserStationSensor);
   public static Elevator elevator = new Elevator(map.elevatorTransmission);
   public static CargoIntake cargoIntake = new CargoIntake(map.intakeTransmission, map.outtakeTransmission, map.intakePiston);
   public static HatchMechanism hatch = new HatchMechanism(map.gripperPiston, map.sliderPiston);
@@ -203,6 +203,7 @@ public class Robot extends TimedRobot {
           else if(HI.turnToLeft())
             drive.setDesiredAngle(90);
             */
+            drive.setGyroDriveDistance(0);
         }
         else if(HI.getVision()) {
           drive.setDriveMode(DriveMode.VISION_CONTROL);

@@ -11,12 +11,13 @@ public class AutoTwoHatchRocketClose extends Autonomous {
     public enum State {
         START,
         TURN_TO_ROCKET1,
+        STOP,
         PLACE_HATCH1, // Places hatch on first level of rocket
         TURN_TO_STATION1, // Turns to 180 degrees to face loading station
         PICKUP_HATCH, // Grabs hatch from loading station
         BACKUP,
         TURN_TO_ROCKET2, // Turns to 0 degrees to face rocket
-        STOP,
+        STOP2,
         PLACE_HATCH2, // Places hatch on second level of rocket
         TURN_TO_STATION2, // Turns to 180 degrees to face loading station
         DRIVE_AT_STATION2 // Drives until it is 60 inches from loading station
@@ -40,17 +41,23 @@ public class AutoTwoHatchRocketClose extends Autonomous {
                 else if(getStartPos() == "StartL") 
                     driveGyrolock(0, 33, DriveMode.GYROLOCK);
                 setHighGear(false);
-                elevator.set(Constants.kElevatorHatchLevel1);
-                currentState = State.TURN_TO_ROCKET1;
+                currentState = State.STOP;
+                break;
+            case STOP:
+                if(gyroTurnDone()) {
+                    startTimer();
+                    currentState = State.TURN_TO_ROCKET1;
+                }
                 break;
             case TURN_TO_ROCKET1:
-                if(gyroTurnDone()) {
-                    setGamePieceRequest(true);
+                if(getTime() >=.75) {
+                    resetTimer();
                     currentState = State.PLACE_HATCH1;
                 }
                 break;
             case PLACE_HATCH1:
-                gamePieceStateMachine.setDriveSpeed(.75);
+                setGamePieceRequest(true);
+                gamePieceStateMachine.setDriveSpeed(.2);
                 gamePieceStateMachine.setMode(GamePieceStateMachineMode.HATCH_LEVEL1);
                 if(gamePieceStateMachine.getCurrentState() == GamePieceState.BACKUP_HATCH) {
                     hatch.setSliderOut(false);
@@ -91,10 +98,10 @@ public class AutoTwoHatchRocketClose extends Autonomous {
                 if(gyroTurnDone()) {
                     startTimer();
                     drivePower(0);
-                    currentState = State.STOP;
+                    currentState = State.STOP2;
                 }
                 break;
-            case STOP:
+            case STOP2:
                 if(getTime() > .5) {
                     setGamePieceRequest(true);
                     gamePieceStateMachine.setMode(GamePieceStateMachineMode.HATCH_LEVEL2);
