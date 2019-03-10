@@ -153,30 +153,17 @@ public class Robot extends TimedRobot {
     }
     else {
       auto.reset();
-      if(cargoIntake.getCargoCarriageSensor()) {
-        if(HI.getStoreElevatorLevel1()) {
-          gamePieceStateMachine.setMode(GamePieceStateMachineMode.BALL_LEVEL1);
-        }
-        else if(HI.getStoreElevatorLevel2()) {
-          gamePieceStateMachine.setMode(GamePieceStateMachineMode.BALL_LEVEL2);
-        }
-        else if(HI.getStoreElevatorLevel3()) {
-          gamePieceStateMachine.setMode(GamePieceStateMachineMode.BALL_LEVEL3);
-        }
+      if(HI.getStoreElevatorLevel1()) {
+        gamePieceStateMachine.setMode(GamePieceStateMachineMode.LEVEL1);
       }
-      else {
-        if(HI.getStoreElevatorLevel1()) {
-          gamePieceStateMachine.setMode(GamePieceStateMachineMode.HATCH_LEVEL1);
-        }
-        else if(HI.getStoreElevatorLevel2()) {
-          gamePieceStateMachine.setMode(GamePieceStateMachineMode.HATCH_LEVEL2);
-        }
-        else if(HI.getStoreElevatorLevel3()) {
-          gamePieceStateMachine.setMode(GamePieceStateMachineMode.HATCH_LEVEL3);
-        }
+      else if(HI.getStoreElevatorLevel2()) {
+        gamePieceStateMachine.setMode(GamePieceStateMachineMode.LEVEL2);
+      }
+      else if(HI.getStoreElevatorLevel3()) {
+        gamePieceStateMachine.setMode(GamePieceStateMachineMode.LEVEL3);
       }
       if(HI.getStoreElevatorPickup()) {
-        gamePieceStateMachine.setMode(GamePieceStateMachineMode.HATCH_PICKUP);
+        gamePieceStateMachine.setMode(GamePieceStateMachineMode.PICKUP);
       }
       if(HI.getAutoGamePiece()) {
         gamePieceStateMachine.setRequest(true);

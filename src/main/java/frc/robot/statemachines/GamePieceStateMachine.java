@@ -29,19 +29,15 @@ public class GamePieceStateMachine {
     }
 
     public enum GamePieceStateMachineMode {
-        HATCH_LEVEL1,
-        HATCH_LEVEL2,
-        HATCH_LEVEL3,
-        BALL_LEVEL1,
-        BALL_LEVEL2,
-        BALL_LEVEL3,
-        HATCH_PICKUP,
-        BALL_PICKUP
+        LEVEL1,
+        LEVEL2,
+        LEVEL3,
+        PICKUP
     }
 
 
     private GamePieceState currentState = GamePieceState.WAITING, nextState;
-    private GamePieceStateMachineMode mode = GamePieceStateMachineMode.HATCH_LEVEL1;
+    private GamePieceStateMachineMode mode = GamePieceStateMachineMode.LEVEL1;
     private Drive drive = Robot.drive;
     private Elevator elevator = Robot.elevator;
     private CargoIntake cargoIntake = Robot.cargoIntake;
@@ -87,41 +83,49 @@ public class GamePieceStateMachine {
             case DRIVING:
                 drive.set(driveSpeed, driveSpeed);
                 switch(mode) { 
-                    case HATCH_LEVEL1:
-                        desiredElevatorHeight = Constants.kElevatorHatchLevel1;
-                        nextState = GamePieceState.PLACING_HATCH;
+                    case LEVEL1:
+                        if(cargoIntake.getCargoCarriageSensor()) {
+                            desiredElevatorHeight = Constants.kElevatorBallLevel1;
+                            nextState = GamePieceState.PLACING_BALL;
+                        }
+                        else {
+                            desiredElevatorHeight = Constants.kElevatorHatchLevel1;
+                            nextState = GamePieceState.PLACING_HATCH;
+                        }
                         break;
-                    case HATCH_LEVEL2:
-                        desiredElevatorHeight = Constants.kElevatorHatchLevel2;
-                        nextState = GamePieceState.PLACING_HATCH;
-                        break;
-                    case HATCH_LEVEL3:
-                        desiredElevatorHeight = Constants.kElevatorHatchLevel3;
-                        nextState = GamePieceState.PLACING_HATCH;
-                        break;
-                    case BALL_LEVEL1:
-                        desiredElevatorHeight = Constants.kElevatorBallLevel1;
-                        nextState = GamePieceState.PLACING_BALL;
-                        break;
-                    case BALL_LEVEL2:
+                    case LEVEL2:
+                    if(cargoIntake.getCargoCarriageSensor()) {
                         desiredElevatorHeight = Constants.kElevatorBallLevel2;
                         nextState = GamePieceState.PLACING_BALL;
+                    }
+                    else {
+                        desiredElevatorHeight = Constants.kElevatorHatchLevel2;
+                        nextState = GamePieceState.PLACING_HATCH;
+                    }
                         break;
-                    case BALL_LEVEL3:
-                        desiredElevatorHeight = Constants.kElevatorBallLevel3;
-                        nextState = GamePieceState.PLACING_BALL;
+                    case LEVEL3:
+                        if(cargoIntake.getCargoCarriageSensor()) {
+                            desiredElevatorHeight = Constants.kElevatorBallLevel3;
+                            nextState = GamePieceState.PLACING_BALL;
+                        }
+                        else {
+                            desiredElevatorHeight = Constants.kElevatorHatchLevel3;
+                            nextState = GamePieceState.PLACING_HATCH;
+                        }
                         break;
-                    case HATCH_PICKUP:
-                        desiredElevatorHeight = Constants.kElevatorHatchPickup;
-                        nextState = GamePieceState.GRABBING_HATCH;
-                        break;
-                    case BALL_PICKUP:
-                        desiredElevatorHeight = Constants.kElevatorBallStationPickup;
-                        nextState = GamePieceState.GRABBING_BALL;
+                    case PICKUP:
+                        if(cargoIntake.getCargoCarriageSensor()) {
+                            desiredElevatorHeight = Constants.kElevatorBallStationPickup;
+                            nextState = GamePieceState.GRABBING_BALL;
+                        }
+                        else {
+                            desiredElevatorHeight = Constants.kElevatorHatchPickup;
+                            nextState = GamePieceState.GRABBING_HATCH;
+                        }
                         break;
                 }
                 if(drive.getDistanceToTarget() <= 48) {
-                    if(mode == GamePieceStateMachineMode.HATCH_PICKUP) {
+                    if(mode == GamePieceStateMachineMode.PICKUP) {
                         hatch.setGripperDown(true);
                     }/*
                     if(drive.getDistanceSensor()) {
@@ -143,6 +147,7 @@ public class GamePieceStateMachine {
                         drive.set(0,0);
                     }
                 }
+                break;
             case GRABBING_HATCH:
                 hatch.setIntakeRequest(true);
                 if(hatch.isDone()) {
