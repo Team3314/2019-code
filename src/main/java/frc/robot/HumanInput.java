@@ -7,6 +7,18 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 
+// TODO: consider making HumanInput a subsystem (specifically so it is updatable)...
+// then move things like managing hasGamepad into update. (possibly check other devices as well) 
+// also anything that might be better done once, could be done there. 
+// TODO: consider making a class that represents a button and handles things...
+// like rising and falling edge detection. 
+// TODO: consider making a class that represents a POV or at least a getPOV method...
+// that accounts for hasGamepad (or whichever device that POV resides on)
+// TODO: consider getAxis function or Axis class with improved functionallity possibly by...
+// managing deadband in a way that leaves deadband at values just off zero.
+// providing scaling or data shaping (crazy: out = a*in^3+b*in^2+c*in+d) or just scaling
+// reversing, etc. 
+
 public class HumanInput {
 	
 	public final Joystick gamepad;
@@ -39,7 +51,7 @@ public class HumanInput {
 		return gamepad.getRawButton(6);
 	}
 //Drive Controls
-    public double getLeftThrottle() {
+   public double getLeftThrottle() {
 		double throttle = -leftStick.getRawAxis(1);
 		if(Math.abs(throttle) < Constants.kJoystickDeadband)
 			throttle = 0;
