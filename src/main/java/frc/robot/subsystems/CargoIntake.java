@@ -108,7 +108,7 @@ public class CargoIntake implements Subsystem {
                 break;
             case TRANSFERRING:
                 setIntakeDown(false);
-                setOuttakeSpeed(.5);
+                setOuttakeSpeed(.375);
                 setIntakeSpeed(1);
                 if(getCargoCarriageSensor()) {
                     currentIntakeState = IntakeState.DONE;

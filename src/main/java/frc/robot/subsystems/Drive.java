@@ -48,11 +48,11 @@ public class Drive extends Drivetrain implements Subsystem {
     SpeedControllerMode controlMode = SpeedControllerMode.kIdle;
     
     //Hardware states
-    private boolean mIsHighGear, elevatorUp, velocityControl = true, distanceSensorTriggered, lastDistanceSensorTriggered, atTarget = false, driveDistance;
+    private boolean mIsHighGear, elevatorUp, velocityControl = true, driveDistance;
 
     private IdleMode idleMode;
     private double rawLeftSpeed, rawRightSpeed, arbFFLeft = 0, arbFFRight = 0, desiredAngle, cameraTurnAngle, tickToInConversion, speedCap,
-     maxDeccel, maxSpeed, cameraDistance, distanceSensorBookmark = 0, gyroDriveDistance;
+     maxDeccel, maxSpeed, cameraDistance, gyroDriveDistance;
     
     private double leftRioDrivePositionInches, rightRioDrivePositionInches, leftRioDrivePositionTicks, rightRioDrivePositionTicks, leftRioDriveSpeedTicks, rightRioDriveSpeedTicks, 
         leftRioDriveSpeedInches, rightRioDriveSpeedInches;
@@ -108,12 +108,13 @@ public class Drive extends Drivetrain implements Subsystem {
     }
 
     public void update(){
-       if((!mIsHighGear && !lastHighGear) ||(mIsHighGear && lastHighGear))
-            shifter.set(Value.kOff);
-       else if(mIsHighGear) {
+       if(mIsHighGear) {
             leftDrive.setEncoderDistancePerPulse(Constants.kNeoTicksToInHighGear);
             rightDrive.setEncoderDistancePerPulse(Constants.kNeoTicksToInHighGear);
-            shifter.set(Constants.kHighGear);
+            if(lastHighGear)
+                 shifter.set(Value.kOff);
+            else
+                shifter.set(Constants.kHighGear);
             leftNeoInchesHighGear =  getLeftNeoPosition() - leftNeoInchesLowGear;
             rightNeoInchesHighGear = getRightNeoPosition() - rightNeoInchesLowGear;
             speedCap = Constants.kRaisedElevatorDriveSpeedCap / Constants.kMaxSpeedHighGear;
@@ -140,7 +141,10 @@ public class Drive extends Drivetrain implements Subsystem {
     	else {
             leftDrive.setEncoderDistancePerPulse(Constants.kNeoTicksToInLowGear);
             rightDrive.setEncoderDistancePerPulse(Constants.kNeoTicksToInLowGear);
-            shifter.set(Constants.kLowGear);
+            if(!lastHighGear)
+                shifter.set(Value.kOff);
+            else
+                shifter.set(Constants.kLowGear);
             leftNeoInchesLowGear =  getLeftNeoPosition() - leftNeoInchesHighGear;
             rightNeoInchesLowGear = getRightNeoPosition() - rightNeoInchesHighGear;
             speedCap = Constants.kRaisedElevatorDriveSpeedCap / Constants.kMaxSpeedLowGear;
@@ -165,18 +169,8 @@ public class Drive extends Drivetrain implements Subsystem {
         }
 
         tickToInConversion = neoInchesPerRev / Constants.kNEODriveEncoderCodesPerRev;
-        distanceSensorTriggered = getAtRocket();
-        if(distanceSensorTriggered && !lastDistanceSensorTriggered) {
-            distanceSensorBookmark = getAverageRioPosition();
-        }
-        if(velocityControl) {
+        if(velocityControl)
             controlMode = SpeedControllerMode.kVelocity;
-        }
-        else {
-
-            controlMode = SpeedControllerMode.kDutyCycle;
-        }
-
         gryoAngleHistory[gyroAngleHistoryStoreIndex] = getAngle();
         gyroAngleHistoryStoreIndex++;
         gyroAngleHistoryStoreIndex %= 199;
@@ -191,6 +185,20 @@ public class Drive extends Drivetrain implements Subsystem {
         }  
         else {
             gyroControl.setI(0);
+        } 
+        if(elevatorUp) {
+            setOpenLoopRampTime(Constants.kRaisedElevatorDriveRampRate);
+            setClosedLoopRampTime(Constants.kRaisedElevatorDriveRampRate);            
+            if(Math.abs(leftDemand) > speedCap) {
+                leftDemand = speedCap;
+            }
+            if(Math.abs(rightDemand) > speedCap) {
+                rightDemand = speedCap;
+            }
+        }
+        else {
+            setOpenLoopRampTime(Constants.kDriveRampRate);
+            setClosedLoopRampTime(Constants.kDriveRampRate);
         }
         updateSpeedAndPosition();
         switch(currentDriveMode) {
@@ -256,26 +264,13 @@ public class Drive extends Drivetrain implements Subsystem {
                 controlMode = SpeedControllerMode.kVelocity;
                 break;
             }
-            if(elevatorUp) {
-                setOpenLoopRampTime(Constants.kRaisedElevatorDriveRampRate);
-                if(rawLeftSpeed > speedCap) {
-                    rawLeftSpeed = speedCap;
-                }
-                if(rawRightSpeed > speedCap) {
-                    rawRightSpeed = speedCap;
-                }
-            }
-            if(velocityControl) {
-                    rawLeftSpeed *= Constants.kMaxSpeedRevs;
-                    rawRightSpeed *= Constants.kMaxSpeedRevs;
-            }
-            else {
-                setOpenLoopRampTime(Constants.kDriveRampRate);
-                setClosedLoopRampTime(Constants.kDriveRampRate);
-            }
+           
+        if(velocityControl) {   
+            rawLeftSpeed *= Constants.kMaxSpeedRevs;
+            rawRightSpeed *= Constants.kMaxSpeedRevs;
+        }
         rightDrive.set(rawRightSpeed, controlMode, arbFFRight);
         leftDrive.set(rawLeftSpeed, controlMode, arbFFLeft);
-        lastDistanceSensorTriggered = distanceSensorTriggered;
         lastHighGear = mIsHighGear;
     }
 
@@ -367,7 +362,6 @@ public class Drive extends Drivetrain implements Subsystem {
             if(mode == DriveMode.GYROLOCK || mode == DriveMode.GYROLOCK_LEFT || mode == DriveMode.GYROLOCK_RIGHT) {
                 gyroControl.enable();
                 setGyroDriveDistance(0);
-                driveDistance = false;
                 setDesiredAngle(getAngle());
             }
             else if(mode == DriveMode.VISION_CONTROL) {
@@ -404,6 +398,7 @@ public class Drive extends Drivetrain implements Subsystem {
     
     
     public void outputToSmartDashboard() {
+        //TODO PICK DASHBOARD CALLS
         SmartDashboard.putBoolean("Rocket Sensor", getAtRocket());
         SmartDashboard.putBoolean("Station Sensor", getStationSensor());
         SmartDashboard.putNumber("Distance To Target", getDistanceToTarget());
@@ -454,7 +449,7 @@ public class Drive extends Drivetrain implements Subsystem {
         this.velocityControl = velocityControl;
     }
     public double getDistanceToTarget() {
-        return targetDistance - getAverageRioPosition() - 24;
+        return targetDistance - getAverageRioPosition() - 12;
     } 
 
     public boolean getRightRocketSensor() {

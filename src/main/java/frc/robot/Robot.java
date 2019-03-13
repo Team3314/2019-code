@@ -162,8 +162,11 @@ public class Robot extends TimedRobot {
       else if(HI.getStoreElevatorLevel3()) {
         gamePieceStateMachine.setMode(GamePieceStateMachineMode.LEVEL3);
       }
-      if(HI.getStoreElevatorPickup()) {
+      else if(HI.getStoreElevatorPickup()) {
         gamePieceStateMachine.setMode(GamePieceStateMachineMode.PICKUP);
+      }
+      else if(HI.getStoreCargoShip()) {
+        gamePieceStateMachine.setMode(GamePieceStateMachineMode.CARGO_SHIP);
       }
       if(HI.getAutoGamePiece()) {
         gamePieceStateMachine.setRequest(true);
@@ -173,6 +176,7 @@ public class Robot extends TimedRobot {
         gamePieceStateMachine.setRequest(false);
         climber.setClimbRequest(HI.getClimbMode());
         climber.setPreviousStateRequest(HI.getPrevious());
+        climber.setIntakeFurtherDownRequest(HI.getIntakeFurtherDown());
         if(HI.getResetGyro()) {
           drive.resetSensors();
         }
@@ -259,6 +263,9 @@ public class Robot extends TimedRobot {
                 else {
                   elevator.set(Constants.kElevatorHatchLevel3);
                 }
+              }
+              else if(HI.getElevatorCargoShip()) {
+                elevator.set(Constants.kElevatorBallCargoShip);
               }
               
             }

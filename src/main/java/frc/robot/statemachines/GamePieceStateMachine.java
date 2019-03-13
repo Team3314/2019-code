@@ -8,7 +8,6 @@ import frc.robot.subsystems.CargoIntake;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.HatchMechanism;
-import frc.robot.subsystems.CargoIntake.IntakeState;
 import frc.robot.subsystems.Drive.DriveMode;
 import frc.robot.subsystems.Elevator.ElevatorControlMode;
 
@@ -32,7 +31,8 @@ public class GamePieceStateMachine {
         LEVEL1,
         LEVEL2,
         LEVEL3,
-        PICKUP
+        PICKUP,
+        CARGO_SHIP
     }
 
 
@@ -94,14 +94,14 @@ public class GamePieceStateMachine {
                         }
                         break;
                     case LEVEL2:
-                    if(cargoIntake.getCargoCarriageSensor()) {
-                        desiredElevatorHeight = Constants.kElevatorBallLevel2;
-                        nextState = GamePieceState.PLACING_BALL;
-                    }
-                    else {
-                        desiredElevatorHeight = Constants.kElevatorHatchLevel2;
-                        nextState = GamePieceState.PLACING_HATCH;
-                    }
+                        if(cargoIntake.getCargoCarriageSensor()) {
+                            desiredElevatorHeight = Constants.kElevatorBallLevel2;
+                            nextState = GamePieceState.PLACING_BALL;
+                        }
+                        else {
+                            desiredElevatorHeight = Constants.kElevatorHatchLevel2;
+                            nextState = GamePieceState.PLACING_HATCH;
+                        }
                         break;
                     case LEVEL3:
                         if(cargoIntake.getCargoCarriageSensor()) {
@@ -122,19 +122,22 @@ public class GamePieceStateMachine {
                             desiredElevatorHeight = Constants.kElevatorHatchPickup;
                             nextState = GamePieceState.GRABBING_HATCH;
                         }
+                        break; 
+                    case CARGO_SHIP:
+                        if(cargoIntake.getCargoCarriageSensor()) {
+                            desiredElevatorHeight = Constants.kElevatorBallCargoShip;
+                            nextState = GamePieceState.PLACING_BALL;
+                        }
+                        else {
+                            desiredElevatorHeight = Constants.kElevatorHatchLevel1;
+                            nextState = GamePieceState.PLACING_HATCH;
+                        }
                         break;
-                }
+                    }
                 if(drive.getDistanceToTarget() <= 48) {
                     if(mode == GamePieceStateMachineMode.PICKUP) {
                         hatch.setGripperDown(true);
-                    }/*
-                    if(drive.getDistanceSensor()) {
-                        drive.setDriveMode(DriveMode.GYROLOCK);
-                        drive.setGyroDriveDistance(drive.getDistanceToTarget());
-                        if(drive.collision()) {
-                            hasCollided = true;
-                        }
-                    }*/
+                    }
                     
                     elevator.set(desiredElevatorHeight);   
                     

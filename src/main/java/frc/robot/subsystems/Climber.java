@@ -24,8 +24,8 @@ public class Climber implements Subsystem {
     private Solenoid highPressure;
     private boolean stopClimber = false;
 
-    private boolean climbRequest, previousStateRequest;
-    private boolean lastClimbRequest, lastPreviousStateRequest;
+    private boolean climbRequest, previousStateRequest, intakeFurtherDownRequest = false;
+    private boolean lastClimbRequest, lastPreviousStateRequest, lastIntakeFurtherDownRequest = false;
 
     private Drive drive = Robot.drive;
     private CargoIntake cargoIntake = Robot.cargoIntake;
@@ -52,7 +52,10 @@ public class Climber implements Subsystem {
         switch(currentState) {
             case WAITING:
                 climberPiston.set(Constants.kClimberUp);
-                intakeClimbPiston.set(Constants.kIntakeClimberUp);
+                if(!intakeFurtherDownRequest)
+                    intakeClimbPiston.set(Constants.kIntakeClimberUp);
+                else 
+                    intakeClimbPiston.set(Constants.kIntakeClimberDown);
                 if(climbRequest && !lastClimbRequest) {
                     currentState = State.INTAKE_AND_CLIMBER_DOWN;
                 }
@@ -163,7 +166,9 @@ public class Climber implements Subsystem {
 
     }
 
-    
+    public void setIntakeFurtherDownRequest(boolean request) {
+        intakeFurtherDownRequest = request;
+    }    
 
     
 

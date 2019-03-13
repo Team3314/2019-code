@@ -37,7 +37,10 @@ public class HumanInput {
 		autoSelector = new Joystick(4);
 	}
 
-//Actions
+	public boolean getShift() {
+		return gamepad.getRawAxis(3) >= .75;
+	}
+	//Actions
 	public boolean getAutoGamePiece() {
 		return leftStick.getRawButton(1); // trigger
 	}
@@ -100,16 +103,19 @@ public class HumanInput {
 	}
 	//Elevator Controls
 	public boolean getElevatorPickup() {
-		return gamepad.getRawAxis(3) > .5 && getStoreElevatorPickup();
+		return getShift() && getStoreElevatorPickup();
 	}
 	public boolean getElevatorLevel1() {
-		return gamepad.getRawAxis(3) > .5 && gamepad.getPOV() == 180;
+		return getShift() && gamepad.getPOV() == 180;
 	}
 	public boolean getElevatorLevel2() {
-		return gamepad.getRawAxis(3) > .5 && gamepad.getPOV() == 90;
+		return getShift() && gamepad.getPOV() == 90;
 	}
 	public boolean getElevatorLevel3() {
-		return gamepad.getRawAxis(3) > .5 && gamepad.getPOV() == 0;
+		return getShift() && gamepad.getPOV() == 0;
+	}
+	public boolean getElevatorCargoShip() {
+		return getShift() && getStoreCargoShip();
 	}
 	public boolean getStoreElevatorLevel1() {
 		return gamepad.getPOV() == 180;
@@ -123,6 +129,12 @@ public class HumanInput {
 	public boolean getStoreElevatorPickup() {
 		return gamepad.getPOV() == 270;
 	}
+	public boolean getStoreCargoShip() {
+		return gamepad.getRawButton(9);
+	}
+	public boolean getStoreBallStationPickup() {
+		return gamepad.getRawButton(7);
+	}
 	public boolean getElevatorManual() {
 		return buttonBox.getRawButton(11); // left switch on button box
 	}
@@ -132,6 +144,9 @@ public class HumanInput {
 	//Cargo Intake Controls
 	public boolean getAutoCargoIntake() {
 		return gamepad.getRawButton(1); // a
+	}
+	public boolean getIntakeFurtherDown() {
+		return getShift() && getAutoCargoIntake();
 	}
 	public boolean getCargoIntake() {
 		return buttonBox.getRawButton(1); // button box 1 

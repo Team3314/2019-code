@@ -54,8 +54,11 @@ public class Camera implements Subsystem {
 		rawDistance = table.getEntry("Distance").getDouble(1337.254);
 		rightHasRight = table.getEntry("Right hasRight").getBoolean(false);
 		leftHasLeft = table.getEntry("Left hasLeft").getBoolean(false);
-		
+
+
 		targetInView = rightHasRight && leftHasLeft &&  rawDistance >= 24;
+
+		targetsLight.set(targetInView);
     }
 
 	/**
