@@ -464,6 +464,9 @@ public class Drive extends Drivetrain implements Subsystem {
         return getLeftRocketSensor() || getRightRocketSensor();
     }
     public boolean getStationSensor() {
+        if(Constants.kPracticeBot) {
+            return getRightRocketSensor();
+        }
         return !laserStationSensor.get();
     }
 
@@ -490,7 +493,7 @@ public class Drive extends Drivetrain implements Subsystem {
     }
     
     public double getDelayedGyroAngle() {
-        int index = gyroAngleHistoryStoreIndex - 12;
+        int index = gyroAngleHistoryStoreIndex - Constants.kGyroDelay;
         if(index < 0)
             index += 200;
         return gryoAngleHistory[index];

@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj.Joystick;
 
 public class HumanInput {
 	
-	public final Joystick gamepad;
+	private final Joystick gamepad;
 	private final Joystick leftStick;
 	private final Joystick rightStick;
 	private final Joystick buttonBox;

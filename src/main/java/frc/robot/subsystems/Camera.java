@@ -1,9 +1,5 @@
 package frc.robot.subsystems;
 
-import frc.robot.Constants;
-
-import java.util.Arrays;
-
 import edu.wpi.first.networktables.*;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -26,9 +22,6 @@ public class Camera implements Subsystem {
 		
 	private boolean targetInView, leftHasLeft, rightHasRight;
 	private double targetHorizError;
-	
-	private double camMode, snapshot;
-	private String camString, snapshotString;
 
 	private boolean lightRingsOn = true;
 
@@ -88,24 +81,6 @@ public class Camera implements Subsystem {
 
 	public boolean getLightRingsOn() {
 		return lightRingsOn;
-	}
-	
-	public String getCamMode() {
-		if (camMode == Constants.kVisionProcessorMode) {
-			camString = "VISION PROCESSOR";
-		} else if (camMode == Constants.kDriverCameraMode) {
-			camString = "DRIVER CAMERA";
-		}
-		return camString;
-	}
-	
-	public String getSnapshot() {
-		if (snapshot == Constants.kSnapshotOff) {
-			snapshotString = "OFF";
-		} else if (snapshot == Constants.kSnapshotOn) {
-			snapshotString = "ON";
-		}
-		return snapshotString;
 	}
 
 	/**

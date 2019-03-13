@@ -86,6 +86,7 @@ public class HatchMechanism implements Subsystem {
             case RAISE:
                 elevator.set(Constants.kElevatorRaisedHatchPickup);
                 if(elevator.inPosition()) {
+                    elevator.set(0);
                     currentState = State.DONE;
                     timer.start();
                 }

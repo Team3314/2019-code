@@ -15,6 +15,7 @@ public class CargoIntake implements Subsystem {
     // TODO: Consider a WAITINGWITHBALL state
     public enum IntakeState {
         WAITING,
+        WAITING_WITH_BALL,
         INTAKING,
         RAISING,
         TRANSFERRING,
@@ -88,6 +89,14 @@ public class CargoIntake implements Subsystem {
                     currentIntakeState = IntakeState.PICKUP_FROM_STATION;
                 }
                 break;
+            case WAITING_WITH_BALL:
+                if(placeRequest && !lastPlaceRequest) {
+                    currentIntakeState = IntakeState.PLACE;
+                }
+                if(!getCargoCarriageSensor()) {
+                    setOuttakeSpeed()
+                }
+                break;
             case INTAKING:
                 if(!intakeRequest)
                     currentIntakeState = IntakeState.DONE;
@@ -139,7 +148,7 @@ public class CargoIntake implements Subsystem {
                 break;
             case DONE:
                 setIntakeDown(false);
-                currentIntakeState = IntakeState.WAITING;
+                currentIntakeState = IntakeState.WAITING_WITH_BALL;
                 break;
             case OVERRIDE:
                 setIntakeDown(true);
