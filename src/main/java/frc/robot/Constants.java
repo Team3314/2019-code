@@ -77,6 +77,7 @@ public class Constants {
 		public static final int kElevatorLowAccelerationThreshold = ((int)(30 / kElevatorInchesPerTick));
 	
 		public static final int kElevatorHatchPickup = (int)(5 / kElevatorInchesPerTick);
+		public static final int kElevatorLoweredHatchPickup = (int) (1 / kElevatorInchesPerTick);
 		public static final int kElevatorRaisedHatchPickup = (int)(7.5 / kElevatorInchesPerTick);
 		public static final int kElevatorBallStationPickup = (int)(25/ kElevatorInchesPerTick);
 		public static final int kElevatorBallLevel1 = (int)(2.5 / kElevatorInchesPerTick);
@@ -225,7 +226,9 @@ public class Constants {
 
 		public static final double kJoystickThrottleScale = 1/ (1-kJoystickDeadband);
 
-		public static final int kJoystickPower = 1;
+		public static final double kJoystickPower = 1;
+
+		public static final double kTurningSensitivityScale = .8;
 
 
 }

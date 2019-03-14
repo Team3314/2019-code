@@ -3,9 +3,10 @@
  * 
  * 
  */
-package frc.robot;
+package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.Joystick;
+import frc.robot.Constants;
 
 // TODO: consider making HumanInput a subsystem (specifically so it is updatable)...
 // then move things like managing hasGamepad into update. (possibly check other devices as well) 
@@ -19,7 +20,7 @@ import edu.wpi.first.wpilibj.Joystick;
 // providing scaling or data shaping (crazy: out = a*in^3+b*in^2+c*in+d) or just scaling
 // reversing, etc. 
 
-public class HumanInput {
+public class HumanInput implements Subsystem {
 	
 	private final Joystick gamepad;
 	private final Joystick leftStick;
@@ -35,6 +36,27 @@ public class HumanInput {
 		rightStick = new Joystick(2);
 		buttonBox = new Joystick(3);
 		autoSelector = new Joystick(4);
+	}
+
+	
+	@Override
+	public void update() {
+
+	}
+
+	@Override
+	public void outputToSmartDashboard() {
+
+	}
+
+	@Override
+	public void debug() {
+
+	}
+
+	@Override
+	public void resetSensors() {
+
 	}
 
 	public boolean getShift() {
@@ -65,7 +87,10 @@ public class HumanInput {
 			throttle -= Constants.kJoystickDeadband;
 		}
 		throttle *= Constants.kJoystickThrottleScale;
-		return throttle;
+		if(getBackwards())
+			return -throttle;
+		else 
+			return throttle;
 	}
 	public double getRightThrottle() {
 		double throttle = -rightStick.getRawAxis(1);
@@ -78,7 +103,10 @@ public class HumanInput {
 			throttle -= Constants.kJoystickDeadband;
 		}
 		throttle *= Constants.kJoystickThrottleScale;
-		return (throttle);
+		if(getBackwards())
+			return -throttle;
+		else 
+			return throttle;
 	}
 	public boolean getLowGear() {
 		return leftStick.getRawButton(4);
@@ -274,5 +302,10 @@ public class HumanInput {
 	public boolean getDebugMode() {
 		return autoSelector.getRawButton(1);
 	}
+
+	public boolean getBackwards() {
+		return rightStick.getRawButton(4);
+	}
+
 
 }

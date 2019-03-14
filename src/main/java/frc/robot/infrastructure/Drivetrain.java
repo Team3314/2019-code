@@ -32,6 +32,15 @@ public class Drivetrain {
         rightDemand = Math.copySign(Math.pow(right, power), right);
     }
 
+    public void setTank(double left, double right, double power, double turningSensitivity) {
+        double averageInput = (left + right) / 2;
+        double differential = (left - right) / 2 * turningSensitivity;
+        left = averageInput + differential;
+        right = averageInput - differential;
+        leftDemand = Math.copySign(Math.pow(left, power), left);
+        rightDemand = Math.copySign(Math.pow(right, power), right);
+    }
+
     public void setArcade(double speed, double turn, double power) {
 
     }

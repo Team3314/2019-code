@@ -29,7 +29,7 @@ public class Camera implements Subsystem {
 
 	private Solenoid leftLightRing, rightLightRing, targetsLight;
     
-    private double rawDistance;
+    private double hatchDistance, cargoDistance;
 	
 	public Camera(Solenoid leftLightRing, Solenoid rightLightRing, Solenoid targetsLight) {
 		this.leftLightRing = leftLightRing;
@@ -44,12 +44,12 @@ public class Camera implements Subsystem {
 
         
 		targetHorizError = -table.getEntry("Angle To Target").getDouble(0);
-		rawDistance = table.getEntry("Distance").getDouble(1337.254);
+		hatchDistance = table.getEntry("Distance").getDouble(1337.254);
 		rightHasRight = table.getEntry("Right hasRight").getBoolean(false);
 		leftHasLeft = table.getEntry("Left hasLeft").getBoolean(false);
 
 
-		targetInView = rightHasRight && leftHasLeft &&  rawDistance >= 24;
+		targetInView = rightHasRight && leftHasLeft &&  hatchDistance >= 24;
 
 		targetsLight.set(targetInView);
     }
@@ -76,7 +76,7 @@ public class Camera implements Subsystem {
      * @return the rawDistance
      */
     public double getDistance() {
-        return rawDistance;
+        return hatchDistance;
 	}
 
 	public boolean getLightRingsOn() {

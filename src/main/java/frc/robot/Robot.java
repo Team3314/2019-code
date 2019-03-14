@@ -20,6 +20,7 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorControlMode;
 import frc.robot.subsystems.HatchMechanism;
+import frc.robot.subsystems.HumanInput;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Camera.DSCamera;
 import frc.robot.subsystems.CargoIntake.IntakeState;
@@ -201,7 +202,7 @@ public class Robot extends TimedRobot {
         }
         else {  
           drive.setDriveMode(DriveMode.TANK);
-          drive.setTank(HI.getLeftThrottle(), HI.getRightThrottle(), Constants.kJoystickPower);
+          drive.setTank(HI.getLeftThrottle(), HI.getRightThrottle(), Constants.kJoystickPower, Constants.kTurningSensitivityScale);
         }
         if(HI.getHighGear()) {
           drive.setHighGear(true);
@@ -288,7 +289,10 @@ public class Robot extends TimedRobot {
               cargoIntake.setIntakeState(IntakeState.PICKUP_FROM_STATION);
             }
             else {
-              cargoIntake.setIntakeState(IntakeState.WAITING);
+              if(cargoIntake.getCargoCarriageSensor())
+                cargoIntake.setIntakeState(IntakeState.WAITING_WITH_BALL);
+            else
+                cargoIntake.setIntakeState(IntakeState.WAITING);
             }
             /**
              * HATCH MECH CONTROLS

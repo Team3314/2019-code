@@ -1,6 +1,7 @@
 package frc.robot;
 
 import frc.robot.autos.*;
+import frc.robot.subsystems.HumanInput;
 
 public class AutoModeSelector {
 	private static HumanInput hi = Robot.HI;
@@ -9,7 +10,7 @@ public class AutoModeSelector {
 	private static Autonomous autoMode;
 	private static Autonomous auto0 = null,
 						auto1 = new AutoTwoHatchRocketClose(),
-						auto2 = null,
+						auto2 = new AutoFrontCargoShip(),
 						auto3 = null,
 						auto4 = null,
 						auto5 = null,

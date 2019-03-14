@@ -1,7 +1,7 @@
 package frc.robot.autos;
 
 import edu.wpi.first.wpilibj.Timer;
-import frc.robot.HumanInput;
+import frc.robot.subsystems.HumanInput;
 import frc.robot.Robot;
 import frc.robot.motion.Path;
 import frc.robot.motion.PathFollower;

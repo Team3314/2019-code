@@ -47,7 +47,7 @@ public class HatchMechanism implements Subsystem {
             case WAITING:
                 if(intakeRequest && !lastIntakeRequest) {
                     if(!mIsGripperDown) {
-                        elevator.set(Constants.kElevatorBallLevel1);
+                        elevator.set(Constants.kElevatorLoweredHatchPickup);
                         currentState = State.LOWER;
                     }
                     else {
