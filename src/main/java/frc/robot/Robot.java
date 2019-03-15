@@ -7,6 +7,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.robot.subsystems.Drive;
@@ -45,6 +48,8 @@ public class Robot extends TimedRobot {
   public static Superstructure superstructure = new Superstructure(map.compressor);
   public static Climber climber = new Climber(map.climberPiston, map.intakeToGroundPiston, map.highPressure);
   public static GamePieceStateMachine gamePieceStateMachine = new GamePieceStateMachine();
+
+
 
   public Autonomous autoMode = null;
   public AutoTwoHatchRocketClose auto = new AutoTwoHatchRocketClose();
@@ -342,6 +347,7 @@ public class Robot extends TimedRobot {
     superstructure.outputToSmartDashboard();
     climber.outputToSmartDashboard();
     gamePieceStateMachine.outputToSmartDashboard();
+
   }
 
   public void debug() {

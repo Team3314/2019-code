@@ -68,13 +68,16 @@ public class HatchMechanism implements Subsystem {
             case LOWER:
                 if(elevator.inPosition()) {
                     setGripperDown(true);
-                    //setSliderOut(true);
+                    if(Constants.kPracticeBot)
+                        setSliderOut(true);
                     timer.start();
                     elevator.set(Constants.kElevatorHatchPickup);
                     currentState = State.GRAB;
                 }
                 break;
             case GRAB:
+                if(Constants.kPracticeBot)
+                    setSliderOut(true);
                 if(timer.get() > .1 && elevator.inPosition()) {
                     setGripperDown(false);
                     setSliderOut(false);

@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.networktables.*;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -19,8 +20,16 @@ public class Camera implements Subsystem {
 	private NetworkTable table = NetworkTableInstance.getDefault().getTable("SmartDashboard").getSubTable("jetson");
 	private NetworkTableEntry expectedTargetAngle = new NetworkTableEntry(NetworkTableInstance.getDefault(), 420), 
 		driveStationCamera = new NetworkTableEntry(NetworkTableInstance.getDefault(), 420);
+
 		
-	private boolean targetInView, leftHasLeft, rightHasRight;
+	public DriverStation ds = DriverStation.getInstance();
+
+		
+	private NetworkTableEntry matchNumber = table.getEntry("Match Number"), 
+	matchTime = table.getEntry("Match Time"),
+    enabled = table.getEntry("Enabled");
+		
+	private boolean targetInView, hasRight, hasLeft;
 	private double targetHorizError;
 
 	private boolean lightRingsOn = true;
@@ -29,7 +38,7 @@ public class Camera implements Subsystem {
 
 	private Solenoid leftLightRing, rightLightRing, targetsLight;
     
-    private double hatchDistance, cargoDistance;
+    private double distance, highDistance;
 	
 	public Camera(Solenoid leftLightRing, Solenoid rightLightRing, Solenoid targetsLight) {
 		this.leftLightRing = leftLightRing;
@@ -44,12 +53,16 @@ public class Camera implements Subsystem {
 
         
 		targetHorizError = -table.getEntry("Angle To Target").getDouble(0);
-		hatchDistance = table.getEntry("Distance").getDouble(1337.254);
-		rightHasRight = table.getEntry("Right hasRight").getBoolean(false);
-		leftHasLeft = table.getEntry("Left hasLeft").getBoolean(false);
+		distance = table.getEntry("Distance").getDouble(1337.254);
+		highDistance = table.getEntry("DistanceHigh").getDouble(1337.254);
+		hasLeft = table.getEntry("Left hasRight").getBoolean(false);
+		hasRight = table.getEntry("Left hasLeft").getBoolean(false);
+		
+		enabled.setBoolean(ds.isEnabled());
+		matchNumber.setNumber(ds.getMatchNumber());
+		matchTime.setNumber(ds.getMatchTime());
 
-
-		targetInView = rightHasRight && leftHasLeft &&  hatchDistance >= 24;
+		targetInView = hasLeft && hasRight &&  distance >= 24;
 
 		targetsLight.set(targetInView);
     }
@@ -76,7 +89,7 @@ public class Camera implements Subsystem {
      * @return the rawDistance
      */
     public double getDistance() {
-        return hatchDistance;
+        return distance;
 	}
 
 	public boolean getLightRingsOn() {

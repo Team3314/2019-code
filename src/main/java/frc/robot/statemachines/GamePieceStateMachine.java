@@ -138,21 +138,23 @@ public class GamePieceStateMachine {
                     if(mode == GamePieceStateMachineMode.PICKUP) {
                         hatch.setGripperDown(true);
                     }
-                    
-                    elevator.set(desiredElevatorHeight);   
+                      
                     
                     if(drive.getStationSensor() && elevator.inPosition() && (nextState == GamePieceState.GRABBING_HATCH || nextState == GamePieceState.GRABBING_BALL)) {
                         currentState = nextState;
+                        elevator.set(desiredElevatorHeight); 
                         drive.set(0,0);
                     }
                     else if(drive.getAtRocket() && elevator.inPosition() && !(nextState == GamePieceState.GRABBING_HATCH || nextState == GamePieceState.GRABBING_BALL)) {
                         currentState = nextState;
+                        elevator.set(desiredElevatorHeight); 
                         drive.set(0,0);
                     }
                 }
                 break;
             case GRABBING_HATCH:
-                hatch.setIntakeRequest(true);
+                if(elevator.inPosition())
+                    hatch.setIntakeRequest(true);
                 if(hatch.isDone()) {
                     hatch.setIntakeRequest(false);
                     currentState = GamePieceState.BACKUP_HATCH;
@@ -160,13 +162,15 @@ public class GamePieceStateMachine {
                 }
                 break;
             case GRABBING_BALL:
-                cargoIntake.setPickupFromStationRequest(true);
+                if(elevator.inPosition())
+                    cargoIntake.setPickupFromStationRequest(true);
                 if(cargoIntake.isDone()) {
                     cargoIntake.setPickupFromStationRequest(false);
                 }
                 break;
             case PLACING_BALL:
-                cargoIntake.setPlaceRequest(true);
+                if(elevator.inPosition())
+                    cargoIntake.setPlaceRequest(true);
                 if(!cargoIntake.getCargoCarriageSensor()) {
                     cargoIntake.setPlaceRequest(false);
                     drive.resetDriveEncoders();
@@ -175,7 +179,8 @@ public class GamePieceStateMachine {
                 }
                 break;
             case PLACING_HATCH:
-                hatch.setPlaceRequest(true);
+                if(elevator.inPosition())
+                    hatch.setPlaceRequest(true);
                 if(hatch.isDone()) {
                     hatch.setPlaceRequest(false);
                     currentState = GamePieceState.BACKUP_HATCH;
@@ -203,7 +208,7 @@ public class GamePieceStateMachine {
                 }
                 break;
             case RETRACT:
-                elevator.set(Constants.kElevatorHatchPickup);
+                elevator.set(Constants.kElevatorLoweredHatchPickup);
                 hatch.setRetractRequest(false);
                 currentState = GamePieceState.DONE;
                 break;
@@ -215,6 +220,8 @@ public class GamePieceStateMachine {
 
     
     public void outputToSmartDashboard() {
+        SmartDashboard.putString("Game Piece State Machine State", currentState.toString());
+        SmartDashboard.putString("Game Piece State Machine Mode", mode.toString());
     }
 
     public void debug() {

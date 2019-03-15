@@ -462,6 +462,9 @@ public class Drive extends Drivetrain implements Subsystem {
     }
 
     public boolean getAtRocket() {
+        if(Constants.kPracticeBot) {
+            return getRightRocketSensor();
+        }
         return getLeftRocketSensor() || getRightRocketSensor();
     }
     public boolean getStationSensor() {
