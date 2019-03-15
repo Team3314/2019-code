@@ -1,7 +1,10 @@
 package frc.robot.subsystems;
 
+import com.kauailabs.navx.frc.AHRS;
+
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Robot;
@@ -20,11 +23,14 @@ public class Climber implements Subsystem {
 
     }
 
+    private AHRS navx;
+    private Timer timer = new Timer();
+
     private DoubleSolenoid climberPiston, intakeClimbPiston;
     private Solenoid highPressure;
     private boolean stopClimber = false;
 
-    private boolean climbRequest, previousStateRequest, intakeFurtherDownRequest = false;
+    private boolean climbRequest, previousStateRequest, intakeFurtherDownRequest, autoClimbButton, manualControlClimb = false;
     private boolean lastClimbRequest, lastPreviousStateRequest, lastIntakeFurtherDownRequest = false;
 
     private Drive drive = Robot.drive;
@@ -32,10 +38,11 @@ public class Climber implements Subsystem {
 
     private State currentState = State.WAITING;
 
-    public Climber(DoubleSolenoid climberPiston, DoubleSolenoid intakeClimbPiston, Solenoid highPressure) {
+    public Climber(DoubleSolenoid climberPiston, DoubleSolenoid intakeClimbPiston, Solenoid highPressure, AHRS navx) {
         this.climberPiston = climberPiston;
         this.intakeClimbPiston = intakeClimbPiston;
         this.highPressure = highPressure;
+        this.navx = navx;
     }
 
     @Override
@@ -47,7 +54,9 @@ public class Climber implements Subsystem {
             intakeClimbPiston.set(Constants.kIntakeClimberUp);
             currentState = State.WAITING;
         }
-        
+        if((climbRequest && !lastClimbRequest) || (previousStateRequest && !lastPreviousStateRequest)){
+            manualControlClimb = true;
+        }
         drive.set(0, 0);
         switch(currentState) {
             case WAITING:
@@ -56,7 +65,12 @@ public class Climber implements Subsystem {
                     intakeClimbPiston.set(Constants.kIntakeClimberUp);
                 else 
                     intakeClimbPiston.set(Constants.kIntakeClimberDown);
-                if(climbRequest && !lastClimbRequest) {
+                if(manualControlClimb && climbRequest && !lastClimbRequest){
+                    navx.reset();
+                    currentState = State.INTAKE_AND_CLIMBER_DOWN;
+                }
+                if(autoClimbButton){
+                    navx.reset();
                     currentState = State.INTAKE_AND_CLIMBER_DOWN;
                 }
                 break;
@@ -72,9 +86,10 @@ public class Climber implements Subsystem {
                     intakeClimbPiston.set(Constants.kIntakeClimberUp);
                     currentState = State.WAITING;
                 }
-                if(climbRequest && !lastClimbRequest) {
+                if(manualControlClimb && climbRequest && !lastClimbRequest)
                     currentState = State.INTAKE_FURTHER_DOWN;
-                }
+                else if(!manualControlClimb && navx.getRoll() <= 0)
+                    currentState = State.INTAKE_FURTHER_DOWN;
                 break;
             case INTAKE_FURTHER_DOWN:
                     highPressure.set(true);
@@ -84,29 +99,33 @@ public class Climber implements Subsystem {
                 if(previousStateRequest && !lastPreviousStateRequest) {
                     currentState = State.INTAKE_AND_CLIMBER_DOWN;
                 }
-                if(climbRequest && !lastClimbRequest) {
+                if(manualControlClimb && climbRequest && !lastClimbRequest)
                     currentState = State.DRIVE;
-                }
+                else if(!manualControlClimb && navx.getRoll() < 4)
+                    currentState = State.DRIVE;
                 break;
             case DRIVE:
                 cargoIntake.setIntakeState(IntakeState.DRIVE_BACK);
                 drive.set(-.1, -.1);
-                if(previousStateRequest && !lastPreviousStateRequest) {
+                if(previousStateRequest && !lastPreviousStateRequest){
                     currentState = State.INTAKE_FURTHER_DOWN;
                 }
-                if(climbRequest && !lastClimbRequest) {
+                if(manualControlClimb && climbRequest && !lastClimbRequest)
                     currentState = State.RAISE_CLIMBER;
-                }
+                else if(!manualControlClimb && !navx.isMoving())
+                    currentState = State.RAISE_CLIMBER;
                 break;
             case RAISE_CLIMBER:
                 climberPiston.set(Constants.kClimberUp);
                 cargoIntake.setIntakeState(IntakeState.INTAKE_DOWN);
+                timer.start();
                 if(previousStateRequest && !lastPreviousStateRequest) {
                     currentState = State.DRIVE;
                 }
-                if(climbRequest && !lastClimbRequest) {
+                if(manualControlClimb && climbRequest && !lastClimbRequest)
                     currentState = State.KEEP_DRIVING;
-                }
+                else if(timer.get() >= 3)
+                    currentState = State.KEEP_DRIVING;
                 break;
             case KEEP_DRIVING:
                 cargoIntake.setIntakeState(IntakeState.DRIVE_BACK);
@@ -114,21 +133,22 @@ public class Climber implements Subsystem {
                 if(previousStateRequest && !lastPreviousStateRequest) {
                     currentState = State.RAISE_CLIMBER;
                 }
-                if(climbRequest && !lastClimbRequest) {
+                if(manualControlClimb && climbRequest && !lastClimbRequest)
                     currentState = State.STOP;
-                }
+                else if(!manualControlClimb && !navx.isMoving())
+                        currentState = State.STOP;
                 break;
             case STOP:
                 cargoIntake.setIntakeState(IntakeState.INTAKE_DOWN);
                 if(previousStateRequest && !lastPreviousStateRequest) {
                     currentState = State.KEEP_DRIVING;
                 }
-                if(climbRequest && !lastClimbRequest) {
+                if(climbRequest && !lastClimbRequest)
                     currentState = State.WAITING;
-                }
                 break;
         }
-
+        timer.stop();
+        timer.reset();
         lastClimbRequest = climbRequest;
     }
 
@@ -137,6 +157,7 @@ public class Climber implements Subsystem {
         SmartDashboard.putString("Climber State", currentState.toString());
         SmartDashboard.putBoolean("Climb Request", climbRequest);
         SmartDashboard.putBoolean("Last Climb Request", lastClimbRequest);
+        SmartDashboard.putNumber("Roll Angle", navx.getRoll());
 
     }
 
@@ -146,6 +167,10 @@ public class Climber implements Subsystem {
 
     public void setPreviousStateRequest(boolean request) { 
         previousStateRequest = request;
+    }
+
+    public void setAutoClimbButton(boolean autoButton){
+        autoClimbButton = autoButton;
     }
 
     public void setStopClimb(boolean stop) {
@@ -168,8 +193,5 @@ public class Climber implements Subsystem {
 
     public void setIntakeFurtherDownRequest(boolean request) {
         intakeFurtherDownRequest = request;
-    }    
-
-    
-
+    }
 }

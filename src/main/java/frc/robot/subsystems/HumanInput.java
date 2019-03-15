@@ -257,7 +257,9 @@ public class HumanInput implements Subsystem {
 	public boolean getClimbMode() {
 		return gamepad.getRawButton(7) && gamepad.getRawButton(8);
 	}
-
+	public boolean getAutoClimbMode(){
+		return getShift() && getClimbMode();
+	}
 	public boolean getPrevious() {
 		return gamepad.getRawButton(7) && gamepad.getRawButton(6);
 	}
