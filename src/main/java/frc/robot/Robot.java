@@ -246,7 +246,7 @@ public class Robot extends TimedRobot {
             else {
               elevator.setElevatorState(ElevatorControlMode.MOTION_MAGIC);
               if(HI.getElevatorLevel1()) {
-                if(cargoIntake.getCargoCarriageSensor()) {
+                if(cargoIntake.hasBall()) {
                   elevator.set(Constants.kElevatorBallLevel1);
                 }
                 else {
@@ -254,7 +254,7 @@ public class Robot extends TimedRobot {
                 }
               }
               else if (HI.getElevatorLevel2()) {
-                if(cargoIntake.getCargoCarriageSensor()) {
+                if(cargoIntake.hasBall()) {
                   elevator.set(Constants.kElevatorBallLevel2);
                 }
                 else {
@@ -262,7 +262,7 @@ public class Robot extends TimedRobot {
                 }
               }
               else if(HI.getElevatorLevel3()) {
-                if(cargoIntake.getCargoCarriageSensor()) {
+                if(cargoIntake.hasBall()) {
                   elevator.set(Constants.kElevatorBallLevel3);
                 }
                 else {
@@ -293,12 +293,8 @@ public class Robot extends TimedRobot {
             else if(HI.getCargoReverseOuttake()) {
               cargoIntake.setIntakeState(IntakeState.PICKUP_FROM_STATION);
             }
-            else {
-              if(cargoIntake.getCargoCarriageSensor())
-                cargoIntake.setIntakeState(IntakeState.WAITING_WITH_BALL);
             else
-                cargoIntake.setIntakeState(IntakeState.WAITING);
-            }
+              cargoIntake.setIntakeState(IntakeState.WAITING);
             /**
              * HATCH MECH CONTROLS
             */

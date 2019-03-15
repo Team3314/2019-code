@@ -16,7 +16,6 @@ public class CargoIntake implements Subsystem {
     // TODO: Consider a WAITINGWITHBALL state
     public enum IntakeState {
         WAITING,
-        WAITING_WITH_BALL,
         INTAKING,
         RAISING,
         TRANSFERRING,
@@ -63,9 +62,6 @@ public class CargoIntake implements Subsystem {
         if((!placeRequest && lastPlaceRequest) || 
          (!vomitRequest && lastVomitRequest) ||
          (!pickupFromStationRequest && lastPickupFromStationRequest)) {
-            if(getCargoCarriageSensor())
-                currentIntakeState = IntakeState.WAITING_WITH_BALL;
-            else
                 currentIntakeState = IntakeState.WAITING;
         }
         setIntakeSpeed(0);
@@ -106,26 +102,6 @@ public class CargoIntake implements Subsystem {
                 if(pickupFromStationRequest && !lastPickupFromStationRequest) {
                     elevator.set(Constants.kElevatorBallStationPickup);
                     currentIntakeState = IntakeState.PICKUP_FROM_STATION;
-                }
-                break;
-            case WAITING_WITH_BALL:
-                if(placeRequest && !lastPlaceRequest) {
-                    currentIntakeState = IntakeState.PLACE;
-                }
-                loadingBall = false;
-                pivotState = Value.kOff;
-                if(!getCargoCarriageSensor()) {
-                    setOuttakeSpeed(.2);
-                    timer.start();
-                    if(timer.get() >= 5) {
-                        currentIntakeState = IntakeState.WAITING;
-                        timer.stop();
-                        timer.reset();
-                    }
-                }
-                else if(getCargoCarriageSensor() && !lastCargoInCarriage) {
-                    timer.stop();
-                    timer.reset();
                 }
                 break;
             case INTAKING:
@@ -184,7 +160,7 @@ public class CargoIntake implements Subsystem {
                 break;
             case DONE:
                 setIntakeDown(false);
-                currentIntakeState = IntakeState.WAITING_WITH_BALL;
+                currentIntakeState = IntakeState.WAITING;
                 break;
             case OVERRIDE:
                 setIntakeDown(true);
@@ -300,7 +276,7 @@ public class CargoIntake implements Subsystem {
     }
 
     public boolean hasBall() {
-        return currentIntakeState == IntakeState.WAITING_WITH_BALL;
+        return hasBall;
     }
 
     @Override

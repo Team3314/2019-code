@@ -72,6 +72,7 @@ public class Camera implements Subsystem {
 	 */
 
     /**
+	 * 
      * @return the targetsInView
      */
     public boolean isTargetInView() {
@@ -90,6 +91,10 @@ public class Camera implements Subsystem {
      */
     public double getDistance() {
         return distance;
+	}
+
+	public double getHighDistance() {
+		return highDistance;
 	}
 
 	public boolean getLightRingsOn() {

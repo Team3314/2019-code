@@ -48,7 +48,7 @@ public class Drive extends Drivetrain implements Subsystem {
     SpeedControllerMode controlMode = SpeedControllerMode.kIdle;
     
     //Hardware states
-    private boolean mIsHighGear, elevatorUp, velocityControl = true, driveDistance;
+    private boolean mIsHighGear, elevatorUp, velocityControl = true, driveDistance, placingCargoOnRocket;
 
     private IdleMode idleMode;
     private double rawLeftSpeed, rawRightSpeed, arbFFLeft = 0, arbFFRight = 0, desiredAngle, cameraTurnAngle, tickToInConversion, speedCap,
@@ -67,6 +67,7 @@ public class Drive extends Drivetrain implements Subsystem {
 
     private PIDController gyroControl;
     private CustomPIDOutput gyroPIDOutput;
+
 
     private double visionOffset;
 
@@ -177,7 +178,10 @@ public class Drive extends Drivetrain implements Subsystem {
 
         if(camera.isTargetInView()) {
             cameraTurnAngle = getDelayedGyroAngle() + camera.getTargetHorizError();
-            cameraDistance = camera.getDistance();
+            if(placingCargoOnRocket)
+                cameraDistance = camera.getHighDistance();
+            else
+                cameraDistance = camera.getDistance();
             targetDistance = getAverageRioPosition() + cameraDistance;
         }
         if(gyroControl.getError() < 5) {
@@ -505,6 +509,10 @@ public class Drive extends Drivetrain implements Subsystem {
 
     public void setVisionOffset(double offset) {
         visionOffset = offset;
+    }
+
+    public void setPlacingOnRocket(boolean rocket) {
+
     }
 
     @Override

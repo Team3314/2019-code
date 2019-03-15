@@ -46,7 +46,8 @@ public class GamePieceStateMachine {
     private Timer timer = new Timer();
 
     private boolean request;
-    private boolean lastRequest;
+    private boolean lastRequest, lastElevatorInPosition;
+
 
     private double driveSpeed = .6, visionOffset = 0;
 
@@ -55,6 +56,7 @@ public class GamePieceStateMachine {
 
     
     public void update() {
+        drive.setPlacingOnRocket(placingCargoOnRocket());
         if(!request && lastRequest) {
             currentState = GamePieceState.WAITING;
             timer.stop();
@@ -63,7 +65,7 @@ public class GamePieceStateMachine {
         }
         switch(currentState) {
             case WAITING:
-                if(request) {
+                if(request && !lastRequest) {
                     drive.setDriveMode(DriveMode.VISION_CONTROL);
                     drive.setVisionOffset(visionOffset);
                     elevator.setElevatorState(ElevatorControlMode.MOTION_MAGIC);
@@ -84,7 +86,7 @@ public class GamePieceStateMachine {
                 drive.set(driveSpeed, driveSpeed);
                 switch(mode) { 
                     case LEVEL1:
-                        if(cargoIntake.getCargoCarriageSensor()) {
+                        if(cargoIntake.hasBall()) {
                             desiredElevatorHeight = Constants.kElevatorBallLevel1;
                             nextState = GamePieceState.PLACING_BALL;
                         }
@@ -94,7 +96,7 @@ public class GamePieceStateMachine {
                         }
                         break;
                     case LEVEL2:
-                        if(cargoIntake.getCargoCarriageSensor()) {
+                        if(cargoIntake.hasBall()) {
                             desiredElevatorHeight = Constants.kElevatorBallLevel2;
                             nextState = GamePieceState.PLACING_BALL;
                         }
@@ -104,7 +106,7 @@ public class GamePieceStateMachine {
                         }
                         break;
                     case LEVEL3:
-                        if(cargoIntake.getCargoCarriageSensor()) {
+                        if(cargoIntake.hasBall()) {
                             desiredElevatorHeight = Constants.kElevatorBallLevel3;
                             nextState = GamePieceState.PLACING_BALL;
                         }
@@ -114,7 +116,7 @@ public class GamePieceStateMachine {
                         }
                         break;
                     case PICKUP:
-                        if(cargoIntake.getCargoCarriageSensor()) {
+                        if(cargoIntake.hasBall()) {
                             desiredElevatorHeight = Constants.kElevatorBallStationPickup;
                             nextState = GamePieceState.GRABBING_BALL;
                         }
@@ -124,7 +126,7 @@ public class GamePieceStateMachine {
                         }
                         break; 
                     case CARGO_SHIP:
-                        if(cargoIntake.getCargoCarriageSensor()) {
+                        if(cargoIntake.hasBall()) {
                             desiredElevatorHeight = Constants.kElevatorBallCargoShip;
                             nextState = GamePieceState.PLACING_BALL;
                         }
@@ -138,8 +140,6 @@ public class GamePieceStateMachine {
                     if(mode == GamePieceStateMachineMode.PICKUP) {
                         hatch.setGripperDown(true);
                     }
-                      
-                    
                     if(drive.getStationSensor() && elevator.inPosition() && (nextState == GamePieceState.GRABBING_HATCH || nextState == GamePieceState.GRABBING_BALL)) {
                         currentState = nextState;
                         elevator.set(desiredElevatorHeight); 
@@ -148,11 +148,14 @@ public class GamePieceStateMachine {
                     else if(drive.getAtRocket() && elevator.inPosition() && !(nextState == GamePieceState.GRABBING_HATCH || nextState == GamePieceState.GRABBING_BALL)) {
                         currentState = nextState;
                         elevator.set(desiredElevatorHeight); 
+                        timer.stop();
+                        timer.reset();
                         drive.set(0,0);
                     }
                 }
                 break;
             case GRABBING_HATCH:
+                drive.set(0,0);
                 if(elevator.inPosition())
                     hatch.setIntakeRequest(true);
                 if(hatch.isDone()) {
@@ -162,6 +165,7 @@ public class GamePieceStateMachine {
                 }
                 break;
             case GRABBING_BALL:
+                drive.set(0,0);
                 if(elevator.inPosition())
                     cargoIntake.setPickupFromStationRequest(true);
                 if(cargoIntake.isDone()) {
@@ -169,9 +173,13 @@ public class GamePieceStateMachine {
                 }
                 break;
             case PLACING_BALL:
-                if(elevator.inPosition())
+                drive.set(0,0);
+                if(elevator.inPosition()) {
+                    if(!lastElevatorInPosition)
+                        timer.start();
                     cargoIntake.setPlaceRequest(true);
-                if(!cargoIntake.getCargoCarriageSensor()) {
+                }
+                if(timer.get() >= .25) {
                     cargoIntake.setPlaceRequest(false);
                     drive.resetDriveEncoders();
                     currentState = GamePieceState.BACKUP_BALL;
@@ -179,6 +187,7 @@ public class GamePieceStateMachine {
                 }
                 break;
             case PLACING_HATCH:
+                drive.set(0,0);
                 if(elevator.inPosition())
                     hatch.setPlaceRequest(true);
                 if(hatch.isDone()) {
@@ -198,7 +207,7 @@ public class GamePieceStateMachine {
                 break;
             case BACKUP_BALL:
                 drive.setDriveMode(DriveMode.GYROLOCK);
-                elevator.set(Constants.kElevatorHatchPickup);
+                elevator.set(Constants.kElevatorLoweredHatchPickup);
                 cargoIntake.setPlaceRequest(false);
                 drive.set(-.25, -.25);
                 if(drive.getAverageRioPosition() <= -12) {
@@ -216,12 +225,15 @@ public class GamePieceStateMachine {
                 break;
         }
         lastRequest = request;
+        lastElevatorInPosition = elevator.inPosition();
     }
 
     
     public void outputToSmartDashboard() {
         SmartDashboard.putString("Game Piece State Machine State", currentState.toString());
         SmartDashboard.putString("Game Piece State Machine Mode", mode.toString());
+        SmartDashboard.putNumber("Timer", timer.get());
+
     }
 
     public void debug() {
@@ -231,6 +243,7 @@ public class GamePieceStateMachine {
     }
 
     
+
     public boolean isDone() {
         return currentState == GamePieceState.DONE;
     }
@@ -255,5 +268,11 @@ public class GamePieceStateMachine {
     }
     public boolean isPlacing() {
         return currentState == GamePieceState.PLACING_BALL || currentState == GamePieceState.PLACING_HATCH || currentState == GamePieceState.GRABBING_HATCH;
+    }
+    
+    public boolean placingCargoOnRocket() {
+        return desiredElevatorHeight == Constants.kElevatorBallLevel1 ||
+        desiredElevatorHeight == Constants.kElevatorBallLevel2 ||
+        desiredElevatorHeight == Constants.kElevatorBallLevel3;
     }
 }

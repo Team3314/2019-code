@@ -73,6 +73,7 @@ public class Elevator extends Lift implements Subsystem {
         SmartDashboard.putNumber("Current Elevator Position Inches", getHeight());
         SmartDashboard.putString("Elevator Control Mode", getElevatorState().toString());
         SmartDashboard.putBoolean("Reverse limit", transmission.getMotor(1).getReverseLimit());
+        SmartDashboard.putBoolean("Elevator In Position", inPosition());
     }   
 
 
