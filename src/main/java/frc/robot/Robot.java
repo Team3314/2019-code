@@ -42,7 +42,7 @@ public class Robot extends TimedRobot {
   public static CargoIntake cargoIntake = new CargoIntake(map.intakeTransmission, map.outtakeTransmission, map.intakePiston);
   public static HatchMechanism hatch = new HatchMechanism(map.gripperPiston, map.sliderPiston);
   public static Superstructure superstructure = new Superstructure(map.compressor);
-  public static Climber climber = new Climber(map.climberPiston, map.intakeToGroundPiston, map.highPressure);
+  public static Climber climber = new Climber(map.climberPiston, map.intakeToGroundPiston, map.highPressure, map.navx);
   public static GamePieceStateMachine gamePieceStateMachine = new GamePieceStateMachine();
 
   public Autonomous autoMode = null;
@@ -149,6 +149,7 @@ public class Robot extends TimedRobot {
     else if(climber.isClimbing()) {
       climber.setStopClimb(HI.getAbortClimb());
       climber.setClimbRequest(HI.getClimbMode());
+      climber.setAutoClimbButton(HI.getAutoClimbMode());
       climber.setPreviousStateRequest(HI.getPrevious());
     }
     else {
@@ -175,6 +176,7 @@ public class Robot extends TimedRobot {
       else {
         gamePieceStateMachine.setRequest(false);
         climber.setClimbRequest(HI.getClimbMode());
+        climber.setAutoClimbButton(HI.getAutoClimbMode());
         climber.setPreviousStateRequest(HI.getPrevious());
         climber.setIntakeFurtherDownRequest(HI.getIntakeFurtherDown());
         if(HI.getResetGyro()) {
@@ -339,6 +341,7 @@ public class Robot extends TimedRobot {
     superstructure.outputToSmartDashboard();
     climber.outputToSmartDashboard();
     gamePieceStateMachine.outputToSmartDashboard();
+    
   }
 
   public void debug() {

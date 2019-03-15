@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import com.kauailabs.navx.frc.AHRS;
+
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -20,11 +22,13 @@ public class Climber implements Subsystem {
 
     }
 
+    AHRS navx;
+
     private DoubleSolenoid climberPiston, intakeClimbPiston;
     private Solenoid highPressure;
     private boolean stopClimber = false;
 
-    private boolean climbRequest, previousStateRequest, intakeFurtherDownRequest = false;
+    private boolean autoClimbButton, climbRequest, previousStateRequest, intakeFurtherDownRequest = false;
     private boolean lastClimbRequest, lastPreviousStateRequest, lastIntakeFurtherDownRequest = false;
 
     private Drive drive = Robot.drive;
@@ -32,10 +36,11 @@ public class Climber implements Subsystem {
 
     private State currentState = State.WAITING;
 
-    public Climber(DoubleSolenoid climberPiston, DoubleSolenoid intakeClimbPiston, Solenoid highPressure) {
+    public Climber(DoubleSolenoid climberPiston, DoubleSolenoid intakeClimbPiston, Solenoid highPressure, AHRS navx) {
         this.climberPiston = climberPiston;
         this.intakeClimbPiston = intakeClimbPiston;
         this.highPressure = highPressure;
+        this.navx = navx;
     }
 
     @Override
@@ -56,7 +61,7 @@ public class Climber implements Subsystem {
                     intakeClimbPiston.set(Constants.kIntakeClimberUp);
                 else 
                     intakeClimbPiston.set(Constants.kIntakeClimberDown);
-                if(climbRequest && !lastClimbRequest) {
+                if(autoClimbButton) {
                     currentState = State.INTAKE_AND_CLIMBER_DOWN;
                 }
                 break;
@@ -72,7 +77,7 @@ public class Climber implements Subsystem {
                     intakeClimbPiston.set(Constants.kIntakeClimberUp);
                     currentState = State.WAITING;
                 }
-                if(climbRequest && !lastClimbRequest) {
+                if(true) {
                     currentState = State.INTAKE_FURTHER_DOWN;
                 }
                 break;
@@ -148,6 +153,10 @@ public class Climber implements Subsystem {
         previousStateRequest = request;
     }
 
+    public void setAutoClimbButton(boolean autoButton){
+        autoClimbButton = autoButton;
+    }
+
     public void setStopClimb(boolean stop) {
         stopClimber = stop;
     }
@@ -168,8 +177,5 @@ public class Climber implements Subsystem {
 
     public void setIntakeFurtherDownRequest(boolean request) {
         intakeFurtherDownRequest = request;
-    }    
-
-    
-
+    }
 }

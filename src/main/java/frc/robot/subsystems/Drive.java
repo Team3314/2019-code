@@ -404,6 +404,8 @@ public class Drive extends Drivetrain implements Subsystem {
         SmartDashboard.putNumber("Distance To Target", getDistanceToTarget());
         SmartDashboard.putNumber("Left Rio Encoder Position", leftRioDrivePositionInches);
         SmartDashboard.putNumber("Right Rio Encoder Position", rightRioDrivePositionInches);
+        //Test
+        SmartDashboard.putNumber("roll Axis", navx.getRoll());
     }
   
     public void resetDriveEncoders() {
