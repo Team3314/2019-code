@@ -52,7 +52,7 @@ public class AutoTwoHatchRocketClose extends Autonomous {
                 }
                 break;
             case TURN_TO_ROCKET1:
-                if(getTime() >=.75) {
+                if(getTime() >=.5) {
                     resetTimer();
                     currentState = State.PLACE_HATCH1;
                 }
@@ -80,8 +80,8 @@ public class AutoTwoHatchRocketClose extends Autonomous {
             case STOP2:
                 if(getTime() >= .05) {
                     resetTimer();
-                    driveGyrolock(.75, 180, 60);
-                    currentState = State.DRIVE;
+                    //driveGyrolock(.75, 180, 60);
+                    currentState = State.PICKUP_HATCH;
                 }
                 break;
             case DRIVE:
