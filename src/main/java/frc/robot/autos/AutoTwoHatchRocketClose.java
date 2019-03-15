@@ -78,7 +78,7 @@ public class AutoTwoHatchRocketClose extends Autonomous {
                 }
                 break;
             case STOP2:
-                if(getTime() >= .5) {
+                if(getTime() >= .05) {
                     resetTimer();
                     driveGyrolock(.75, 180, 60);
                     currentState = State.DRIVE;

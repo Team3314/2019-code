@@ -95,8 +95,9 @@ public class RobotMap {
         Solenoid leftLightRing;
         Solenoid rightLightRing;
         Solenoid targetsLight;
+        Solenoid autoLight;
 
-        AnalogInput distanceSensor, atTargetSensor;
+        AnalogInput rightRocketSensor, leftRocketSensor;
 
         DigitalInput laserStationSensor;
 
@@ -262,8 +263,8 @@ public class RobotMap {
 
         climberPiston = new DoubleSolenoid(0, 4, 5);
 
-        distanceSensor = new AnalogInput(2);
-        atTargetSensor = new AnalogInput(3);
+        rightRocketSensor = new AnalogInput(2);
+        leftRocketSensor = new AnalogInput(3);
 
         laserStationSensor = new DigitalInput(9);
     }

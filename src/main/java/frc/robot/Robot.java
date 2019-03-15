@@ -20,6 +20,7 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorControlMode;
 import frc.robot.subsystems.HatchMechanism;
+import frc.robot.subsystems.HumanInput;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Camera.DSCamera;
 import frc.robot.subsystems.CargoIntake.IntakeState;
@@ -37,7 +38,7 @@ public class Robot extends TimedRobot {
   public static RobotMap map = new RobotMap();
   public static HumanInput HI = new HumanInput();
   public static Camera camera = new Camera(map.leftLightRing, map.rightLightRing, map.targetsLight);
-  public static Drive drive = new Drive(map.leftDrive, map.rightDrive, map.navx, map.shifter, map.leftDriveEncoder, map.rightDriveEncoder, map.distanceSensor, map.atTargetSensor, map.laserStationSensor);
+  public static Drive drive = new Drive(map.leftDrive, map.rightDrive, map.navx, map.shifter, map.leftDriveEncoder, map.rightDriveEncoder, map.rightRocketSensor, map.leftRocketSensor, map.laserStationSensor);
   public static Elevator elevator = new Elevator(map.elevatorTransmission);
   public static CargoIntake cargoIntake = new CargoIntake(map.intakeTransmission, map.outtakeTransmission, map.intakePiston);
   public static HatchMechanism hatch = new HatchMechanism(map.gripperPiston, map.sliderPiston);
@@ -186,7 +187,6 @@ public class Robot extends TimedRobot {
         if(HI.getGyrolock()) {
           drive.setDriveMode(DriveMode.GYROLOCK);
           drive.setTank(HI.getLeftThrottle(), HI.getLeftThrottle(), Constants.kJoystickPower);
-          /*  XXX GYRO TEST CODE
           if(HI.turnToZero())
             drive.setDesiredAngle(0);
           else if(HI.turnToRight())
@@ -195,7 +195,7 @@ public class Robot extends TimedRobot {
             drive.setDesiredAngle(180);
           else if(HI.turnToLeft())
             drive.setDesiredAngle(90);
-            */
+            
             drive.setGyroDriveDistance(0);
         }
         else if(HI.getVision()) {
@@ -204,7 +204,7 @@ public class Robot extends TimedRobot {
         }
         else {  
           drive.setDriveMode(DriveMode.TANK);
-          drive.setTank(HI.getLeftThrottle(), HI.getRightThrottle(), Constants.kJoystickPower);
+          drive.setTank(HI.getLeftThrottle(), HI.getRightThrottle(), Constants.kJoystickPower, Constants.kTurningSensitivityScale);
         }
         if(HI.getHighGear()) {
           drive.setHighGear(true);
@@ -291,7 +291,10 @@ public class Robot extends TimedRobot {
               cargoIntake.setIntakeState(IntakeState.PICKUP_FROM_STATION);
             }
             else {
-              cargoIntake.setIntakeState(IntakeState.WAITING);
+              if(cargoIntake.getCargoCarriageSensor())
+                cargoIntake.setIntakeState(IntakeState.WAITING_WITH_BALL);
+            else
+                cargoIntake.setIntakeState(IntakeState.WAITING);
             }
             /**
              * HATCH MECH CONTROLS

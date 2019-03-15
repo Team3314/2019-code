@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 public class Constants {
 
-	public static boolean practiceBot = false;
+	public static boolean kPracticeBot = true;
 
 
 //Conversions	
@@ -77,6 +77,7 @@ public class Constants {
 		public static final int kElevatorLowAccelerationThreshold = ((int)(30 / kElevatorInchesPerTick));
 	
 		public static final int kElevatorHatchPickup = (int)(5 / kElevatorInchesPerTick);
+		public static final int kElevatorLoweredHatchPickup = (int) (1 / kElevatorInchesPerTick);
 		public static final int kElevatorRaisedHatchPickup = (int)(7.5 / kElevatorInchesPerTick);
 		public static final int kElevatorBallStationPickup = (int)(25/ kElevatorInchesPerTick);
 		public static final int kElevatorBallLevel1 = (int)(2.5 / kElevatorInchesPerTick);
@@ -189,16 +190,6 @@ public class Constants {
 		public static final double kMotionProfileRightForeLow_Intercept = 0.143260;
 		
 //camera
-		public static int kLEDDefault = 0;
-		public static int kLEDOff = 1;
-		public static int kLEDOn = 3;
-
-		public static int kVisionProcessorMode = 0;
-		public static int kDriverCameraMode = 1;
-		
-		public static int kSnapshotOff = 0;
-		public static int kSnapshotOn = 1;
-		
 		public static double kCameraHeight = 13/16; //inches
 		public static double kMountingAngle = 10; //degrees
 	
@@ -224,33 +215,20 @@ public class Constants {
 		public static final Value kIntakeClimberDown = Value.kForward;
 		public static final double kOpticalSensorVoltageThreshold = 3;
 
-
-		public static final double kRightStopUpAngle = 82;
-
-
-		public static final double kLeftStopUpAngle = 125;
-
-
-		public static final double kRightStopDownAngle = 115;
-
-
-		public static final double kLeftStopDownAngle = 85;
-
-
 		public static final Value kClimberDown = Value.kForward;
-
-
 		public static final Value kClimberUp = Value.kReverse;
 
 
-		public static final int kGyroDelay = 0;
+		public static final int kGyroDelay = 12;
 
 		//Controls
 		public static final double kJoystickDeadband = .15;
 
 		public static final double kJoystickThrottleScale = 1/ (1-kJoystickDeadband);
 
-		public static final int kJoystickPower = 1;
+		public static final double kJoystickPower = 1;
+
+		public static final double kTurningSensitivityScale = .8;
 
 
 }
