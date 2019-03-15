@@ -228,7 +228,7 @@ public class Constants {
 
 		public static final double kJoystickPower = 1;
 
-		public static final double kTurningSensitivityScale = .8;
+		public static final double kTurningSensitivityScale = .6;
 
 
 }

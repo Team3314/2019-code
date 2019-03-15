@@ -134,7 +134,14 @@ public class GamePieceStateMachine {
                     if(mode == GamePieceStateMachineMode.PICKUP) {
                         hatch.setGripperDown(true);
                     }
-                    if( (nextState == GamePieceState.GRABBING_HATCH || nextState == GamePieceState.GRABBING_BALL)) {
+                    if((nextState == GamePieceState.GRABBING_HATCH || nextState == GamePieceState.GRABBING_BALL)) {
+                        elevator.set(desiredElevatorHeight); 
+                        if(drive.getStationSensor() && elevator.inPosition()) {
+                            currentState = nextState;
+                            drive.set(0,0);
+                        }
+                    }
+                    else if(nextState == GamePieceState.PLACING_BALL && mode == GamePieceStateMachineMode.CARGO_SHIP) {
                         elevator.set(desiredElevatorHeight); 
                         if(drive.getStationSensor() && elevator.inPosition()) {
                             currentState = nextState;

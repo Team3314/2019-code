@@ -39,9 +39,9 @@ public class AutoTwoHatchRocketClose extends Autonomous {
         switch(currentState) {
             case START:
                 if(getStartPos() == "StartR")
-                    driveGyrolock(0, -33, DriveMode.GYROLOCK_LEFT);
+                    driveGyrolock(0, -30, DriveMode.GYROLOCK_LEFT);
                 else if(getStartPos() == "StartL") 
-                    driveGyrolock(0, 33, DriveMode.GYROLOCK_RIGHT);
+                    driveGyrolock(0, 30, DriveMode.GYROLOCK_RIGHT);
                 setHighGear(false);
                 currentState = State.STOP;
                 break;
@@ -85,7 +85,7 @@ public class AutoTwoHatchRocketClose extends Autonomous {
                 }
                 break;
             case DRIVE:
-                if(drive.getGyroDriveDone()) {
+                if(gyroTurnDone()) {
                     drive.set(0,0);
                     setGamePieceRequest(true);
                     gamePieceStateMachine.setMode(GamePieceStateMachineMode.PICKUP);
