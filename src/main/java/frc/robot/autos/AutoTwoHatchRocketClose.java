@@ -39,9 +39,9 @@ public class AutoTwoHatchRocketClose extends Autonomous {
         switch(currentState) {
             case START:
                 if(getStartPos() == "StartR")
-                    driveGyrolock(0, -33, DriveMode.GYROLOCK);
+                    driveGyrolock(0, -33, DriveMode.GYROLOCK_LEFT);
                 else if(getStartPos() == "StartL") 
-                    driveGyrolock(0, 33, DriveMode.GYROLOCK);
+                    driveGyrolock(0, 33, DriveMode.GYROLOCK_RIGHT);
                 setHighGear(false);
                 currentState = State.STOP;
                 break;

@@ -116,14 +116,8 @@ public class GamePieceStateMachine {
                         }
                         break;
                     case PICKUP:
-                        if(cargoIntake.hasBall()) {
-                            desiredElevatorHeight = Constants.kElevatorBallStationPickup;
-                            nextState = GamePieceState.GRABBING_BALL;
-                        }
-                        else {
                             desiredElevatorHeight = Constants.kElevatorHatchPickup;
                             nextState = GamePieceState.GRABBING_HATCH;
-                        }
                         break; 
                     case CARGO_SHIP:
                         if(cargoIntake.hasBall()) {
@@ -140,10 +134,12 @@ public class GamePieceStateMachine {
                     if(mode == GamePieceStateMachineMode.PICKUP) {
                         hatch.setGripperDown(true);
                     }
-                    if(drive.getStationSensor() && elevator.inPosition() && (nextState == GamePieceState.GRABBING_HATCH || nextState == GamePieceState.GRABBING_BALL)) {
-                        currentState = nextState;
+                    if( (nextState == GamePieceState.GRABBING_HATCH || nextState == GamePieceState.GRABBING_BALL)) {
                         elevator.set(desiredElevatorHeight); 
-                        drive.set(0,0);
+                        if(drive.getStationSensor() && elevator.inPosition()) {
+                            currentState = nextState;
+                            drive.set(0,0);
+                        }
                     }
                     else if(drive.getAtRocket() && elevator.inPosition() && !(nextState == GamePieceState.GRABBING_HATCH || nextState == GamePieceState.GRABBING_BALL)) {
                         currentState = nextState;
@@ -246,6 +242,10 @@ public class GamePieceStateMachine {
 
     public boolean isDone() {
         return currentState == GamePieceState.DONE;
+    }
+
+    public boolean isRunning() {
+        return currentState != GamePieceState.WAITING;
     }
 
     public GamePieceState getCurrentState() {

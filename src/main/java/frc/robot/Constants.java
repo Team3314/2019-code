@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 public class Constants {
 
-	public static boolean kPracticeBot = true;
+	public static boolean kPracticeBot = false;
 
 
 //Conversions	
