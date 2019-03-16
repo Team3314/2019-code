@@ -61,6 +61,7 @@ public class Climber implements Subsystem {
         drive.set(0, 0);
         switch(currentState) {
             case WAITING:
+                highPressure.set(false);
                 climberPiston.set(Constants.kClimberUp);
                 if(!intakeFurtherDownRequest)
                     intakeClimbPiston.set(Constants.kIntakeClimberUp);

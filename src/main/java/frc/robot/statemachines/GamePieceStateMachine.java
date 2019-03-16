@@ -276,10 +276,18 @@ public class GamePieceStateMachine {
     public boolean isPlacing() {
         return currentState == GamePieceState.PLACING_BALL || currentState == GamePieceState.PLACING_HATCH || currentState == GamePieceState.GRABBING_HATCH;
     }
+
+    public boolean isDriving() {
+        return currentState == GamePieceState.DRIVING || currentState == GamePieceState.ALIGNING;
+    }
     
     public boolean placingCargoOnRocket() {
         return desiredElevatorHeight == Constants.kElevatorBallLevel1 ||
         desiredElevatorHeight == Constants.kElevatorBallLevel2 ||
         desiredElevatorHeight == Constants.kElevatorBallLevel3;
+    }
+
+    public void reset() {
+        currentState = GamePieceState.WAITING;
     }
 }

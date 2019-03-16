@@ -178,7 +178,8 @@ public class Robot extends TimedRobot {
       }
       if(HI.getAutoGamePiece()) {
         gamePieceStateMachine.setRequest(true);
-        gamePieceStateMachine.setDriveSpeed(HI.getRightThrottle());
+        if(gamePieceStateMachine.isDriving())
+          gamePieceStateMachine.setDriveSpeed(HI.getRightThrottle());
       }
       else {
         gamePieceStateMachine.setRequest(false);

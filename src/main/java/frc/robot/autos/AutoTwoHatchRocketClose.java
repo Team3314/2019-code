@@ -39,9 +39,9 @@ public class AutoTwoHatchRocketClose extends Autonomous {
         switch(currentState) {
             case START:
                 if(getStartPos() == "StartR")
-                    driveGyrolock(0, -30, DriveMode.GYROLOCK_LEFT);
+                    driveGyrolock(0, -33, DriveMode.GYROLOCK_LEFT);
                 else if(getStartPos() == "StartL") 
-                    driveGyrolock(0, 30, DriveMode.GYROLOCK_RIGHT);
+                    driveGyrolock(0, 33, DriveMode.GYROLOCK_RIGHT);
                 setHighGear(false);
                 currentState = State.STOP;
                 break;
@@ -87,22 +87,23 @@ public class AutoTwoHatchRocketClose extends Autonomous {
             case DRIVE:
                 if(gyroTurnDone()) {
                     drive.set(0,0);
-                    setGamePieceRequest(true);
-                    gamePieceStateMachine.setMode(GamePieceStateMachineMode.PICKUP);
+
                     currentState = State.PICKUP_HATCH;
                 }
                 break;
             case PICKUP_HATCH:
+                setGamePieceRequest(true);
                 gamePieceStateMachine.setDriveSpeed(.6);
+                gamePieceStateMachine.setMode(GamePieceStateMachineMode.PICKUP);
                 if(gamePieceStateMachine.getCurrentState() == GamePieceState.BACKUP_HATCH) {
                     setGamePieceRequest(false);
                     currentState = State.BACKUP;
                     drive.resetDriveEncoders();
-                    driveGyrolock(-1, 180, -54);
+                    driveGyrolock(-1, 180);
                 }
                 break;
             case BACKUP:
-                if(drive.getGyroDriveDone()) {
+                if(drive.getAverageRioPosition() <= -54) {
                     currentState = State.TURN_TO_ROCKET2;
                     if(getStartPos() == "StartR")
                         driveGyrolock(0, -20, DriveMode.GYROLOCK);
@@ -119,14 +120,14 @@ public class AutoTwoHatchRocketClose extends Autonomous {
                 break;
             case STOP3:
                 if(getTime() > .5) {
-                    setGamePieceRequest(true);
-                    gamePieceStateMachine.setMode(GamePieceStateMachineMode.LEVEL2);
                     resetTimer();
                     currentState = State.PLACE_HATCH2;
                 }
                 break;
             case PLACE_HATCH2:
+                setGamePieceRequest(true);
                 gamePieceStateMachine.setDriveSpeed(.6);
+                gamePieceStateMachine.setMode(GamePieceStateMachineMode.LEVEL2);
                 if(gamePieceStateMachine.isDone()) {
                     setGamePieceRequest(false);
                     currentState = State.TURN_TO_STATION2;
@@ -135,12 +136,12 @@ public class AutoTwoHatchRocketClose extends Autonomous {
                 break;
             case TURN_TO_STATION2:
                 if(gyroTurnDone()) {
-                    setGamePieceRequest(true);
-                    gamePieceStateMachine.setMode(GamePieceStateMachineMode.PICKUP);
                     currentState = State.DRIVE_AT_STATION2;
                 }
                 break;
             case DRIVE_AT_STATION2:
+                    setGamePieceRequest(true);
+                    gamePieceStateMachine.setMode(GamePieceStateMachineMode.PICKUP);
                 if(getCameraDistance() < 72) {
                     setGamePieceRequest(false);
                 }

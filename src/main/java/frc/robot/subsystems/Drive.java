@@ -217,13 +217,6 @@ public class Drive extends Drivetrain implements Subsystem {
                 setIdleMode(IdleMode.kBrake);
                 break;
             case GYROLOCK:
-                if(driveDistance) {
-                    calculatedVelocity = calcVelocity(0, gyroDriveDistance);
-                    if((leftDemand * maxSpeed) > calculatedVelocity) {
-                        leftDemand = calculatedVelocity / maxSpeed;
-                        rightDemand = calculatedVelocity / maxSpeed;
-                    }
-                }
                 rawLeftSpeed = leftDemand + gyroPIDOutput.getOutput();
                 rawRightSpeed = rightDemand - gyroPIDOutput.getOutput();
                 gyroControl.setSetpoint(desiredAngle);
