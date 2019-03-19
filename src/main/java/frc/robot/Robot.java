@@ -42,7 +42,8 @@ public class Robot extends TimedRobot {
   public static RobotMap map = new RobotMap();
   public static HumanInput HI = new HumanInput();
   public static Camera camera = new Camera(map.leftLightRing, map.rightLightRing, map.targetsLight);
-  public static Drive drive = new Drive(map.leftDrive, map.rightDrive, map.navx, map.shifter, map.leftDriveEncoder, map.rightDriveEncoder, map.rightRocketSensor, map.leftRocketSensor, map.laserStationSensor);
+  public static Drive drive = new Drive(map.leftDrive, map.rightDrive, map.navx, map.shifter, map.leftDriveEncoder, map.rightDriveEncoder, 
+                                        map.rightRocketSensor, map.leftRocketSensor, map.leftStationSensor, map.rightStationSensor);
   public static Elevator elevator = new Elevator(map.elevatorTransmission);
   public static CargoIntake cargoIntake = new CargoIntake(map.intakeTransmission, map.outtakeTransmission, map.intakePiston);
   public static HatchMechanism hatch = new HatchMechanism(map.gripperPiston, map.sliderPiston);
@@ -171,7 +172,7 @@ public class Robot extends TimedRobot {
         gamePieceStateMachine.setMode(GamePieceStateMachineMode.LEVEL3);
       }
       else if(HI.getStoreElevatorPickup()) {
-        gamePieceStateMachine.setMode(GamePieceStateMachineMode.PICKUP);
+        gamePieceStateMachine.setMode(GamePieceStateMachineMode.HATCH_PICKUP);
       }
       else if(HI.getStoreCargoShip()) {
         gamePieceStateMachine.setMode(GamePieceStateMachineMode.CARGO_SHIP);
@@ -275,6 +276,9 @@ public class Robot extends TimedRobot {
               }
               else if(HI.getElevatorCargoShip()) {
                 elevator.set(Constants.kElevatorBallCargoShip);
+              }
+              else if(HI.getElevatorPickup()) { 
+                elevator.set(Constants.kElevatorHatchPickup);
               }
               
             }

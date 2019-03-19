@@ -71,6 +71,7 @@ public abstract class Autonomous {
 	}
 
 	protected void driveGyrolock(double desiredSpeed, double desiredAngle) {
+		drive.setDriveMode(DriveMode.GYROLOCK);
 		drive.set(desiredSpeed, desiredSpeed);
 		drive.setDesiredAngle(desiredAngle);
 	}

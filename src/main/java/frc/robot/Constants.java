@@ -78,7 +78,7 @@ public class Constants {
 	
 		public static final int kElevatorHatchPickup = (int)(5 / kElevatorInchesPerTick);
 		public static final int kElevatorLoweredHatchPickup = (int) (1 / kElevatorInchesPerTick);
-		public static final int kElevatorRaisedHatchPickup = (int)(7.5 / kElevatorInchesPerTick);
+		public static final int kElevatorRaisedHatchPickup = (int)(9 / kElevatorInchesPerTick);
 		public static final int kElevatorBallStationPickup = (int)(25/ kElevatorInchesPerTick);
 		public static final int kElevatorBallLevel1 = (int)(2.5 / kElevatorInchesPerTick);
 		public static final int kElevatorBallLevel2 = (int)(28 / kElevatorInchesPerTick);

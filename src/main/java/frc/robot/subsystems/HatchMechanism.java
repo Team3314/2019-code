@@ -19,6 +19,7 @@ public class HatchMechanism implements Subsystem {
         GRAB,
         EXTEND,
         RETRACT,
+        LOWER_AFTER_PICKUP,
         DONE
     }
 
@@ -76,11 +77,9 @@ public class HatchMechanism implements Subsystem {
                 }
                 break;
             case GRAB:
-                if(Constants.kPracticeBot)
                     setSliderOut(true);
                 if(timer.get() > .1 && elevator.inPosition()) {
                     setGripperDown(false);
-                    setSliderOut(false);
                     timer.stop();
                     timer.reset();
                     currentState = State.RAISE;
@@ -89,9 +88,13 @@ public class HatchMechanism implements Subsystem {
             case RAISE:
                 elevator.set(Constants.kElevatorRaisedHatchPickup);
                 if(elevator.inPosition()) {
-                    elevator.set(0);
+                    setSliderOut(false);
+                    currentState = State.LOWER_AFTER_PICKUP;
+                }
+                break;
+            case LOWER_AFTER_PICKUP:
+                if(elevator.inPosition()) {
                     currentState = State.DONE;
-                    timer.start();
                 }
                 break;
             case EXTEND:

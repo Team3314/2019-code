@@ -99,7 +99,7 @@ public class RobotMap {
 
         AnalogInput rightRocketSensor, leftRocketSensor;
 
-        DigitalInput laserStationSensor;
+        DigitalInput leftStationSensor, rightStationSensor;
 
         Compressor compressor;
     
@@ -266,6 +266,7 @@ public class RobotMap {
         rightRocketSensor = new AnalogInput(2);
         leftRocketSensor = new AnalogInput(3);
 
-        laserStationSensor = new DigitalInput(9);
+        rightStationSensor = new DigitalInput(8);
+        leftStationSensor = new DigitalInput(9);
     }
 }

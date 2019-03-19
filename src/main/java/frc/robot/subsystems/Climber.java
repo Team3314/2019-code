@@ -104,7 +104,7 @@ public class Climber implements Subsystem {
                 }
                 if(manualControlClimb && climbRequest && !lastClimbRequest)
                     currentState = State.INTAKE_FURTHER_DOWN;
-                else if(!manualControlClimb && navx.getRoll() >= -8)
+                else if(!manualControlClimb && navx.getRoll() >= -5)
                     currentState = State.INTAKE_FURTHER_DOWN;
                 break;
             case INTAKE_FURTHER_DOWN:
@@ -145,7 +145,7 @@ public class Climber implements Subsystem {
                 break;
             case KEEP_DRIVING:
                 cargoIntake.setIntakeState(IntakeState.DRIVE_BACK);
-                drive.set(-.1, -.1);
+                drive.set(-.05, -.05);
                 if(previousStateRequest && !lastPreviousStateRequest) {
                     currentState = State.RAISE_CLIMBER;
                 }

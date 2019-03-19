@@ -52,7 +52,7 @@ public class Camera implements Subsystem {
 		rightLightRing.set(lightRingsOn);
 
         
-		targetHorizError = -table.getEntry("Angle To Target").getDouble(0);
+		targetHorizError = -(table.getEntry("Angle To Target").getDouble(0)+3);
 		distance = table.getEntry("Distance").getDouble(1337.254);
 		highDistance = table.getEntry("DistanceHigh").getDouble(1337.254);
 		hasLeft = table.getEntry("Left hasRight").getBoolean(false);
@@ -133,6 +133,10 @@ public class Camera implements Subsystem {
 	
 	@Override
 	public void outputToSmartDashboard() {
+		SmartDashboard.putBoolean("Targets in view", isTargetInView());
+		SmartDashboard.putNumber("Target horizontal error", getTargetHorizError());
+		SmartDashboard.putNumber("Distance", getDistance());
+		SmartDashboard.putBoolean("Light Rings On", getLightRingsOn());
 	}
 
 	@Override
@@ -141,9 +145,5 @@ public class Camera implements Subsystem {
 
 	@Override
 	public void debug() {
-		SmartDashboard.putBoolean("Targets in view", isTargetInView());
-		SmartDashboard.putNumber("Target horizontal error", getTargetHorizError());
-		SmartDashboard.putNumber("Distance", getDistance());
-		SmartDashboard.putBoolean("Light Rings On", getLightRingsOn());
 	}
 }

@@ -75,20 +75,22 @@ public class Drive extends Drivetrain implements Subsystem {
 
     private AnalogInput rightRocketSensor, leftRocketSensor;
 
-    private DigitalInput laserStationSensor;
+    private DigitalInput leftStationSensor, rightStationSensor;
 
     private boolean lastHighGear;
 
     private Camera camera;
     public Drive(EncoderTransmission left, EncoderTransmission right, AHRS gyro, DoubleSolenoid shifter, 
-        EncoderAdapter leftEnc, EncoderAdapter rightEnc, AnalogInput rightRocketSensor, AnalogInput leftRocketSensor, DigitalInput laserStationSensor){
+        EncoderAdapter leftEnc, EncoderAdapter rightEnc, AnalogInput rightRocketSensor, AnalogInput leftRocketSensor, 
+        DigitalInput leftStationSensor, DigitalInput rightStationSensor){
         super(left, right);
         camera = Robot.camera;
         leftRioEncoder = leftEnc;
         rightRioEncoder = rightEnc;
         this.rightRocketSensor = rightRocketSensor;
         this.leftRocketSensor = leftRocketSensor;
-        this.laserStationSensor = laserStationSensor;
+        this.leftStationSensor = leftStationSensor;
+        this.rightStationSensor = rightStationSensor;
     	
 		//Hardware
     	this.shifter = shifter;
@@ -397,7 +399,7 @@ public class Drive extends Drivetrain implements Subsystem {
     public void outputToSmartDashboard() {
         //TODO PICK DASHBOARD CALLS
         SmartDashboard.putBoolean("Rocket Sensor", getAtRocket());
-        SmartDashboard.putBoolean("Station Sensor", getStationSensor());
+        SmartDashboard.putBoolean("Station Sensor", getAtStation());
         SmartDashboard.putNumber("Distance To Target", getDistanceToTarget());
         SmartDashboard.putNumber("Left Rio Encoder Position", leftRioDrivePositionInches); 
         SmartDashboard.putNumber("Right Rio Encoder Position", rightRioDrivePositionInches);
@@ -464,11 +466,20 @@ public class Drive extends Drivetrain implements Subsystem {
         }
         return getLeftRocketSensor() || getRightRocketSensor();
     }
-    public boolean getStationSensor() {
+
+    public boolean getLeftStationSensor() {
+        return !leftStationSensor.get();
+    }
+
+    public boolean getRightStationSensor() {
+        return !rightStationSensor.get();
+    }
+
+    public boolean getAtStation() {
         if(Constants.kPracticeBot) {
             return getRightRocketSensor();
         }
-        return !laserStationSensor.get();
+        return getLeftStationSensor() || getRightStationSensor();
     }
 
     private double calcVelocity(double speed, double distance) {

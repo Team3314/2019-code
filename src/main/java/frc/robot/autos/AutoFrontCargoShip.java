@@ -6,6 +6,8 @@ public class AutoFrontCargoShip extends Autonomous {
 
     public enum State {
         START,
+        DRIVE,
+        STOP,
         PLACE_HATCH,
         DONE
     }
@@ -21,7 +23,21 @@ public class AutoFrontCargoShip extends Autonomous {
     public void update() {
         switch(currentState) {
             case START:
-                currentState = State.PLACE_HATCH;
+                currentState = State.DRIVE;
+                drive.resetDriveEncoders();
+                break;
+            case DRIVE:
+                driveGyrolock(.5, getAngle());
+                if(drive.getAverageRioPosition() >= 24) {
+                    drivePower(0);
+                    startTimer();
+                    currentState = State.STOP;
+                }
+                break;
+            case STOP:
+                if(getTime() >= .25) {
+                    currentState = State.PLACE_HATCH;
+                }
                 break;
             case PLACE_HATCH:
                 gamePieceStateMachine.setRequest(true);
