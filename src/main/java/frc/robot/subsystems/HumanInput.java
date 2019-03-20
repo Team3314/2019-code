@@ -63,7 +63,7 @@ public class HumanInput implements Subsystem {
 		return gamepad.getRawAxis(3) >= .75;
 	}
 	//Actions
-	public boolean getAutoGamePiece() {
+	public boolean getTracking() {
 		return leftStick.getRawButton(1); // trigger
 	}
 	public boolean getAuto() {

@@ -7,6 +7,8 @@ import frc.robot.motion.Path;
 import frc.robot.motion.PathFollower;
 import frc.robot.motion.PathList;
 import frc.robot.statemachines.GamePieceStateMachine;
+import frc.robot.statemachines.TrackingStateMachine;
+import frc.robot.statemachines.GamePieceStateMachine.GamePieceStateMachineMode;
 import frc.robot.subsystems.Camera;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Elevator;
@@ -21,6 +23,7 @@ public abstract class Autonomous {
 	protected HumanInput HI = Robot.HI;
 	protected Camera camera = Robot.camera;
 	protected GamePieceStateMachine gamePieceStateMachine = Robot.gamePieceStateMachine;
+	protected TrackingStateMachine trackingStateMachine = Robot.trackingStateMachine;
 	
 	private PathFollower pathFollower = new PathFollower();
 	private Timer timer = new Timer();
@@ -155,5 +158,12 @@ public abstract class Autonomous {
 
 	protected void setGamePieceRequest(boolean request) {
 		gamePieceStateMachine.setRequest(request);
+	}
+
+	protected void gamePieceInteract(GamePieceStateMachineMode mode, double driveSpeed) {
+		gamePieceStateMachine.setRequest(true);
+		gamePieceStateMachine.setMode(mode);
+		trackingStateMachine.setRequest(true);
+		trackingStateMachine.setDriveSpeed(driveSpeed);
 	}
 }

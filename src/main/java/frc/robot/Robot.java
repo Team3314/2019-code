@@ -17,6 +17,7 @@ import frc.robot.subsystems.Drive;
 import frc.robot.autos.AutoTwoHatchRocketClose;
 import frc.robot.autos.Autonomous;
 import frc.robot.statemachines.GamePieceStateMachine;
+import frc.robot.statemachines.TrackingStateMachine;
 import frc.robot.statemachines.GamePieceStateMachine.GamePieceStateMachineMode;
 import frc.robot.subsystems.Camera;
 import frc.robot.subsystems.CargoIntake;
@@ -50,6 +51,7 @@ public class Robot extends TimedRobot {
   public static Superstructure superstructure = new Superstructure(map.compressor);
   public static Climber climber = new Climber(map.climberPiston, map.intakeToGroundPiston, map.highPressure, map.navx);
   public static GamePieceStateMachine gamePieceStateMachine = new GamePieceStateMachine();
+  public static TrackingStateMachine trackingStateMachine = new TrackingStateMachine();
 
 
 
@@ -177,13 +179,7 @@ public class Robot extends TimedRobot {
       else if(HI.getStoreCargoShip()) {
         gamePieceStateMachine.setMode(GamePieceStateMachineMode.CARGO_SHIP);
       }
-      if(HI.getAutoGamePiece()) {
-        gamePieceStateMachine.setRequest(true);
-        if(gamePieceStateMachine.isDriving())
-          gamePieceStateMachine.setDriveSpeed(HI.getRightThrottle());
-      }
       else {
-        gamePieceStateMachine.setRequest(false);
         climber.setClimbRequest(HI.getClimbMode());
         climber.setAutoClimbButton(HI.getAutoClimbMode());
         climber.setPreviousStateRequest(HI.getPrevious());
@@ -191,28 +187,36 @@ public class Robot extends TimedRobot {
         if(HI.getResetGyro()) {
           drive.resetSensors();
         }
+
         // Drive Controls
-        if(HI.getGyrolock()) {
-          drive.setDriveMode(DriveMode.GYROLOCK);
-          drive.setTank(HI.getLeftThrottle(), HI.getLeftThrottle(), Constants.kJoystickPower);
-          if(HI.turnToZero())
-            drive.setDesiredAngle(0);
-          else if(HI.turnToRight())
-            drive.setDesiredAngle((-90));
-          else if(HI.turnBack())
-            drive.setDesiredAngle(180);
-          else if(HI.turnToLeft())
-            drive.setDesiredAngle(90);
-            
-            drive.setGyroDriveDistance(0);
+        if(HI.getTracking()) {
+          trackingStateMachine.setRequest(true);
+          trackingStateMachine.setDriveSpeed(HI.getRightThrottle());
         }
-        else if(HI.getVision()) {
-          drive.setDriveMode(DriveMode.VISION_CONTROL);
-          drive.setTank(HI.getRightThrottle(), HI.getRightThrottle(), Constants.kJoystickPower);
-        }
-        else {  
-          drive.setDriveMode(DriveMode.TANK);
-          drive.setTank(HI.getLeftThrottle(), HI.getRightThrottle(), Constants.kJoystickPower, Constants.kTurningSensitivityScale);
+        else {
+          trackingStateMachine.setRequest(false);
+          if(HI.getGyrolock()) {
+            drive.setDriveMode(DriveMode.GYROLOCK);
+            drive.setTank(HI.getLeftThrottle(), HI.getLeftThrottle(), Constants.kJoystickPower);
+            if(HI.turnToZero())
+              drive.setDesiredAngle(0);
+            else if(HI.turnToRight())
+              drive.setDesiredAngle((-90));
+            else if(HI.turnBack())
+              drive.setDesiredAngle(180);
+            else if(HI.turnToLeft())
+              drive.setDesiredAngle(90);
+              
+              drive.setGyroDriveDistance(0);
+          }
+          else if(HI.getVision()) {
+            drive.setDriveMode(DriveMode.VISION_CONTROL);
+            drive.setTank(HI.getRightThrottle(), HI.getRightThrottle(), Constants.kJoystickPower);
+          }
+          else {  
+            drive.setDriveMode(DriveMode.TANK);
+            drive.setTank(HI.getLeftThrottle(), HI.getRightThrottle(), Constants.kJoystickPower, Constants.kTurningSensitivityScale);
+          }
         }
         if(HI.getHighGear()) {
           drive.setHighGear(true);
@@ -232,96 +236,98 @@ public class Robot extends TimedRobot {
         if(HI.getCargoEject()) {
           cargoIntake.stopLoadingBall();
         }
-        hatch.setPlaceRequest(HI.getHatchPlace());
-        hatch.setRetractRequest(HI.getHatchRetract());
-        if(!elevator.isHoming()) {
-          if(!HI.getElevatorManual()) {
-            cargoIntake.setIntakeRequest(HI.getAutoCargoIntake()); 
-            cargoIntake.setPickupFromStationRequest(HI.getCargoStationPickup());
-            hatch.setIntakeRequest(HI.getHatchIntake());
-          }
-          if(!cargoIntake.getLoadingBall() && !HI.getHatchIntake() && !HI.getHatchPlace() && !HI.getCargoStationPickup()) {
-            if(HI.getElevatorManual()) {
-              elevator.setElevatorState(ElevatorControlMode.MANUAL);
-              elevator.set(HI.getElevatorSpeed());
+        if(HI.getGamePieceInteract()) {
+          gamePieceStateMachine.setRequest(true);
+        } 
+        else {
+          hatch.setPlaceRequest(HI.getHatchPlace());
+          hatch.setRetractRequest(HI.getHatchRetract());
+          if(!elevator.isHoming()) {
+            if(!HI.getElevatorManual()) {
+              cargoIntake.setIntakeRequest(HI.getAutoCargoIntake()); 
+              cargoIntake.setPickupFromStationRequest(HI.getCargoStationPickup());
+              hatch.setIntakeRequest(HI.getHatchIntake());
             }
-            else if(HI.getHome()) {
-              elevator.setElevatorState(ElevatorControlMode.HOMING);
-            }
-            else {
-              elevator.setElevatorState(ElevatorControlMode.MOTION_MAGIC);
-              if(HI.getElevatorLevel1()) {
-                if(cargoIntake.hasBall()) {
-                  elevator.set(Constants.kElevatorBallLevel1);
-                }
-                else {
-                  elevator.set(Constants.kElevatorHatchLevel1);
-                }
+            if(!cargoIntake.getLoadingBall() && !HI.getHatchIntake() && !HI.getHatchPlace() && !HI.getCargoStationPickup()) {
+              if(HI.getElevatorManual()) {
+                elevator.setElevatorState(ElevatorControlMode.MANUAL);
+                elevator.set(HI.getElevatorSpeed());
               }
-              else if (HI.getElevatorLevel2()) {
-                if(cargoIntake.hasBall()) {
-                  elevator.set(Constants.kElevatorBallLevel2);
-                }
-                else {
-                  elevator.set(Constants.kElevatorHatchLevel2);
-                }
+              else if(HI.getHome()) {
+                elevator.setElevatorState(ElevatorControlMode.HOMING);
               }
-              else if(HI.getElevatorLevel3()) {
-                if(cargoIntake.hasBall()) {
-                  elevator.set(Constants.kElevatorBallLevel3);
+              else {
+                elevator.setElevatorState(ElevatorControlMode.MOTION_MAGIC);
+                if(HI.getElevatorLevel1()) {
+                  if(cargoIntake.hasBall()) {
+                    elevator.set(Constants.kElevatorBallLevel1);
+                  }
+                  else {
+                    elevator.set(Constants.kElevatorHatchLevel1);
+                  }
                 }
-                else {
-                  elevator.set(Constants.kElevatorHatchLevel3);
+                else if (HI.getElevatorLevel2()) {
+                  if(cargoIntake.hasBall()) {
+                    elevator.set(Constants.kElevatorBallLevel2);
+                  }
+                  else {
+                    elevator.set(Constants.kElevatorHatchLevel2);
+                  }
                 }
+                else if(HI.getElevatorLevel3()) {
+                  if(cargoIntake.hasBall()) {
+                    elevator.set(Constants.kElevatorBallLevel3);
+                  }
+                  else {
+                    elevator.set(Constants.kElevatorHatchLevel3);
+                  }
+                }
+                else if(HI.getElevatorCargoShip()) {
+                  elevator.set(Constants.kElevatorBallCargoShip);
+                }
+                else if(HI.getElevatorPickup()) { 
+                  elevator.set(Constants.kElevatorHatchPickup);
+                }
+                
               }
-              else if(HI.getElevatorCargoShip()) {
-                elevator.set(Constants.kElevatorBallCargoShip);
-              }
-              else if(HI.getElevatorPickup()) { 
-                elevator.set(Constants.kElevatorHatchPickup);
-              }
-              
-            }
 
-          /**
-           * CARGO INTAKE CONTROLS
-          */
-            if (HI.getCargoIntake()) {
-              cargoIntake.setIntakeState(IntakeState.INTAKING);
-            }
-            else if (HI.getCargoPlace()) {
-              cargoIntake.setIntakeState(IntakeState.PLACE);
-            }
-            else if (HI.getCargoTransfer()) {
-              cargoIntake.setIntakeState(IntakeState.TRANSFERRING);
-            }
-            else if(HI.getCargoEject()) {
-              cargoIntake.setIntakeState(IntakeState.VOMIT);
-            }
-            else if(HI.getCargoReverseOuttake()) {
-              cargoIntake.setIntakeState(IntakeState.PICKUP_FROM_STATION);
-            }
-            else
-              cargoIntake.setIntakeState(IntakeState.WAITING);
             /**
-             * HATCH MECH CONTROLS
+             * CARGO INTAKE CONTROLS
             */
-      
-            if (HI.getGripperDown()) {
-              hatch.setGripperDown(true);
+              if (HI.getCargoIntake()) {
+                cargoIntake.setIntakeState(IntakeState.INTAKING);
+              }
+              else if (HI.getCargoPlace()) {
+                cargoIntake.setIntakeState(IntakeState.PLACE);
+              }
+              else if (HI.getCargoTransfer()) {
+                cargoIntake.setIntakeState(IntakeState.TRANSFERRING);
+              }
+              else if(HI.getCargoEject()) {
+                cargoIntake.setIntakeState(IntakeState.VOMIT);
+              }
+              else if(HI.getCargoReverseOuttake()) {
+                cargoIntake.setIntakeState(IntakeState.PICKUP_FROM_STATION);
+              }
+              else
+                cargoIntake.setIntakeState(IntakeState.WAITING);
+              /**
+               * HATCH MECH CONTROLS
+              */
+        
+              if (HI.getGripperDown()) {
+                hatch.setGripperDown(true);
+              }
+              else if (HI.getGripperUp()) {
+                hatch.setGripperDown(false);
+              }
+              if (HI.getSliderOut()) {
+                hatch.setSliderOut(true);
+              }
+              else if (HI.getSliderIn()) {
+                hatch.setSliderOut(false);
+              }
             }
-            else if (HI.getGripperUp()) {
-              hatch.setGripperDown(false);
-            }
-            if (HI.getSliderOut()) {
-              hatch.setSliderOut(true);
-            }
-            else if (HI.getSliderIn()) {
-              hatch.setSliderOut(false);
-            }
-            /**
-             * CLIMBER CONTROLS
-             */
           }
       }
     }
