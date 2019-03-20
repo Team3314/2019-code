@@ -166,4 +166,9 @@ public abstract class Autonomous {
 		trackingStateMachine.setRequest(true);
 		trackingStateMachine.setDriveSpeed(driveSpeed);
 	}
+
+	protected void stopGamePieceInteract() {
+		gamePieceStateMachine.setRequest(false);
+		trackingStateMachine.setRequest(false);
+	}
 }

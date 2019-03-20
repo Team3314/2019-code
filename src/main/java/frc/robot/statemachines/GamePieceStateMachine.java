@@ -122,7 +122,6 @@ public class GamePieceStateMachine {
                     }
                 }
                 if(request) {
-                    elevator.setElevatorState(ElevatorControlMode.MOTION_MAGIC);
                     if((nextState == GamePieceState.GRABBING_HATCH)) {
                         hatch.setGripperDown(true);
                     }

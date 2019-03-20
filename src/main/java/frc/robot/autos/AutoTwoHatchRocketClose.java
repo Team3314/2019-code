@@ -59,7 +59,7 @@ public class AutoTwoHatchRocketClose extends Autonomous {
                 break;
             case PLACE_HATCH1:
                 setGamePieceRequest(true);
-                gamePieceStateMachine.setDriveSpeed(.75);
+                tracking.setDriveSpeed(.75);
                 gamePieceStateMachine.setMode(GamePieceStateMachineMode.LEVEL1);
                 if(gamePieceStateMachine.getCurrentState() == GamePieceState.BACKUP_HATCH) {
                     hatch.setSliderOut(false);
