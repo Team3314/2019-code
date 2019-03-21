@@ -28,7 +28,7 @@ public class HumanInput implements Subsystem {
 	private final Joystick buttonBox;
 	private final Joystick autoSelector;
 
-	public boolean hasGamepad = false;
+	public boolean hasGamepad = false, sticksZero = false;
     
 	public HumanInput() {
 		gamepad = new Joystick(0);
@@ -41,7 +41,7 @@ public class HumanInput implements Subsystem {
 	
 	@Override
 	public void update() {
-
+		sticksZero = !getGyrolock() && !getTracking() && getLeftThrottle() ==0 && getRightThrottle() == 0;
 	}
 
 	@Override
@@ -67,13 +67,16 @@ public class HumanInput implements Subsystem {
 		return leftStick.getRawButton(1); // trigger
 	}
 	public boolean getAuto() {
-		return false;//leftStick.getRawButton(2); // side button
+		return  leftStick.getRawButton(2); // side button
 	}
 	public boolean getStopAuto() {
 		return gamepad.getRawButton(10); // right stick in
 	}
 	public boolean getGamePieceInteract() {
 		return gamepad.getRawButton(6);
+	}
+	public boolean getForceGamePieceInteract() {
+		return getGamePieceInteract() && getShift();
 	}
 	public boolean getStopGamePieceInteract() {
 		return buttonBox.getRawButton(7);
@@ -236,8 +239,9 @@ public class HumanInput implements Subsystem {
 	public String getLeftRightCenter() {
 		if(autoSelector.getRawButton(13)) {
 			return "StartL"; // Start Left
-		} else if(autoSelector.getRawButton(14)) 
+		} else if(autoSelector.getRawButton(14)) {
 			return "StartR";// Start Right
+		}
 		return "StartC"; 
 	}
 	public int getBinaryOne() {
@@ -313,6 +317,9 @@ public class HumanInput implements Subsystem {
 
 	public boolean getBackwards() {
 		return rightStick.getRawButton(4);
+	}
+	public boolean getSticksZero() {
+		return sticksZero;
 	}
 
 

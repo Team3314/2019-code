@@ -23,7 +23,7 @@ public class TrackingStateMachine {
     private boolean request;
     private boolean lastRequest;
     public void update() {
-        if(!request) {
+        if(!request ||Robot.gamePieceStateMachine.isPlacing()) {
             currentState = State.WAITING;
         }
         switch(currentState) {

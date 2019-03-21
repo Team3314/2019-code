@@ -9,6 +9,7 @@ import frc.robot.subsystems.CargoIntake;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.HatchMechanism;
+import frc.robot.subsystems.HumanInput;
 import frc.robot.subsystems.Drive.DriveMode;
 
 public class GamePieceStateMachine {
@@ -41,18 +42,22 @@ public class GamePieceStateMachine {
     private Elevator elevator = Robot.elevator;
     private CargoIntake cargoIntake = Robot.cargoIntake;
     private HatchMechanism hatch = Robot.hatch;
+    private HumanInput HI = Robot.HI;
     private TrackingStateMachine trackingStateMachine = Robot.trackingStateMachine;
     private DriverStation ds = DriverStation.getInstance();
 
     private Timer timer = new Timer();
 
-    private boolean request;
-    private boolean lastRequest, lastElevatorInPosition;
+    private boolean request, force;
+    private boolean lastRequest, lastElevatorInPosition, lastForce;
 
     private int desiredElevatorHeight = 0;
 
     
     public void update() {
+        if((ds.isAutonomous() || HI.getAuto()) && !request) {
+            currentState = GamePieceState.WAITING;
+        }
         drive.setPlacingOnRocket(placingCargoOnRocket());
         switch(currentState) {
             case WAITING:
@@ -135,12 +140,17 @@ public class GamePieceStateMachine {
                         drive.set(0,0);
                     }
                 }
+                if(getForce()) {
+                    elevator.set(desiredElevatorHeight);
+                    currentState = nextState;
+                    drive.set(0,0);
+                }
                 break;
             case GRABBING_HATCH:
                 drive.set(0,0);
                 if(elevator.inPosition())
                     hatch.setIntakeRequest(true);
-                if(hatch.isDone()) {
+                if(hatch.isDone() || getForce()) {
                     hatch.setIntakeRequest(false);
                     currentState = GamePieceState.BACKUP_HATCH;
                     drive.resetDriveEncoders();
@@ -150,7 +160,7 @@ public class GamePieceStateMachine {
                 drive.set(0,0);
                 if(elevator.inPosition())
                     cargoIntake.setPickupFromStationRequest(true);
-                if(cargoIntake.isDone()) {
+                if(cargoIntake.isDone()|| getForce()) {
                     cargoIntake.setPickupFromStationRequest(false);
                 }
                 break;
@@ -161,7 +171,7 @@ public class GamePieceStateMachine {
                         timer.start();
                     cargoIntake.setPlaceRequest(true);
                 }
-                if(timer.get() >= .25) {
+                if(timer.get() >= .25 || getForce()) {
                     cargoIntake.setPlaceRequest(false);
                     currentState = GamePieceState.RETRACT;
 
@@ -171,18 +181,16 @@ public class GamePieceStateMachine {
                 drive.set(0,0);
                 if(elevator.inPosition())
                     hatch.setPlaceRequest(true);
-                if(hatch.isDone()) {
+                if(hatch.isDone() || getForce()) {
                     hatch.setPlaceRequest(false);
                     currentState = GamePieceState.BACKUP_HATCH;
                     drive.resetDriveEncoders();
                 }
                 break;
             case BACKUP_HATCH:
-                if(!ds.isAutonomous()) {
-                    drive.setDriveMode(DriveMode.GYROLOCK);
-                    drive.set(-.25, -.25);
-                }
-                if(drive.getAverageRioPosition() <= -12) {
+                drive.setDriveMode(DriveMode.GYROLOCK);
+                drive.set(-.25, -.25);
+                if(drive.getAverageRioPosition() <= -12 || getForce()) {
                     hatch.setRetractRequest(true);
                     drive.set(0, 0);
                     currentState = GamePieceState.RETRACT;
@@ -191,11 +199,9 @@ public class GamePieceStateMachine {
             case BACKUP_BALL:
                 elevator.set(0);
                 cargoIntake.setPlaceRequest(false);
-                if(!ds.isAutonomous()) {
-                    drive.setDriveMode(DriveMode.GYROLOCK);
-                    drive.set(-.25, -.25);
-                }
-                if(drive.getAverageRioPosition() <= -12) {
+                drive.setDriveMode(DriveMode.GYROLOCK);
+                drive.set(-.25, -.25);
+                if(drive.getAverageRioPosition() <= -12 || getForce()) {
                     hatch.setRetractRequest(true);
                     drive.set(0, 0);
                     currentState = GamePieceState.DONE;
@@ -212,6 +218,7 @@ public class GamePieceStateMachine {
                 break;
         }
         lastRequest = request;
+        lastForce = force;
         lastElevatorInPosition = elevator.inPosition();
     }
 
@@ -256,5 +263,13 @@ public class GamePieceStateMachine {
 
     public void reset() {
         currentState = GamePieceState.WAITING;
+    }
+
+    public void setForce(boolean force) {
+        this.force = force;
+    }
+
+    private boolean getForce() {
+        return force && !lastForce;
     }
 }

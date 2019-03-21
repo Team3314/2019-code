@@ -418,7 +418,11 @@ public class Drive extends Drivetrain implements Subsystem {
     }
     
     public void resetSensors() {
-    	navx.reset();
+        navx.reset();
+        for(int i = 0; i <= 15; i++) {
+            gryoAngleHistory[i] = 0;
+        }
+        gyroAngleHistoryStoreIndex = 14;
     	resetDriveEncoders();
     }
     
@@ -453,7 +457,7 @@ public class Drive extends Drivetrain implements Subsystem {
     public double getDistanceToTarget() {
         double adjustment = 0;
         if(Constants.kPracticeBot) {
-            adjustment = 6;
+            adjustment = 3;
         }
         else {
             adjustment = 6;

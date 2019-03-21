@@ -39,7 +39,7 @@ public class CargoIntake implements Subsystem {
     private boolean intakeRequest, placeRequest, vomitRequest, pickupFromStationRequest;
     private boolean lastIntakeRequest, lastPlaceRequest, lastVomitRequest, lastPickupFromStationRequest;
 
-    private boolean loadingBall = false, hasBall = false;
+    private boolean loadingBall = false, hasBall = false, runningIntake;
 
     private boolean lastCargoInCarriage;
 
@@ -111,7 +111,8 @@ public class CargoIntake implements Subsystem {
                     break;
                 }
                 setIntakeDown(true);
-                setIntakeSpeed(1);
+                if(runningIntake)
+                    setIntakeSpeed(1);
                 elevator.set(Constants.kElevatorBallLevel1);
                 if(getCargoIntakeSensor() && intakeRequest) {
                     setIntakeDown(false);
@@ -269,6 +270,9 @@ public class CargoIntake implements Subsystem {
     }
     public void stopLoadingBall() {
         loadingBall = false;
+    }
+    public void setRunIntake(boolean run) {
+        runningIntake = run;
     }
 
     public boolean isDone() {

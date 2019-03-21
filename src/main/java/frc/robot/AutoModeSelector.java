@@ -4,15 +4,16 @@ import frc.robot.autos.*;
 import frc.robot.subsystems.HumanInput;
 
 public class AutoModeSelector {
+	//TODO CHANGED AUTO NUMBERS : ROCKET AUTO ON 4
 	private static HumanInput hi = Robot.HI;
 	private static String autoModeBinary;
 	private static int autoModeDecimal;
 	private static Autonomous autoMode;
 	private static Autonomous auto0 = null,
-						auto1 = new AutoTwoHatchRocketClose(),
+						auto1 = null,
 						auto2 = new AutoFrontCargoShip(),
 						auto3 = null,
-						auto4 = null,
+						auto4 = new AutoTwoHatchRocketClose(),
 						auto5 = null,
 						auto6 = null,
 						auto7 = null,

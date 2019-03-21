@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Drive;
 import frc.robot.autos.AutoTwoHatchRocketClose;
 import frc.robot.autos.Autonomous;
@@ -52,6 +53,8 @@ public class Robot extends TimedRobot {
   public static Climber climber = new Climber(map.climberPiston, map.intakeToGroundPiston, map.highPressure, map.navx);
   public static TrackingStateMachine trackingStateMachine = new TrackingStateMachine();
   public static GamePieceStateMachine gamePieceStateMachine = new GamePieceStateMachine();
+
+  public static boolean driverDisabled = false;
 
 
 
@@ -151,7 +154,9 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     allPeriodic();
-
+    if(HI.getSticksZero()) {
+      driverDisabled = false;
+    }
     if(HI.getAuto()) {
       auto.update();
       elevator.setElevatorState(ElevatorControlMode.MOTION_MAGIC);
@@ -190,43 +195,46 @@ public class Robot extends TimedRobot {
         gamePieceStateMachine.reset();
       }
       if(gamePieceStateMachine.isPlacing()) {
-        trackingStateMachine.reset();
+        driverDisabled = true;
       }
+
       else if(!gamePieceStateMachine.isPlacing()){
-        // Drive Controls
-        trackingStateMachine.setRequest(HI.getTracking());
-        if(trackingStateMachine.isDriving()) {
-          trackingStateMachine.setDriveSpeed(HI.getRightThrottle());
-        }
-        else {
-          if(HI.getGyrolock()) {
-            drive.setDriveMode(DriveMode.GYROLOCK);
-            drive.setTank(HI.getLeftThrottle(), HI.getLeftThrottle(), Constants.kJoystickPower);
-            if(HI.turnToZero())
-              drive.setDesiredAngle(0);
-            else if(HI.turnToRight())
-              drive.setDesiredAngle((-90));
-            else if(HI.turnBack())
-              drive.setDesiredAngle(180);
-            else if(HI.turnToLeft())
-              drive.setDesiredAngle(90);
-              
-              drive.setGyroDriveDistance(0);
+          // Drive Controls'
+          if(!driverDisabled) {
+          trackingStateMachine.setRequest(HI.getTracking());
+          if(trackingStateMachine.isDriving()) {
+            trackingStateMachine.setDriveSpeed(HI.getRightThrottle());
           }
-          else if(HI.getVision()) {
-            drive.setDriveMode(DriveMode.VISION_CONTROL);
-            drive.setTank(HI.getRightThrottle(), HI.getRightThrottle(), Constants.kJoystickPower);
+          else{
+            if(HI.getGyrolock()) {
+              drive.setDriveMode(DriveMode.GYROLOCK);
+              drive.setTank(HI.getLeftThrottle(), HI.getLeftThrottle(), Constants.kJoystickPower);
+              if(HI.turnToZero())
+                drive.setDesiredAngle(0);
+              else if(HI.turnToRight())
+                drive.setDesiredAngle((-90));
+              else if(HI.turnBack())
+                drive.setDesiredAngle(180);
+              else if(HI.turnToLeft())
+                drive.setDesiredAngle(90);
+                
+                drive.setGyroDriveDistance(0);
+            }
+            else if(HI.getVision()) {
+              drive.setDriveMode(DriveMode.VISION_CONTROL);
+              drive.setTank(HI.getRightThrottle(), HI.getRightThrottle(), Constants.kJoystickPower);
+            }
+            else {  
+              drive.setDriveMode(DriveMode.TANK);
+              drive.setTank(HI.getLeftThrottle(), HI.getRightThrottle(), Constants.kJoystickPower, Constants.kTurningSensitivityScale);
+            }
           }
-          else {  
-            drive.setDriveMode(DriveMode.TANK);
-            drive.setTank(HI.getLeftThrottle(), HI.getRightThrottle(), Constants.kJoystickPower, Constants.kTurningSensitivityScale);
+          if(HI.getHighGear()) {
+            drive.setHighGear(true);
           }
-        }
-        if(HI.getHighGear()) {
-          drive.setHighGear(true);
-        }
-        else if(HI.getLowGear()) {
-          drive.setHighGear(false);
+          else if(HI.getLowGear()) {
+            drive.setHighGear(false);
+          }
         }
         if(HI.getLightRingsOn())
           camera.setLightRings(true);
@@ -240,7 +248,7 @@ public class Robot extends TimedRobot {
         if(HI.getCargoEject()) {
           cargoIntake.stopLoadingBall();
         }
-        if(HI.getGamePieceInteract()) {
+        if(HI.getGamePieceInteract() && !HI.getAutoCargoIntake()) {
           gamePieceStateMachine.setRequest(true);
         } 
         else {
@@ -249,7 +257,8 @@ public class Robot extends TimedRobot {
           hatch.setRetractRequest(HI.getHatchRetract());
           if(!elevator.isHoming()) {
             if(!HI.getElevatorManual()) {
-              cargoIntake.setIntakeRequest(HI.getAutoCargoIntake()); 
+              cargoIntake.setIntakeRequest(HI.getAutoCargoIntake());
+              cargoIntake.setRunIntake(HI.getGamePieceInteract());
               cargoIntake.setPickupFromStationRequest(HI.getCargoStationPickup());
               hatch.setIntakeRequest(HI.getHatchIntake());
             }
@@ -262,7 +271,6 @@ public class Robot extends TimedRobot {
                 elevator.setElevatorState(ElevatorControlMode.HOMING);
               }
               else {
-                System.out.print(HI.getElevatorLevel1());
                 elevator.setElevatorState(ElevatorControlMode.MOTION_MAGIC);
                 if(HI.getElevatorLevel1()) {
                   if(cargoIntake.hasBall()) {
@@ -362,7 +370,8 @@ public class Robot extends TimedRobot {
 		drive.outputToSmartDashboard();
     hatch.outputToSmartDashboard();
     elevator.outputToSmartDashboard();
-		camera.outputToSmartDashboard();
+    camera.outputToSmartDashboard();
+    HI.update();
     superstructure.outputToSmartDashboard();
     climber.outputToSmartDashboard();
     gamePieceStateMachine.outputToSmartDashboard();
