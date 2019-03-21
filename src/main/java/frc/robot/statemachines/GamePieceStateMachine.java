@@ -117,6 +117,7 @@ public class GamePieceStateMachine {
                         hatch.setGripperDown(true);
                     }
                     if(drive.getAtStation() && elevator.inPosition()) {
+                        Robot.driverDisabled = true;
                         currentState = nextState;
                         drive.set(0,0);
                     }
@@ -130,19 +131,26 @@ public class GamePieceStateMachine {
                             elevator.set(desiredElevatorHeight); 
                         if(drive.getAtStation()) {
                             elevator.set(desiredElevatorHeight);
+                            timer.stop();
+                            timer.reset();
                             currentState = nextState;
+                            Robot.driverDisabled = true;
                             drive.set(0,0);
                         }
                     }
                     else if(drive.getAtRocket() && !(nextState == GamePieceState.GRABBING_HATCH || nextState == GamePieceState.GRABBING_BALL)) {
                         currentState = nextState;
+                        Robot.driverDisabled = true;
                         elevator.set(desiredElevatorHeight);
+                        timer.stop();
+                        timer.reset();
                         drive.set(0,0);
                     }
                 }
                 if(getForce()) {
                     elevator.set(desiredElevatorHeight);
                     currentState = nextState;
+                    Robot.driverDisabled = true;
                     drive.set(0,0);
                 }
                 break;

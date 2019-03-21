@@ -61,11 +61,13 @@ public class AutoTwoHatchRocketClose extends Autonomous {
                     stopGamePieceInteract();
                     currentState = State.BACKUP;
                     drive.resetDriveEncoders();
-                    driveGyrolock(-1, getAngle());
                 }
                 break;
             case BACKUP:
-                driveGyrolock(-1, getAngle());
+                    if(getStartPos() == "StartR")
+                        driveGyrolock(-1, -145);
+                    else if(getStartPos() == "StartL") 
+                        driveGyrolock(-1, 145);
                 elevator.set(0);
                 if(drive.getAverageRioPosition() <= -54) {
                     currentState = State.TURN_TO_ROCKET2;

@@ -457,7 +457,7 @@ public class Drive extends Drivetrain implements Subsystem {
     public double getDistanceToTarget() {
         double adjustment = 0;
         if(Constants.kPracticeBot) {
-            adjustment = 3;
+            adjustment = 0;
         }
         else {
             adjustment = 6;
