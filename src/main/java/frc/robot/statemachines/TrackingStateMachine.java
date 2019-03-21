@@ -2,10 +2,8 @@ package frc.robot.statemachines;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
-import frc.robot.subsystems.CargoIntake;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.HatchMechanism;
 import frc.robot.subsystems.Drive.DriveMode;
 
 public class TrackingStateMachine {
@@ -55,7 +53,7 @@ public class TrackingStateMachine {
     }
 
     public boolean isDriving() {
-        return currentState == State.DRIVING;
+        return currentState == State.DRIVING || currentState == State.ALIGNING;
     }
 
     public void setRequest(boolean request) {
@@ -63,5 +61,10 @@ public class TrackingStateMachine {
     }
     public void setDriveSpeed(double speed) {
         driveSpeed = speed;
+    }
+	public void debug() {
+    }
+    public void reset() {
+        currentState = State.WAITING;
     }
 }

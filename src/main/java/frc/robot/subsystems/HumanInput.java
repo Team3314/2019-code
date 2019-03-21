@@ -75,6 +75,9 @@ public class HumanInput implements Subsystem {
 	public boolean getGamePieceInteract() {
 		return gamepad.getRawButton(6);
 	}
+	public boolean getStopGamePieceInteract() {
+		return buttonBox.getRawButton(7);
+	}
 //Drive Controls
    public double getLeftThrottle() {
 		double throttle = -leftStick.getRawAxis(1);
@@ -144,6 +147,9 @@ public class HumanInput implements Subsystem {
 	}
 	public boolean getElevatorCargoShip() {
 		return getShift() && getStoreCargoShip();
+	}
+	public boolean getElevatorVisionTracking() {
+		return buttonBox.getRawButton(8);
 	}
 	public boolean getStoreElevatorLevel1() {
 		return gamepad.getPOV() == 180;

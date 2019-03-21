@@ -50,8 +50,8 @@ public class Robot extends TimedRobot {
   public static HatchMechanism hatch = new HatchMechanism(map.gripperPiston, map.sliderPiston);
   public static Superstructure superstructure = new Superstructure(map.compressor);
   public static Climber climber = new Climber(map.climberPiston, map.intakeToGroundPiston, map.highPressure, map.navx);
-  public static GamePieceStateMachine gamePieceStateMachine = new GamePieceStateMachine();
   public static TrackingStateMachine trackingStateMachine = new TrackingStateMachine();
+  public static GamePieceStateMachine gamePieceStateMachine = new GamePieceStateMachine();
 
 
 
@@ -179,22 +179,26 @@ public class Robot extends TimedRobot {
       else if(HI.getStoreCargoShip()) {
         gamePieceStateMachine.setMode(GamePieceStateMachineMode.CARGO_SHIP);
       }
-      else {
-        climber.setClimbRequest(HI.getClimbMode());
-        climber.setAutoClimbButton(HI.getAutoClimbMode());
-        climber.setPreviousStateRequest(HI.getPrevious());
-        climber.setIntakeFurtherDownRequest(HI.getIntakeFurtherDown());
-        if(HI.getResetGyro()) {
-          drive.resetSensors();
-        }
-
+      climber.setClimbRequest(HI.getClimbMode());
+      climber.setAutoClimbButton(HI.getAutoClimbMode());
+      climber.setPreviousStateRequest(HI.getPrevious());
+      climber.setIntakeFurtherDownRequest(HI.getIntakeFurtherDown());
+      if(HI.getResetGyro()) {
+        drive.resetSensors();
+      }
+      if(HI.getStopGamePieceInteract()) {
+        gamePieceStateMachine.reset();
+      }
+      if(gamePieceStateMachine.isPlacing()) {
+        trackingStateMachine.reset();
+      }
+      else if(!gamePieceStateMachine.isPlacing()){
         // Drive Controls
-        if(HI.getTracking()) {
-          trackingStateMachine.setRequest(true);
+        trackingStateMachine.setRequest(HI.getTracking());
+        if(trackingStateMachine.isDriving()) {
           trackingStateMachine.setDriveSpeed(HI.getRightThrottle());
         }
         else {
-          trackingStateMachine.setRequest(false);
           if(HI.getGyrolock()) {
             drive.setDriveMode(DriveMode.GYROLOCK);
             drive.setTank(HI.getLeftThrottle(), HI.getLeftThrottle(), Constants.kJoystickPower);
@@ -240,6 +244,7 @@ public class Robot extends TimedRobot {
           gamePieceStateMachine.setRequest(true);
         } 
         else {
+          gamePieceStateMachine.setRequest(false);
           hatch.setPlaceRequest(HI.getHatchPlace());
           hatch.setRetractRequest(HI.getHatchRetract());
           if(!elevator.isHoming()) {
@@ -257,6 +262,7 @@ public class Robot extends TimedRobot {
                 elevator.setElevatorState(ElevatorControlMode.HOMING);
               }
               else {
+                System.out.print(HI.getElevatorLevel1());
                 elevator.setElevatorState(ElevatorControlMode.MOTION_MAGIC);
                 if(HI.getElevatorLevel1()) {
                   if(cargoIntake.hasBall()) {
@@ -287,6 +293,9 @@ public class Robot extends TimedRobot {
                 }
                 else if(HI.getElevatorPickup()) { 
                   elevator.set(Constants.kElevatorHatchPickup);
+                }
+                else if(HI.getElevatorVisionTracking()) {
+                  elevator.set(Constants.kElevatorLoweredHatchPickup);
                 }
                 
               }
@@ -329,10 +338,10 @@ public class Robot extends TimedRobot {
               }
             }
           }
+        }
       }
     }
    }
-  }
 
   @Override
   public void testInit() {
@@ -357,6 +366,7 @@ public class Robot extends TimedRobot {
     superstructure.outputToSmartDashboard();
     climber.outputToSmartDashboard();
     gamePieceStateMachine.outputToSmartDashboard();
+    trackingStateMachine.outputToSmartDashboard();
   }
 
   public void debug() {
@@ -367,6 +377,7 @@ public class Robot extends TimedRobot {
     camera.debug();
     superstructure.debug();
     gamePieceStateMachine.debug();
+    trackingStateMachine.debug();
   }
 
   public void allPeriodic() {
@@ -378,6 +389,7 @@ public class Robot extends TimedRobot {
     hatch.update();
     climber.update();
     gamePieceStateMachine.update();
+    trackingStateMachine.update();
   }
 
 }

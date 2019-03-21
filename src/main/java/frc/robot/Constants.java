@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 public class Constants {
 
-	public static boolean kPracticeBot = false;
+	public static boolean kPracticeBot = true;
 
 
 //Conversions	
@@ -219,7 +219,7 @@ public class Constants {
 		public static final Value kClimberUp = Value.kReverse;
 
 
-		public static final int kGyroDelay = 12;
+		public static final int kGyroDelay = 6;
 
 		//Controls
 		public static final double kJoystickDeadband = .15;

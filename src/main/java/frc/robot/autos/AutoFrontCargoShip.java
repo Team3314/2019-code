@@ -40,11 +40,9 @@ public class AutoFrontCargoShip extends Autonomous {
                 }
                 break;
             case PLACE_HATCH:
-                gamePieceStateMachine.setRequest(true);
-                gamePieceStateMachine.setDriveSpeed(.6);
-                gamePieceStateMachine.setMode(GamePieceStateMachineMode.CARGO_SHIP);
+                gamePieceInteract(GamePieceStateMachineMode.CARGO_SHIP, .5);
                 if(gamePieceStateMachine.isDone()) {
-                    gamePieceStateMachine.setRequest(false);
+                    stopGamePieceInteract();
                     drivePower(0);
                     currentState = State.DONE;
                 }

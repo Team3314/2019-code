@@ -1,5 +1,6 @@
 package frc.robot.statemachines;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
@@ -9,7 +10,6 @@ import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.HatchMechanism;
 import frc.robot.subsystems.Drive.DriveMode;
-import frc.robot.subsystems.Elevator.ElevatorControlMode;
 
 public class GamePieceStateMachine {
 
@@ -42,6 +42,7 @@ public class GamePieceStateMachine {
     private CargoIntake cargoIntake = Robot.cargoIntake;
     private HatchMechanism hatch = Robot.hatch;
     private TrackingStateMachine trackingStateMachine = Robot.trackingStateMachine;
+    private DriverStation ds = DriverStation.getInstance();
 
     private Timer timer = new Timer();
 
@@ -53,12 +54,6 @@ public class GamePieceStateMachine {
     
     public void update() {
         drive.setPlacingOnRocket(placingCargoOnRocket());
-        if(!request && lastRequest) {
-            currentState = GamePieceState.WAITING;
-            timer.stop();
-            timer.reset();
-
-        }
         switch(currentState) {
             case WAITING:
                 switch(mode) { 
@@ -129,6 +124,7 @@ public class GamePieceStateMachine {
                         if(nextState != GamePieceState.PLACING_HATCH)
                             elevator.set(desiredElevatorHeight); 
                         if(drive.getAtStation()) {
+                            elevator.set(desiredElevatorHeight);
                             currentState = nextState;
                             drive.set(0,0);
                         }
@@ -167,8 +163,7 @@ public class GamePieceStateMachine {
                 }
                 if(timer.get() >= .25) {
                     cargoIntake.setPlaceRequest(false);
-                    drive.resetDriveEncoders();
-                    currentState = GamePieceState.BACKUP_BALL;
+                    currentState = GamePieceState.RETRACT;
 
                 }
                 break;
@@ -183,8 +178,10 @@ public class GamePieceStateMachine {
                 }
                 break;
             case BACKUP_HATCH:
-                drive.setDriveMode(DriveMode.GYROLOCK);
-                drive.set(-.25, -.25);
+                if(!ds.isAutonomous()) {
+                    drive.setDriveMode(DriveMode.GYROLOCK);
+                    drive.set(-.25, -.25);
+                }
                 if(drive.getAverageRioPosition() <= -12) {
                     hatch.setRetractRequest(true);
                     drive.set(0, 0);
@@ -192,22 +189,26 @@ public class GamePieceStateMachine {
                 }
                 break;
             case BACKUP_BALL:
-                drive.setDriveMode(DriveMode.GYROLOCK);
-                elevator.set(Constants.kElevatorLoweredHatchPickup);
+                elevator.set(0);
                 cargoIntake.setPlaceRequest(false);
-                drive.set(-.25, -.25);
+                if(!ds.isAutonomous()) {
+                    drive.setDriveMode(DriveMode.GYROLOCK);
+                    drive.set(-.25, -.25);
+                }
                 if(drive.getAverageRioPosition() <= -12) {
                     hatch.setRetractRequest(true);
                     drive.set(0, 0);
-                    currentState = GamePieceState.WAITING;
+                    currentState = GamePieceState.DONE;
                 }
                 break;
             case RETRACT:
-                elevator.set(Constants.kElevatorLoweredHatchPickup);
-                hatch.setRetractRequest(false);
+                elevator.set(0);
                 currentState = GamePieceState.DONE;
                 break;
             case DONE:
+                if(!request) {
+                    currentState = GamePieceState.WAITING;
+                }
                 break;
         }
         lastRequest = request;
@@ -241,7 +242,10 @@ public class GamePieceStateMachine {
     }
 
     public boolean isPlacing() {
-        return currentState == GamePieceState.PLACING_BALL || currentState == GamePieceState.PLACING_HATCH || currentState == GamePieceState.GRABBING_HATCH;
+        return currentState == GamePieceState.PLACING_BALL || currentState == GamePieceState.PLACING_HATCH
+         || currentState == GamePieceState.GRABBING_HATCH || currentState == GamePieceState.GRABBING_BALL
+         || currentState == GamePieceState.BACKUP_BALL || currentState == GamePieceState.BACKUP_HATCH ||
+         currentState == GamePieceState.RETRACT;
     }
     
     public boolean placingCargoOnRocket() {

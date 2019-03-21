@@ -1,7 +1,6 @@
 package frc.robot.autos;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants;
 import frc.robot.statemachines.GamePieceStateMachine.GamePieceState;
 import frc.robot.statemachines.GamePieceStateMachine.GamePieceStateMachineMode;
 import frc.robot.subsystems.Drive.DriveMode;
@@ -10,16 +9,12 @@ public class AutoTwoHatchRocketClose extends Autonomous {
 
     public enum State {
         START,
-        TURN_TO_ROCKET1,
-        STOP,
         PLACE_HATCH1, // Places hatch on first level of rocket
         TURN_TO_STATION1, // Turns to 180 degrees to face loading station
-        STOP2,
-        DRIVE,
         PICKUP_HATCH, // Grabs hatch from loading station
         BACKUP,
         TURN_TO_ROCKET2, // Turns to 0 degrees to face rocket
-        STOP3,
+        STOP2,
         PLACE_HATCH2, // Places hatch on second level of rocket
         TURN_TO_STATION2, // Turns to 180 degrees to face loading station
         DRIVE_AT_STATION2 // Drives until it is 60 inches from loading station
@@ -38,65 +33,31 @@ public class AutoTwoHatchRocketClose extends Autonomous {
     public void update() {
         switch(currentState) {
             case START:
-                if(getStartPos() == "StartR")
-                    driveGyrolock(0, -33, DriveMode.GYROLOCK_LEFT);
-                else if(getStartPos() == "StartL") 
-                    driveGyrolock(0, 33, DriveMode.GYROLOCK_RIGHT);
                 setHighGear(false);
-                currentState = State.STOP;
-                break;
-            case STOP:
-                if(gyroTurnDone()) {
-                    startTimer();
-                    currentState = State.TURN_TO_ROCKET1;
-                }
-                break;
-            case TURN_TO_ROCKET1:
-                if(getTime() >=.5) {
-                    resetTimer();
-                    currentState = State.PLACE_HATCH1;
-                }
+                currentState = State.PLACE_HATCH1;
                 break;
             case PLACE_HATCH1:
-                setGamePieceRequest(true);
-                tracking.setDriveSpeed(.75);
-                gamePieceStateMachine.setMode(GamePieceStateMachineMode.LEVEL1);
+                gamePieceInteract(GamePieceStateMachineMode.LEVEL1, .75);
                 if(gamePieceStateMachine.getCurrentState() == GamePieceState.BACKUP_HATCH) {
                     hatch.setSliderOut(false);
                     if(getStartPos() == "StartR")
                         driveGyrolock(0, -180, DriveMode.GYROLOCK_RIGHT);
                     else if(getStartPos() == "StartL") 
                         driveGyrolock(0, 180, DriveMode.GYROLOCK_LEFT);
-                    setGamePieceRequest(false);
+                    stopGamePieceInteract();
                     currentState = State.TURN_TO_STATION1;
                 }
                 break;
             case TURN_TO_STATION1:
                 if(gyroTurnDone()) {
                     startTimer();
-                    currentState = State.STOP2;
-                }
-                break;
-            case STOP2:
-                if(getTime() >= .05) {
-                    resetTimer();
-                    //driveGyrolock(.75, 180, 60);
-                    currentState = State.PICKUP_HATCH;
-                }
-                break;
-            case DRIVE:
-                if(gyroTurnDone()) {
-                    drive.set(0,0);
-
                     currentState = State.PICKUP_HATCH;
                 }
                 break;
             case PICKUP_HATCH:
-                setGamePieceRequest(true);
-                gamePieceStateMachine.setDriveSpeed(.6);
-                gamePieceStateMachine.setMode(GamePieceStateMachineMode.HATCH_PICKUP);
+                gamePieceInteract(GamePieceStateMachineMode.HATCH_PICKUP, .6);
                 if(gamePieceStateMachine.getCurrentState() == GamePieceState.BACKUP_HATCH) {
-                    setGamePieceRequest(false);
+                    stopGamePieceInteract();
                     currentState = State.BACKUP;
                     drive.resetDriveEncoders();
                     driveGyrolock(-1, 180);
@@ -116,19 +77,17 @@ public class AutoTwoHatchRocketClose extends Autonomous {
                 if(gyroTurnDone()) {
                     startTimer();
                     drivePower(0);
-                    currentState = State.STOP3;
+                    currentState = State.STOP2;
                 }
                 break;
-            case STOP3:
+            case STOP2:
                 if(getTime() > .5) {
                     resetTimer();
                     currentState = State.PLACE_HATCH2;
                 }
                 break;
             case PLACE_HATCH2:
-                setGamePieceRequest(true);
-                gamePieceStateMachine.setDriveSpeed(.6);
-                gamePieceStateMachine.setMode(GamePieceStateMachineMode.LEVEL2);
+                gamePieceInteract(GamePieceStateMachineMode.LEVEL2, .6);
                 if(gamePieceStateMachine.isDone()) {
                     setGamePieceRequest(false);
                     currentState = State.TURN_TO_STATION2;

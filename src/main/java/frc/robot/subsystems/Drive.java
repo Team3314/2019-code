@@ -178,7 +178,7 @@ public class Drive extends Drivetrain implements Subsystem {
         gyroAngleHistoryStoreIndex++;
         gyroAngleHistoryStoreIndex %= 199;
 
-        if(camera.isTargetInView()) {
+        if(camera.isTargetInView() && !getAtRocket() && !getAtStation()) {
             cameraTurnAngle = getDelayedGyroAngle() + camera.getTargetHorizError();
             if(placingCargoOnRocket)
                 cameraDistance = camera.getHighDistance();
@@ -403,7 +403,9 @@ public class Drive extends Drivetrain implements Subsystem {
         SmartDashboard.putNumber("Distance To Target", getDistanceToTarget());
         SmartDashboard.putNumber("Left Rio Encoder Position", leftRioDrivePositionInches); 
         SmartDashboard.putNumber("Right Rio Encoder Position", rightRioDrivePositionInches);
-
+        SmartDashboard.putNumber("Desired Angle", getDesiredAngle());
+        SmartDashboard.putNumber("Current Angle", getAngle());
+        SmartDashboard.putNumber("Camera angle", cameraTurnAngle);
     }
   
     public void resetDriveEncoders() {
@@ -449,7 +451,14 @@ public class Drive extends Drivetrain implements Subsystem {
         this.velocityControl = velocityControl;
     }
     public double getDistanceToTarget() {
-        return targetDistance - getAverageRioPosition() - 12;
+        double adjustment = 0;
+        if(Constants.kPracticeBot) {
+            adjustment = 6;
+        }
+        else {
+            adjustment = 6;
+        }
+        return targetDistance - getAverageRioPosition() - adjustment;
     } 
 
     public boolean getRightRocketSensor() {
