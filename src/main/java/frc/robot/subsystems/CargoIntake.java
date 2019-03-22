@@ -13,7 +13,6 @@ import frc.robot.infrastructure.Transmission;
 
 public class CargoIntake implements Subsystem {
 
-    // TODO: Consider a WAITINGWITHBALL state
     public enum IntakeState {
         WAITING,
         INTAKING,
