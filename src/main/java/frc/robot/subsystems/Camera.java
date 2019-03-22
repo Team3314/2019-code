@@ -36,6 +36,8 @@ public class Camera implements Subsystem {
 
 	private double correction;
 
+	private double offset = 0;
+
 	private Solenoid leftLightRing, rightLightRing, targetsLight;
     
     private double distance, highDistance;
@@ -52,7 +54,7 @@ public class Camera implements Subsystem {
 		rightLightRing.set(lightRingsOn);
 
         
-		targetHorizError = -(table.getEntry("Angle To Target").getDouble(0));
+		targetHorizError = -(table.getEntry("Angle To Target").getDouble(0) + offset);
 		distance = table.getEntry("Distance").getDouble(1337.254);
 		highDistance = table.getEntry("DistanceHigh").getDouble(1337.254);
 		hasLeft = table.getEntry("Left hasRight").getBoolean(false);

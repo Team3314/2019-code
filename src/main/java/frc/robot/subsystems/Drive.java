@@ -360,7 +360,6 @@ public class Drive extends Drivetrain implements Subsystem {
         if(mode != currentDriveMode) {
             if(mode == DriveMode.GYROLOCK || mode == DriveMode.GYROLOCK_LEFT || mode == DriveMode.GYROLOCK_RIGHT) {
                 gyroControl.enable();
-                setGyroDriveDistance(0);
                 setDesiredAngle(getAngle());
             }
             else if(mode == DriveMode.VISION_CONTROL) {
@@ -502,16 +501,6 @@ public class Drive extends Drivetrain implements Subsystem {
         
         return calcVel;
     }
-
-    public void setGyroDriveDistance(double distance) {
-        gyroDriveDistance = distance;
-        if(distance ==  0) {
-            driveDistance = false;
-        } 
-        else {
-            driveDistance = true;
-        }
-    }   
 
     public boolean getGyroDriveDone() {
         return Math.abs(gyroDriveDistance - getAverageRioPosition()) < 5;

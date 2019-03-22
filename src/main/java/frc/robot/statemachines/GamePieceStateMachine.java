@@ -97,7 +97,7 @@ public class GamePieceStateMachine {
                             nextState = GamePieceState.GRABBING_HATCH;
                         break; 
                     case CARGO_PICKUP:
-                            desiredElevatorHeight = Constants.kElevatorBallStationPickup;
+                            desiredElevatorHeight = Constants.kElevatorCargoStationPickup;
                             nextState = GamePieceState.GRABBING_BALL;
                         break;
                     case CARGO_SHIP:

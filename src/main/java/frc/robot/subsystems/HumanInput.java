@@ -151,6 +151,9 @@ public class HumanInput implements Subsystem {
 	public boolean getElevatorCargoShip() {
 		return getShift() && getStoreCargoShip();
 	}
+	public boolean getElevatorCargoStationPickup() {
+		return getShift() && getStoreCargoStationPickup();
+	}
 	public boolean getElevatorVisionTracking() {
 		return buttonBox.getRawButton(8);
 	}
@@ -169,7 +172,7 @@ public class HumanInput implements Subsystem {
 	public boolean getStoreCargoShip() {
 		return gamepad.getRawButton(9);
 	}
-	public boolean getStoreBallStationPickup() {
+	public boolean getStoreCargoStationPickup() {
 		return gamepad.getRawButton(7);
 	}
 	public boolean getElevatorManual() {
@@ -197,9 +200,6 @@ public class HumanInput implements Subsystem {
 	}
 	public boolean getCargoEject() {
 		return buttonBox.getRawButton(3); // Button Box 3 shoots cargo backwards towards intake
-	}
-	public boolean getCargoStationPickup() {
-		return gamepad.getRawButton(4);
 	}
 	public boolean getCargoReverseOuttake() {
 		return buttonBox.getRawButton(4);
@@ -264,6 +264,72 @@ public class HumanInput implements Subsystem {
 			return 1;
 		return 0;
 	}
+	//TODO ADD CORRECT BUTTONS FOR CAMERA OFFSET SELECT
+	//Positive Half, fourth from left
+	public int getCameraOffsetPositiveHalfBinaryOne() {
+		if(buttonBox.getRawButton(20))
+			return 1;
+		return 0;
+	}
+	public int getCameraOffsetPositiveHalfBinaryTwo() {
+		if(buttonBox.getRawButton(20))
+			return 1;
+		return 0;
+	}
+	public int getCameraOffsetPositiveHalfBinaryFour() {
+		if(buttonBox.getRawButton(20))
+			return 1;
+		return 0;
+	}
+	//Positive WHole,third from left
+	public int getCameraOffsetPositiveWholeBinaryOne() {
+		if(buttonBox.getRawButton(20))
+			return 1;
+		return 0;
+	}
+	public int getCameraOffsetPositiveWholeBinaryTwo() {
+		if(buttonBox.getRawButton(20))
+			return 1;
+		return 0;
+	}
+	public int getCameraOffsetPositiveWholeBinaryFour() {
+		if(buttonBox.getRawButton(20))
+			return 1;
+		return 0;
+	}
+	//Negative Half. second from left
+	public int getCameraOffsetNegativeHalfBinaryOne() {
+		if(buttonBox.getRawButton(20))
+			return 1;
+		return 0;
+	}
+	public int getCameraOffsetNegativeHalfBinaryTwo() {
+		if(buttonBox.getRawButton(20))
+			return 1;
+		return 0;
+	}
+	public int getCameraOffsetNegativeHalfBinaryFour() {
+		if(buttonBox.getRawButton(20))
+			return 1;
+		return 0;
+	}
+	//Negative Whole. leftmost switch
+	public int getCameraOffsetNegativeWholeBinaryOne() {
+		if(buttonBox.getRawButton(20))
+			return 1;
+		return 0;
+	}
+	public int getCameraOffsetNegativeWholeBinaryTwo() {
+		if(buttonBox.getRawButton(20))
+			return 1;
+		return 0;
+	}
+	public int getCameraOffsetNegativeWholeBinaryFour() {
+		if(buttonBox.getRawButton(20))
+			return 1;
+		return 0;
+	}
+
 	public boolean getClimbMode() {
 		return gamepad.getRawButton(7) && gamepad.getRawButton(8);
 	}

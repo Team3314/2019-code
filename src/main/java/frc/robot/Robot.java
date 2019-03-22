@@ -7,13 +7,8 @@
 
 package frc.robot;
 
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Drive;
 import frc.robot.autos.AutoTwoHatchRocketClose;
 import frc.robot.autos.Autonomous;
@@ -32,7 +27,7 @@ import frc.robot.subsystems.Camera.DSCamera;
 import frc.robot.subsystems.CargoIntake.IntakeState;
 import frc.robot.subsystems.Drive.DriveMode;
 
-/**
+/**c
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the TimedRobot
  * documentation. If you change the name of tHIs class or the package after
@@ -184,6 +179,9 @@ public class Robot extends TimedRobot {
       else if(HI.getStoreCargoShip()) {
         gamePieceStateMachine.setMode(GamePieceStateMachineMode.CARGO_SHIP);
       }
+      else if(HI.getStoreCargoStationPickup()) {
+        gamePieceStateMachine.setMode(GamePieceStateMachineMode.CARGO_PICKUP);
+      }
       climber.setClimbRequest(HI.getClimbMode());
       climber.setAutoClimbButton(HI.getAutoClimbMode());
       climber.setPreviousStateRequest(HI.getPrevious());
@@ -194,12 +192,8 @@ public class Robot extends TimedRobot {
       if(HI.getStopGamePieceInteract()) {
         gamePieceStateMachine.reset();
       }
-      if(gamePieceStateMachine.isPlacing()) {
-        driverDisabled = true;
-      }
-
-      else if(!gamePieceStateMachine.isPlacing()){
-          // Drive Controls'
+      if(!gamePieceStateMachine.isPlacing()){
+          // Drive Controls
           if(!driverDisabled) {
           trackingStateMachine.setRequest(HI.getTracking());
           if(trackingStateMachine.isDriving()) {
@@ -209,6 +203,7 @@ public class Robot extends TimedRobot {
             if(HI.getGyrolock()) {
               drive.setDriveMode(DriveMode.GYROLOCK);
               drive.setTank(HI.getLeftThrottle(), HI.getLeftThrottle(), Constants.kJoystickPower);
+              /* XXX GYRO TEST CODE
               if(HI.turnToZero())
                 drive.setDesiredAngle(0);
               else if(HI.turnToRight())
@@ -216,9 +211,7 @@ public class Robot extends TimedRobot {
               else if(HI.turnBack())
                 drive.setDesiredAngle(180);
               else if(HI.turnToLeft())
-                drive.setDesiredAngle(90);
-                
-                drive.setGyroDriveDistance(0);
+                drive.setDesiredAngle(90);*/
             }
             else if(HI.getVision()) {
               drive.setDriveMode(DriveMode.VISION_CONTROL);
@@ -259,10 +252,10 @@ public class Robot extends TimedRobot {
             if(!HI.getElevatorManual()) {
               cargoIntake.setIntakeRequest(HI.getAutoCargoIntake());
               cargoIntake.setRunIntake(HI.getGamePieceInteract());
-              cargoIntake.setPickupFromStationRequest(HI.getCargoStationPickup());
+              cargoIntake.setPickupFromStationRequest(HI.getElevatorCargoStationPickup());
               hatch.setIntakeRequest(HI.getHatchIntake());
             }
-            if(!cargoIntake.getLoadingBall() && !HI.getHatchIntake() && !HI.getHatchPlace() && !HI.getCargoStationPickup()) {
+            if(!cargoIntake.getLoadingBall() && !HI.getHatchIntake() && !HI.getHatchPlace() && !HI.getElevatorCargoStationPickup()) {
               if(HI.getElevatorManual()) {
                 elevator.setElevatorState(ElevatorControlMode.MANUAL);
                 elevator.set(HI.getElevatorSpeed());
@@ -304,6 +297,9 @@ public class Robot extends TimedRobot {
                 }
                 else if(HI.getElevatorVisionTracking()) {
                   elevator.set(Constants.kElevatorLoweredHatchPickup);
+                }
+                else if(HI.getElevatorCargoStationPickup()) {
+                  elevator.set(Constants.kElevatorCargoStationPickup);
                 }
                 
               }

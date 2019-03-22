@@ -79,11 +79,11 @@ public class Constants {
 		public static final int kElevatorHatchPickup = (int)(5 / kElevatorInchesPerTick);
 		public static final int kElevatorLoweredHatchPickup = (int) (1 / kElevatorInchesPerTick);
 		public static final int kElevatorRaisedHatchPickup = (int)(9 / kElevatorInchesPerTick);
-		public static final int kElevatorBallStationPickup = (int)(25/ kElevatorInchesPerTick);
+		public static final int kElevatorCargoStationPickup = (int)(25/ kElevatorInchesPerTick);
 		public static final int kElevatorBallLevel1 = (int)(2.5 / kElevatorInchesPerTick);
-		public static final int kElevatorBallLevel2 = (int)(28 / kElevatorInchesPerTick);
+		public static final int kElevatorBallLevel2 = (int)(29 / kElevatorInchesPerTick);
 		public static final int kElevatorBallLevel3 = (int)(58 / kElevatorInchesPerTick);
-		public static final int kElevatorBallCargoShip = (int)(18 / kElevatorInchesPerTick);
+		public static final int kElevatorBallCargoShip = (int)(1 / kElevatorInchesPerTick);
 		public static final int kElevatorHatchLevel1 = (int)(5 / kElevatorInchesPerTick);
 		public static final int kElevatorHatchLevel2 = (int)(33 / kElevatorInchesPerTick);
 		public static final int kElevatorHatchLevel3 = (int)(62 / kElevatorInchesPerTick);
@@ -219,7 +219,7 @@ public class Constants {
 		public static final Value kClimberUp = Value.kReverse;
 
 
-		public static final int kGyroDelay = 6;
+		public static final int kGyroDelay = 2;
 
 		//Controls
 		public static final double kJoystickDeadband = .15;

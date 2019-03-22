@@ -12,8 +12,6 @@ public class TrackingStateMachine {
         ALIGNING,
         DRIVING
     }
-
-    private Elevator elevator = Robot.elevator;
     private Drive drive = Robot.drive;
 
     private double driveSpeed;

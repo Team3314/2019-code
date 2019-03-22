@@ -100,7 +100,7 @@ public class CargoIntake implements Subsystem {
                         hasBall = false;
                 }
                 if(pickupFromStationRequest && !lastPickupFromStationRequest) {
-                    elevator.set(Constants.kElevatorBallStationPickup);
+                    elevator.set(Constants.kElevatorCargoStationPickup);
                     currentIntakeState = IntakeState.PICKUP_FROM_STATION;
                 }
                 break;

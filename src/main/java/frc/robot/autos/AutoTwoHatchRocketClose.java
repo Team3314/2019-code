@@ -17,8 +17,8 @@ public class AutoTwoHatchRocketClose extends Autonomous {
         STOP2,
         PLACE_HATCH2, // Places hatch on second level of rocket
         TURN_TO_STATION2, // Turns to 180 degrees to face loading station
-        DRIVE_AT_STATION2 // Drives until it is 60 inches from loading station
-
+        DRIVE_AT_STATION2, // Drives until it is 60 inches from loading station
+        DONE
     }
 
     private State currentState = State.START;
@@ -38,7 +38,7 @@ public class AutoTwoHatchRocketClose extends Autonomous {
                 currentState = State.PLACE_HATCH1;
                 break;
             case PLACE_HATCH1:
-                gamePieceInteract(GamePieceStateMachineMode.LEVEL1, .75);
+                gamePieceInteract(GamePieceStateMachineMode.LEVEL1, .6);
                 if(gamePieceStateMachine.getCurrentState() == GamePieceState.BACKUP_HATCH) {
                     stopGamePieceInteract();
                     hatch.setSliderOut(false);
@@ -107,11 +107,13 @@ public class AutoTwoHatchRocketClose extends Autonomous {
                 }
                 break;
             case DRIVE_AT_STATION2:
-                    setGamePieceRequest(true);
-                    gamePieceStateMachine.setMode(GamePieceStateMachineMode.HATCH_PICKUP);
+                gamePieceInteract(GamePieceStateMachineMode.HATCH_PICKUP, .6);
                 if(getCameraDistance() < 72) {
-                    setGamePieceRequest(false);
+                    stopGamePieceInteract();
+                    currentState = State.DONE;
                 }
+                break;
+            case DONE:
                 break;
         }
         SmartDashboard.putString("Auto State", currentState.toString());
