@@ -175,8 +175,9 @@ public class GamePieceStateMachine {
             case PLACING_BALL:
                 drive.set(0,0);
                 if(elevator.inPosition()) {
-                    if(!lastElevatorInPosition)
+                    if(timer.get() <= 0) {
                         timer.start();
+                    }
                     cargoIntake.setPlaceRequest(true);
                 }
                 if(timer.get() >= .25 || getForce()) {

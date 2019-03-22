@@ -160,8 +160,6 @@ public class HatchMechanism implements Subsystem {
 
     @Override
     public void outputToSmartDashboard() {
-        SmartDashboard.putBoolean("Gripper down?", mIsGripperDown);
-        SmartDashboard.putBoolean("Slider out?", mIsSliderOut);
         SmartDashboard.putString("Hatch State", currentState.toString());
     }
 
@@ -187,7 +185,8 @@ public class HatchMechanism implements Subsystem {
 
     @Override
     public void debug() {
-
+        SmartDashboard.putBoolean("Gripper down?", mIsGripperDown);
+        SmartDashboard.putBoolean("Slider out?", mIsSliderOut);
     }
 
 }

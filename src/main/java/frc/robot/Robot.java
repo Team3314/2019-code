@@ -90,21 +90,15 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
     allPeriodic();
+    if(elevator.getElevatorState() == ElevatorControlMode.MOTION_MAGIC) {
+      elevator.set(elevator.getPosition()); // XXX MIGHT FIX ELEVATOR MOVING ON ENABLE PROBLEM, MAYBE NOT, REMOVE IF BREAKS CODE
+    }
+    else {
+      elevator.set(0);
+    }
   }
   @Override
   public void robotPeriodic() {
-    if(HI.getHasGamepad()) {
-      HI.setHasGamepad(true);
-    }
-    
-    if(HI.getForwardCamera())
-      camera.setDSView(DSCamera.FRONT);
-    else if(HI.getRightCamera())
-      camera.setDSView(DSCamera.RIGHT);
-    else if(HI.getBackCamera()) 
-      camera.setDSView(DSCamera.BACK);
-    else if(HI.getLeftCamera()) 
-      camera.setDSView(DSCamera.LEFT);
   }
   @Override
   public void autonomousInit() {
@@ -135,7 +129,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    HI.setHasGamepad(HI.getHasGamepad());
     superstructure.startCompressor();
     if(elevator.getElevatorState() == ElevatorControlMode.MOTION_MAGIC) {
       elevator.set(elevator.getPosition());
@@ -235,9 +228,6 @@ public class Robot extends TimedRobot {
           camera.setLightRings(false);
         drive.setElevatorUp(elevator.getPosition() >= Constants.kElevatorLowAccelerationThreshold);
 
-        /**
-         * ELEVATOR CONTROLS
-        */
         if(HI.getCargoEject()) {
           cargoIntake.stopLoadingBall();
         }
@@ -256,6 +246,9 @@ public class Robot extends TimedRobot {
               hatch.setIntakeRequest(HI.getHatchIntake());
             }
             if(!cargoIntake.getLoadingBall() && !HI.getHatchIntake() && !HI.getHatchPlace() && !HI.getElevatorCargoStationPickup()) {
+              /**
+               * ELEVATOR CONTROLS
+              */
               if(HI.getElevatorManual()) {
                 elevator.setElevatorState(ElevatorControlMode.MANUAL);
                 elevator.set(HI.getElevatorSpeed());
@@ -381,6 +374,7 @@ public class Robot extends TimedRobot {
     elevator.debug();
     camera.debug();
     superstructure.debug();
+    climber.debug();
     gamePieceStateMachine.debug();
     trackingStateMachine.debug();
   }

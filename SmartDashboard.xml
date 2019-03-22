@@ -1,0 +1,162 @@
+<xml version="1.0">
+<dashboard>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.CameraServerViewer">
+		<location x="206" y="0"/>
+		<width>806</width>
+		<height>590</height>
+		<property name="Degrees Rotation" value="180"/>
+		<property name="Camera Choice" value=""/>
+	</static-widget>
+	<widget field="Cargo Intake Raised" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="1163" y="329"/>
+		<width>170</width>
+		<height>65</height>
+	</widget>
+	<widget field="Ball in Intake" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="1340" y="340"/>
+		<width>125</width>
+		<height>52</height>
+	</widget>
+	<widget field="Ball in Carriage" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="1475" y="344"/>
+		<width>135</width>
+		<height>43</height>
+	</widget>
+	<widget field="Targets in view" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="1105" y="91"/>
+		<width>178</width>
+		<height>223</height>
+	</widget>
+	<widget field="Elevator In Position" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="76" y="619"/>
+	</widget>
+	<widget field="Right NEO Velocity" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1612" y="40"/>
+	</widget>
+	<widget field="Cargo Intake current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1623" y="338"/>
+		<height>20</height>
+	</widget>
+	<widget field="Gripper down?" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="68" y="774"/>
+		<height>43</height>
+	</widget>
+	<widget field="Cargo intake sensor voltage" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1421" y="410"/>
+		<height>20</height>
+	</widget>
+	<widget field="Current Angle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1400" y="150"/>
+	</widget>
+	<widget field="Hatch State" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="401" y="778"/>
+		<height>39</height>
+	</widget>
+	<widget field="Reverse limit" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="596" y="617"/>
+	</widget>
+	<widget field="Target horizontal error" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1109" y="18"/>
+	</widget>
+	<widget field="Distance To Target" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1483" y="183"/>
+	</widget>
+	<widget field="Right Rio Encoder Position" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1615" y="93"/>
+	</widget>
+	<widget field="Station Sensor" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1312" y="634"/>
+	</widget>
+	<widget field="Desired Angle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1585" y="153"/>
+	</widget>
+	<widget field="Game Piece State Machine Mode" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1261" y="507"/>
+		<height>111</height>
+	</widget>
+	<widget field="Cargo Intake speed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1629" y="367"/>
+	</widget>
+	<widget field="Rocket Sensor" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1292" y="677"/>
+	</widget>
+	<widget field="Elevator Cargo sensor Voltage" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1661" y="408"/>
+	</widget>
+	<widget field="Light Rings On" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1128" y="72"/>
+		<height>20</height>
+	</widget>
+	<widget field="Desired Elevator Position" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="46" y="695"/>
+	</widget>
+	<widget field="Right Rio Velocity" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1614" y="19"/>
+		<height>20</height>
+	</widget>
+	<widget field="Distance" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1168" y="47"/>
+	</widget>
+	<widget field="Left Rio Encoder Position" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1351" y="92"/>
+		<height>26</height>
+	</widget>
+	<widget field="Elevator Master Voltage" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="545" y="651"/>
+	</widget>
+	<widget field="Elevator Slave Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="323" y="677"/>
+	</widget>
+	<widget field="Climber State" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="30" y="878"/>
+		<width>252</width>
+		<height>104</height>
+	</widget>
+	<widget field="Current Elevator Position ticks" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="28" y="651"/>
+	</widget>
+	<widget field="Current Elevator Position Inches" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="15" y="675"/>
+		<height>20</height>
+	</widget>
+	<widget field="Camera angle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1506" y="210"/>
+	</widget>
+	<widget field="Tracking State Machine State" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1022" y="511"/>
+		<height>113</height>
+	</widget>
+	<widget field="Cargo Intake IntakeState" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1175" y="406"/>
+	</widget>
+	<widget field="Left Rio Veloctiy" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1389" y="16"/>
+	</widget>
+	<widget field="Elevator Control Mode" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="313" y="612"/>
+	</widget>
+	<widget field="Left NEO Velocity" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1388" y="37"/>
+	</widget>
+	<widget field="Game Piece State Machine State" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1560" y="501"/>
+		<height>119</height>
+	</widget>
+	<widget field="Elevator Master Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="323" y="652"/>
+		<height>21</height>
+	</widget>
+	<widget field="Slider out?" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="239" y="775"/>
+		<height>30</height>
+	</widget>
+</dashboard>
+<live-window>
+</live-window>
+	<hidden field="Limelight_Interface"/>
+	<hidden field="Roll Angle"/>
+	<hidden field="Limelight_Stream"/>
+	<hidden field="Limelight_PipelineName"/>
+	<hidden field="Climb Request"/>
+	<hidden field="Last Climb Request"/>
+</xml>

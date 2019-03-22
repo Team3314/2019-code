@@ -239,14 +239,8 @@ public class CargoIntake implements Subsystem {
 
     @Override
     public void outputToSmartDashboard() {
-        SmartDashboard.putNumber("Cargo Intake current", intake.getOutputCurrent(0));
-        SmartDashboard.putNumber("Cargo Intake speed", intakeSpeed);
         SmartDashboard.putString("Cargo Intake IntakeState", getIntakeState().toString());
-        SmartDashboard.putNumber("Cargo intake sensor voltage", intakeCargoSensor.getVoltage());
-        SmartDashboard.putNumber("Elevator Cargo sensor Voltage", elevatorCargoSensor.getVoltage());
-        SmartDashboard.putBoolean("Ball in Intake", getCargoIntakeSensor());
-        SmartDashboard.putBoolean("Ball in Carriage", getCargoCarriageSensor());
-        SmartDashboard.putBoolean("Cargo Intake Raised", getIsUp());
+        
     }
 
     @Override
@@ -284,6 +278,13 @@ public class CargoIntake implements Subsystem {
 
     @Override
     public void debug() {
+    SmartDashboard.putNumber("Cargo intake sensor voltage", intakeCargoSensor.getVoltage());
+    SmartDashboard.putNumber("Elevator Cargo sensor Voltage", elevatorCargoSensor.getVoltage());
+    SmartDashboard.putBoolean("Ball in Intake", getCargoIntakeSensor());
+    SmartDashboard.putBoolean("Ball in Carriage", getCargoCarriageSensor());
+    SmartDashboard.putBoolean("Cargo Intake Raised", getIsUp());
+    SmartDashboard.putNumber("Cargo Intake current", intake.getOutputCurrent(0));
+    SmartDashboard.putNumber("Cargo Intake speed", intakeSpeed);
 
     }
 }

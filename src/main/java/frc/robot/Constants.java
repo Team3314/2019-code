@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 public class Constants {
 
-	public static boolean kPracticeBot = true;
+	public static boolean kPracticeBot = false;
 
 
 //Conversions	
@@ -83,7 +83,7 @@ public class Constants {
 		public static final int kElevatorBallLevel1 = (int)(2.5 / kElevatorInchesPerTick);
 		public static final int kElevatorBallLevel2 = (int)(29 / kElevatorInchesPerTick);
 		public static final int kElevatorBallLevel3 = (int)(58 / kElevatorInchesPerTick);
-		public static final int kElevatorBallCargoShip = (int)(1 / kElevatorInchesPerTick);
+		public static final int kElevatorBallCargoShip = (int)(16 / kElevatorInchesPerTick);
 		public static final int kElevatorHatchLevel1 = (int)(5 / kElevatorInchesPerTick);
 		public static final int kElevatorHatchLevel2 = (int)(33 / kElevatorInchesPerTick);
 		public static final int kElevatorHatchLevel3 = (int)(62 / kElevatorInchesPerTick);
@@ -105,6 +105,7 @@ public class Constants {
 		public static double kGyroLock_kI = 0;
 		public static double kGyroLock_kD = 0;
 		public static double kGyroLock_kF = 0;
+		public static final double kGyroLock_LoopTime = .02;
 	//Velocity
 		public static double kVelocity_kP = 1.6e-5;
 		public static double kVelocity_kI = 0;

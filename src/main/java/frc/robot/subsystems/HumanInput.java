@@ -5,12 +5,10 @@
  */
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import frc.robot.Constants;
 
-// TODO: consider making HumanInput a subsystem (specifically so it is updatable)...
-// then move things like managing hasGamepad into update. (possibly check other devices as well) 
-// also anything that might be better done once, could be done there. 
 // TODO: consider making a class that represents a button and handles things...
 // like rising and falling edge detection. 
 // TODO: consider making a class that represents a POV or at least a getPOV method...
@@ -21,6 +19,8 @@ import frc.robot.Constants;
 // reversing, etc. 
 
 public class HumanInput implements Subsystem {
+
+	private DriverStation ds = DriverStation.getInstance();
 	
 	private final Joystick gamepad;
 	private final Joystick leftStick;
@@ -42,6 +42,12 @@ public class HumanInput implements Subsystem {
 	@Override
 	public void update() {
 		sticksZero = !getGyrolock() && !getTracking() && getLeftThrottle() ==0 && getRightThrottle() == 0;
+		if(ds.isDisabled()) {
+			hasGamepad = getHasGamepad();
+		}
+		else if(getHasGamepad()) {
+			hasGamepad = true;
+		}
 	}
 
 	@Override
@@ -152,7 +158,7 @@ public class HumanInput implements Subsystem {
 		return getShift() && getStoreCargoShip();
 	}
 	public boolean getElevatorCargoStationPickup() {
-		return getShift() && getStoreCargoStationPickup();
+		return false;
 	}
 	public boolean getElevatorVisionTracking() {
 		return buttonBox.getRawButton(8);
@@ -344,20 +350,6 @@ public class HumanInput implements Subsystem {
 		return buttonBox.getRawButton(6);
 	}
 
-//Camera
-	public boolean getForwardCamera() {
-		return rightStick.getPOV() == 0;
-	}
-	public boolean getRightCamera() {
-		return rightStick.getPOV() == 90;
-	}
-	public boolean getBackCamera() {
-		return rightStick.getPOV() == 180;
-	}
-	public boolean getLeftCamera() {
-		return rightStick.getPOV() == 270;
-	}
-
 	public boolean turnToZero() {
 		return leftStick.getPOV() == 0;
 	}
@@ -379,7 +371,7 @@ public class HumanInput implements Subsystem {
 
 	public boolean getDebugMode() {
 		return autoSelector.getRawButton(1);
-	}
+	} 
 
 	public boolean getBackwards() {
 		return rightStick.getRawButton(4);

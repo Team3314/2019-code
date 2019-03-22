@@ -171,9 +171,6 @@ public class Climber implements Subsystem {
     @Override
     public void outputToSmartDashboard() {
         SmartDashboard.putString("Climber State", currentState.toString());
-        SmartDashboard.putBoolean("Climb Request", climbRequest);
-        SmartDashboard.putBoolean("Last Climb Request", lastClimbRequest);
-        SmartDashboard.putNumber("Roll Angle", navx.getRoll());
 
     }
 
@@ -204,6 +201,9 @@ public class Climber implements Subsystem {
 
     @Override
     public void debug() {
+        SmartDashboard.putBoolean("Climb Request", climbRequest);
+        SmartDashboard.putBoolean("Last Climb Request", lastClimbRequest);
+        SmartDashboard.putNumber("Roll Angle", navx.getRoll());
 
     }
 

@@ -99,7 +99,7 @@ public class Drive extends Drivetrain implements Subsystem {
 
         gyroPIDOutput = new CustomPIDOutput();
     	gyroControl = new PIDController(Constants.kGyroLock_kP, Constants.kGyroLock_kI, Constants.kGyroLock_kD,
-            Constants.kGyroLock_kF, navx, gyroPIDOutput);
+            Constants.kGyroLock_kF, navx, gyroPIDOutput, Constants.kGyroLock_LoopTime);
 		//Sets the PID controller to treat 180 and -180 to be the same point, 
 		//so that when turning the robot takes the shortest path instead of going the long way around
 		//Effectively changes PID input from a line to a circle
@@ -383,8 +383,8 @@ public class Drive extends Drivetrain implements Subsystem {
         rightRioDrivePositionTicks = getRightRioPositionTicks();
         leftRioDrivePositionInches = leftRioDrivePositionTicks * Constants.kDriveTicksToInches;
         rightRioDrivePositionInches = rightRioDrivePositionTicks * Constants.kDriveTicksToInches;
-        leftRioDriveSpeedTicks = leftDrive.getVelocity();
-        rightRioDriveSpeedTicks = -rightDrive.getVelocity();
+        leftRioDriveSpeedTicks = leftRioEncoder.getVelocity();
+        rightRioDriveSpeedTicks = -rightRioEncoder.getVelocity();
         leftRioDriveSpeedInches = leftRioDriveSpeedTicks * tickToInConversion;
         rightRioDriveSpeedInches = rightRioDriveSpeedTicks * tickToInConversion;
 
@@ -399,12 +399,6 @@ public class Drive extends Drivetrain implements Subsystem {
         //TODO PICK DASHBOARD CALLS
         SmartDashboard.putBoolean("Rocket Sensor", getAtRocket());
         SmartDashboard.putBoolean("Station Sensor", getAtStation());
-        SmartDashboard.putNumber("Distance To Target", getDistanceToTarget());
-        SmartDashboard.putNumber("Left Rio Encoder Position", leftRioDrivePositionInches); 
-        SmartDashboard.putNumber("Right Rio Encoder Position", rightRioDrivePositionInches);
-        SmartDashboard.putNumber("Desired Angle", getDesiredAngle());
-        SmartDashboard.putNumber("Current Angle", getAngle());
-        SmartDashboard.putNumber("Camera angle", cameraTurnAngle);
     }
   
     public void resetDriveEncoders() {
@@ -523,7 +517,22 @@ public class Drive extends Drivetrain implements Subsystem {
 
     @Override
     public void debug() {
-
+        SmartDashboard.putNumber("Left Master Current", leftDrive.getOutputCurrent(0));
+        SmartDashboard.putNumber("Left Follower 1 Current", leftDrive.getOutputCurrent(1));
+        SmartDashboard.putNumber("Left Follower 2 Current", leftDrive.getOutputCurrent(2));
+        SmartDashboard.putNumber("Right Master Current", rightDrive.getOutputCurrent(0));
+        SmartDashboard.putNumber("Right Follower 1 Current", rightDrive.getOutputCurrent(1));
+        SmartDashboard.putNumber("Right Follower 2 Current", rightDrive.getOutputCurrent(2));
+        SmartDashboard.putNumber("Distance To Target", getDistanceToTarget());
+        SmartDashboard.putNumber("Left Rio Encoder Position", leftRioDrivePositionInches); 
+        SmartDashboard.putNumber("Right Rio Encoder Position", rightRioDrivePositionInches);
+        SmartDashboard.putNumber("Desired Angle", getDesiredAngle());
+        SmartDashboard.putNumber("Current Angle", getAngle());
+        SmartDashboard.putNumber("Camera angle", cameraTurnAngle);
+        SmartDashboard.putNumber("Left NEO Velocity", getLeftNeoVelocity());
+        SmartDashboard.putNumber("Right NEO Velocity", getRightNeoVelocity());
+        SmartDashboard.putNumber("Left Rio Veloctiy", leftRioDriveSpeedInches);
+        SmartDashboard.putNumber("Right Rio Velocity", rightRioDriveSpeedInches);
     }
 
     
