@@ -134,6 +134,7 @@ public class Climber implements Subsystem {
             case RAISE_CLIMBER:
                 climberPiston.set(Constants.kClimberUp);
                 cargoIntake.setIntakeState(IntakeState.INTAKE_DOWN);
+                highPressure.set(false);
                 timer.start();
                 if(previousStateRequest && !lastPreviousStateRequest) {
                     currentState = State.DRIVE;
@@ -145,12 +146,13 @@ public class Climber implements Subsystem {
                 break;
             case KEEP_DRIVING:
                 cargoIntake.setIntakeState(IntakeState.DRIVE_BACK);
-                drive.set(-.05, -.05);
+                drive.set(-.025, -.025);
                 if(previousStateRequest && !lastPreviousStateRequest) {
                     currentState = State.RAISE_CLIMBER;
                 }
                 if(manualControlClimb && climbRequest && !lastClimbRequest)
-                    currentState = State.STOP;
+                    currentState = State
+                    .STOP;
                 /*else if(!manualControlClimb && !navx.isMoving())
                         currentState = State.STOP;*/
                 break;

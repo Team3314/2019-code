@@ -1,5 +1,26 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="Right Follower 2 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="758"/>
+	</widget>
+	<widget field="Right Follower 1 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="737"/>
+	</widget>
+	<widget field="Right Master Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="42"/>
+	</widget>
+	<widget field="Left Follower 2 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="716"/>
+	</widget>
+	<widget field="Left Follower 1 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="591"/>
+	</widget>
+	<widget field="Left Master Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="21"/>
+	</widget>
+	<widget field="Auto State" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="0"/>
+	</widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.CameraServerViewer">
 		<location x="206" y="0"/>
 		<width>806</width>
@@ -38,7 +59,7 @@
 		<height>20</height>
 	</widget>
 	<widget field="Gripper down?" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="68" y="774"/>
+		<location x="792" y="608"/>
 		<height>43</height>
 	</widget>
 	<widget field="Cargo intake sensor voltage" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
@@ -49,7 +70,7 @@
 		<location x="1400" y="150"/>
 	</widget>
 	<widget field="Hatch State" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="401" y="778"/>
+		<location x="882" y="663"/>
 		<height>39</height>
 	</widget>
 	<widget field="Reverse limit" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
@@ -108,8 +129,8 @@
 		<location x="323" y="677"/>
 	</widget>
 	<widget field="Climber State" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="30" y="878"/>
-		<width>252</width>
+		<location x="1539" y="651"/>
+		<width>346</width>
 		<height>104</height>
 	</widget>
 	<widget field="Current Elevator Position ticks" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
@@ -147,11 +168,136 @@
 		<height>21</height>
 	</widget>
 	<widget field="Slider out?" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="239" y="775"/>
-		<height>30</height>
+		<location x="967" y="616"/>
+		<height>20</height>
 	</widget>
 </dashboard>
 <live-window>
+	<widget field="Ungrouped" type="LW Subsystem" class="edu.wpi.first.smartdashboard.livewindow.elements.LWSubsystem">
+		<widget field="Compressor[0]" type="Compressor" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalOutputController">
+			<location x="85" y="16"/>
+			<height>23</height>
+			<width>136</width>
+		</widget>
+		<widget field="Encoder[1]" type="Quadrature Encoder" class="edu.wpi.first.smartdashboard.livewindow.elements.EncoderDisplay">
+			<location x="6" y="39"/>
+			<height>97</height>
+			<width>297</width>
+		</widget>
+		<widget field="AnalogInput[1]" type="Analog Input" class="edu.wpi.first.smartdashboard.livewindow.elements.SingleNumberDisplay">
+			<location x="6" y="136"/>
+			<height>20</height>
+			<width>297</width>
+		</widget>
+		<widget field="DigitalInput[8]" type="Digital Input" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalInputDisplay">
+			<location x="6" y="156"/>
+			<height>20</height>
+			<width>297</width>
+		</widget>
+		<widget field="DoubleSolenoid[0,0]" type="Double Solenoid" class="edu.wpi.first.smartdashboard.livewindow.elements.RelayController">
+			<location x="6" y="176"/>
+			<height>20</height>
+			<width>297</width>
+		</widget>
+		<widget field="DoubleSolenoid[0,2]" type="Double Solenoid" class="edu.wpi.first.smartdashboard.livewindow.elements.RelayController">
+			<location x="6" y="196"/>
+			<height>20</height>
+			<width>297</width>
+		</widget>
+		<widget field="DoubleSolenoid[0,6]" type="Double Solenoid" class="edu.wpi.first.smartdashboard.livewindow.elements.RelayController">
+			<location x="6" y="216"/>
+			<height>20</height>
+			<width>297</width>
+		</widget>
+		<widget field="Solenoid[2,1]" type="Solenoid" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalOutputController">
+			<location x="92" y="236"/>
+			<height>23</height>
+			<width>123</width>
+		</widget>
+		<widget field="Solenoid[2,3]" type="Solenoid" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalOutputController">
+			<location x="92" y="259"/>
+			<height>23</height>
+			<width>123</width>
+		</widget>
+		<widget field="AnalogInput[0]" type="Analog Input" class="edu.wpi.first.smartdashboard.livewindow.elements.SingleNumberDisplay">
+			<location x="6" y="282"/>
+			<height>20</height>
+			<width>297</width>
+		</widget>
+		<widget field="Talon SRX [9]" type="Speed Controller" class="edu.wpi.first.smartdashboard.livewindow.elements.SpeedController">
+			<location x="6" y="302"/>
+			<height>45</height>
+			<width>297</width>
+		</widget>
+		<widget field="Talon SRX [10]" type="Speed Controller" class="edu.wpi.first.smartdashboard.livewindow.elements.SpeedController">
+			<location x="6" y="347"/>
+			<height>45</height>
+			<width>297</width>
+		</widget>
+		<widget field="DoubleSolenoid[1,0]" type="Double Solenoid" class="edu.wpi.first.smartdashboard.livewindow.elements.RelayController">
+			<location x="6" y="392"/>
+			<height>20</height>
+			<width>297</width>
+		</widget>
+		<widget field="DoubleSolenoid[1,2]" type="Double Solenoid" class="edu.wpi.first.smartdashboard.livewindow.elements.RelayController">
+			<location x="6" y="412"/>
+			<height>20</height>
+			<width>297</width>
+		</widget>
+		<widget field="Solenoid[2,2]" type="Solenoid" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalOutputController">
+			<location x="92" y="432"/>
+			<height>23</height>
+			<width>123</width>
+		</widget>
+		<widget field="Talon SRX [8]" type="Speed Controller" class="edu.wpi.first.smartdashboard.livewindow.elements.SpeedController">
+			<location x="6" y="455"/>
+			<height>45</height>
+			<width>297</width>
+		</widget>
+		<widget field="DigitalInput[4]" type="Digital Input" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalInputDisplay">
+			<location x="6" y="500"/>
+			<height>20</height>
+			<width>297</width>
+		</widget>
+		<widget field="DoubleSolenoid[0,4]" type="Double Solenoid" class="edu.wpi.first.smartdashboard.livewindow.elements.RelayController">
+			<location x="6" y="520"/>
+			<height>20</height>
+			<width>297</width>
+		</widget>
+		<widget field="Talon SRX [7]" type="Speed Controller" class="edu.wpi.first.smartdashboard.livewindow.elements.SpeedController">
+			<location x="6" y="540"/>
+			<height>45</height>
+			<width>297</width>
+		</widget>
+		<widget field="Encoder[0]" type="Quadrature Encoder" class="edu.wpi.first.smartdashboard.livewindow.elements.EncoderDisplay">
+			<location x="6" y="585"/>
+			<height>97</height>
+			<width>297</width>
+		</widget>
+		<widget field="Solenoid[2,0]" type="Solenoid" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalOutputController">
+			<location x="92" y="682"/>
+			<height>23</height>
+			<width>123</width>
+		</widget>
+		<widget field="AnalogInput[3]" type="Analog Input" class="edu.wpi.first.smartdashboard.livewindow.elements.SingleNumberDisplay">
+			<location x="6" y="705"/>
+			<height>20</height>
+			<width>297</width>
+		</widget>
+		<widget field="AnalogInput[2]" type="Analog Input" class="edu.wpi.first.smartdashboard.livewindow.elements.SingleNumberDisplay">
+			<location x="6" y="725"/>
+			<height>20</height>
+			<width>297</width>
+		</widget>
+		<widget field="DigitalInput[9]" type="Digital Input" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalInputDisplay">
+			<location x="6" y="745"/>
+			<height>20</height>
+			<width>297</width>
+		</widget>
+		<location x="0" y="0"/>
+		<width>309</width>
+		<height>771</height>
+	</widget>
 </live-window>
 	<hidden field="Limelight_Interface"/>
 	<hidden field="Roll Angle"/>

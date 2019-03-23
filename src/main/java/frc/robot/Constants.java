@@ -223,13 +223,13 @@ public class Constants {
 		public static final int kGyroDelay = 2;
 
 		//Controls
-		public static final double kJoystickDeadband = .15;
+		public static final double kJoystickDeadband = .075;
 
 		public static final double kJoystickThrottleScale = 1/ (1-kJoystickDeadband);
 
 		public static final double kJoystickPower = 1;
 
-		public static final double kTurningSensitivityScale = .4;
+		public static final double kTurningSensitivityScale = .5;
 
 
 }
