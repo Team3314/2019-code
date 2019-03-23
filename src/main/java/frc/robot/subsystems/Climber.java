@@ -168,6 +168,7 @@ public class Climber implements Subsystem {
         timer.stop();
         timer.reset();
         lastClimbRequest = climbRequest;
+        lastPreviousStateRequest = previousStateRequest;
     }
 
     @Override

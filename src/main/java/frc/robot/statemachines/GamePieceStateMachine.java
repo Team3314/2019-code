@@ -138,13 +138,17 @@ public class GamePieceStateMachine {
                             drive.set(0,0);
                         }
                     }
-                    else if(drive.getAtRocket() && !(nextState == GamePieceState.GRABBING_HATCH || nextState == GamePieceState.GRABBING_BALL)) {
-                        currentState = nextState;
-                        Robot.driverDisabled = true;
-                        elevator.set(desiredElevatorHeight);
-                        timer.stop();
-                        timer.reset();
-                        drive.set(0,0);
+                    else if(!(nextState == GamePieceState.GRABBING_HATCH || nextState == GamePieceState.GRABBING_BALL)) {
+                        if(nextState == GamePieceState.PLACING_BALL)
+                            elevator.set(desiredElevatorHeight);
+                        if(drive.getAtRocket()) {
+                            currentState = nextState;
+                            Robot.driverDisabled = true;
+                            elevator.set(desiredElevatorHeight);
+                            timer.stop();
+                            timer.reset();
+                            drive.set(0,0);
+                        }
                     }
                 }
                 if(getForce()) {
