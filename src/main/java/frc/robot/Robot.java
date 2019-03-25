@@ -117,7 +117,7 @@ public class Robot extends TimedRobot {
     if(HI.getStopAuto()) {
       stopAuto = true;
     }
-    if(autoMode == null || stopAuto) {
+    gamePieceStateMachine.setForce(HI.getForceGamePieceInteract());if(autoMode == null || stopAuto) {
       teleopPeriodic();
     } 
     else {
@@ -156,6 +156,10 @@ public class Robot extends TimedRobot {
       climber.setPreviousStateRequest(HI.getPrevious());
     }
     else {
+      if(gamePieceStateMachine.isPlacing()) {
+        gamePieceStateMachine.setRequest(HI.getGamePieceInteract());
+        gamePieceStateMachine.setForce(HI.getForceGamePieceInteract());
+      }
       auto.reset();
       if(HI.getStoreElevatorLevel1()) {
         gamePieceStateMachine.setMode(GamePieceStateMachineMode.LEVEL1);
@@ -171,9 +175,6 @@ public class Robot extends TimedRobot {
       }
       else if(HI.getStoreCargoShip()) {
         gamePieceStateMachine.setMode(GamePieceStateMachineMode.CARGO_SHIP);
-      }
-      else if(HI.getStoreCargoStationPickup()) {
-        gamePieceStateMachine.setMode(GamePieceStateMachineMode.CARGO_PICKUP);
       }
       climber.setClimbRequest(HI.getClimbMode());
       climber.setAutoClimbButton(HI.getAutoClimbMode());
@@ -233,6 +234,7 @@ public class Robot extends TimedRobot {
         }
         if(HI.getGamePieceInteract() && !HI.getAutoCargoIntake()) {
           gamePieceStateMachine.setRequest(true);
+          gamePieceStateMachine.setForce(HI.getForceGamePieceInteract());
         } 
         else {
           gamePieceStateMachine.setRequest(false);
@@ -290,9 +292,6 @@ public class Robot extends TimedRobot {
                 }
                 else if(HI.getElevatorVisionTracking()) {
                   elevator.set(Constants.kElevatorLoweredHatchPickup);
-                }
-                else if(HI.getElevatorCargoStationPickup()) {
-                  elevator.set(Constants.kElevatorCargoStationPickup);
                 }
                 
               }

@@ -1,22 +1,31 @@
 <xml version="1.0">
 <dashboard>
-	<widget field="Right Follower 2 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="758"/>
+	<widget field="Limelight_Stream" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="84"/>
 	</widget>
-	<widget field="Right Follower 1 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="737"/>
+	<widget field="Limelight_Interface" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="63"/>
 	</widget>
-	<widget field="Right Master Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="42"/>
-	</widget>
-	<widget field="Left Follower 2 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="716"/>
-	</widget>
-	<widget field="Left Follower 1 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+	<widget field="Limelight_PipelineName" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="0" y="591"/>
 	</widget>
+	<widget field="Right Follower 2 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1023" y="152"/>
+	</widget>
+	<widget field="Right Follower 1 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1011" y="121"/>
+	</widget>
+	<widget field="Right Master Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1013" y="94"/>
+	</widget>
+	<widget field="Left Follower 2 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1003" y="61"/>
+	</widget>
+	<widget field="Left Follower 1 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1002" y="42"/>
+	</widget>
 	<widget field="Left Master Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="21"/>
+		<location x="1009" y="21"/>
 	</widget>
 	<widget field="Auto State" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="0" y="0"/>
@@ -44,7 +53,7 @@
 		<height>43</height>
 	</widget>
 	<widget field="Targets in view" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
-		<location x="1105" y="91"/>
+		<location x="1274" y="90"/>
 		<width>178</width>
 		<height>223</height>
 	</widget>
@@ -52,7 +61,8 @@
 		<location x="76" y="619"/>
 	</widget>
 	<widget field="Right NEO Velocity" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1612" y="40"/>
+		<location x="1712" y="34"/>
+		<height>24</height>
 	</widget>
 	<widget field="Cargo Intake current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1623" y="338"/>
@@ -77,13 +87,13 @@
 		<location x="596" y="617"/>
 	</widget>
 	<widget field="Target horizontal error" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1109" y="18"/>
+		<location x="1297" y="16"/>
 	</widget>
 	<widget field="Distance To Target" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1483" y="183"/>
 	</widget>
 	<widget field="Right Rio Encoder Position" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1615" y="93"/>
+		<location x="1683" y="66"/>
 	</widget>
 	<widget field="Station Sensor" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1312" y="634"/>
@@ -105,21 +115,21 @@
 		<location x="1661" y="408"/>
 	</widget>
 	<widget field="Light Rings On" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1128" y="72"/>
+		<location x="1289" y="68"/>
 		<height>20</height>
 	</widget>
 	<widget field="Desired Elevator Position" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="46" y="695"/>
 	</widget>
 	<widget field="Right Rio Velocity" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1614" y="19"/>
+		<location x="1715" y="8"/>
 		<height>20</height>
 	</widget>
 	<widget field="Distance" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1168" y="47"/>
+		<location x="1360" y="34"/>
 	</widget>
 	<widget field="Left Rio Encoder Position" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1351" y="92"/>
+		<location x="1458" y="64"/>
 		<height>26</height>
 	</widget>
 	<widget field="Elevator Master Voltage" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
@@ -151,13 +161,13 @@
 		<location x="1175" y="406"/>
 	</widget>
 	<widget field="Left Rio Veloctiy" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1389" y="16"/>
+		<location x="1513" y="12"/>
 	</widget>
 	<widget field="Elevator Control Mode" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="313" y="612"/>
 	</widget>
 	<widget field="Left NEO Velocity" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1388" y="37"/>
+		<location x="1510" y="35"/>
 	</widget>
 	<widget field="Game Piece State Machine State" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1560" y="501"/>
@@ -174,6 +184,16 @@
 </dashboard>
 <live-window>
 	<widget field="Ungrouped" type="LW Subsystem" class="edu.wpi.first.smartdashboard.livewindow.elements.LWSubsystem">
+		<widget field="DigitalInput[9]" type="Digital Input" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalInputDisplay">
+			<location x="0" y="0"/>
+			<height>0</height>
+			<width>0</width>
+		</widget>
+		<widget field="DigitalInput[9]" type="Digital Input" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalInputDisplay">
+			<location x="0" y="0"/>
+			<height>0</height>
+			<width>0</width>
+		</widget>
 		<widget field="Compressor[0]" type="Compressor" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalOutputController">
 			<location x="85" y="16"/>
 			<height>23</height>
@@ -189,17 +209,17 @@
 			<height>20</height>
 			<width>297</width>
 		</widget>
-		<widget field="DigitalInput[8]" type="Digital Input" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalInputDisplay">
+		<widget field="DoubleSolenoid[0,2]" type="Double Solenoid" class="edu.wpi.first.smartdashboard.livewindow.elements.RelayController">
 			<location x="6" y="156"/>
 			<height>20</height>
 			<width>297</width>
 		</widget>
-		<widget field="DoubleSolenoid[0,0]" type="Double Solenoid" class="edu.wpi.first.smartdashboard.livewindow.elements.RelayController">
+		<widget field="DigitalInput[8]" type="Digital Input" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalInputDisplay">
 			<location x="6" y="176"/>
 			<height>20</height>
 			<width>297</width>
 		</widget>
-		<widget field="DoubleSolenoid[0,2]" type="Double Solenoid" class="edu.wpi.first.smartdashboard.livewindow.elements.RelayController">
+		<widget field="DoubleSolenoid[0,0]" type="Double Solenoid" class="edu.wpi.first.smartdashboard.livewindow.elements.RelayController">
 			<location x="6" y="196"/>
 			<height>20</height>
 			<width>297</width>
@@ -289,20 +309,9 @@
 			<height>20</height>
 			<width>297</width>
 		</widget>
-		<widget field="DigitalInput[9]" type="Digital Input" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalInputDisplay">
-			<location x="6" y="745"/>
-			<height>20</height>
-			<width>297</width>
-		</widget>
 		<location x="0" y="0"/>
 		<width>309</width>
-		<height>771</height>
+		<height>751</height>
 	</widget>
 </live-window>
-	<hidden field="Limelight_Interface"/>
-	<hidden field="Roll Angle"/>
-	<hidden field="Limelight_Stream"/>
-	<hidden field="Limelight_PipelineName"/>
-	<hidden field="Climb Request"/>
-	<hidden field="Last Climb Request"/>
 </xml>

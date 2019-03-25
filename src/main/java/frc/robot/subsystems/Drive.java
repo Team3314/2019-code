@@ -453,7 +453,7 @@ public class Drive extends Drivetrain implements Subsystem {
             adjustment = 0;
         }
         else {
-            adjustment = 6;
+            adjustment = 3;
         }
         return targetDistance - getAverageRioPosition() - adjustment;
     } 
