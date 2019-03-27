@@ -234,8 +234,14 @@ public class RobotMap {
     //Cargo intake
         mIntakeMaster = new WPI_TalonSRX(9);
         mIntakeMaster.setInverted(true);
+        mIntakeMaster.configContinuousCurrentLimit(Constants.kIntakeContinuousCurrentLimit);
+        mIntakeMaster.configPeakCurrentLimit(Constants.kIntakePeakCurrentLimit, Constants.kCANTimeout);
+        mIntakeMaster.configPeakCurrentDuration(Constants.kIntakeCurrentDuration, Constants.kCANTimeout);
         mOuttakeMaster = new WPI_TalonSRX(10);
         mOuttakeMaster.setInverted(true);
+        mOuttakeMaster.configContinuousCurrentLimit(Constants.kIntakeContinuousCurrentLimit);
+        mOuttakeMaster.configPeakCurrentLimit(Constants.kIntakePeakCurrentLimit, Constants.kCANTimeout);
+        mOuttakeMaster.configPeakCurrentDuration(Constants.kIntakeCurrentDuration, Constants.kCANTimeout);
 
         mIntakeMasterWrapper = new TalonSRX(mIntakeMaster);
         mOuttakeMasterWrapper = new TalonSRX(mOuttakeMaster);

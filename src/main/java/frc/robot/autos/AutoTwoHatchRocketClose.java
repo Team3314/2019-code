@@ -72,7 +72,8 @@ public class AutoTwoHatchRocketClose extends Autonomous {
                 if(drive.getAverageRioPosition() <= -54) {
                     currentState = State.TURN_TO_ROCKET2;
                     if(getStartPos() == "StartR")
-                        driveGyrolock(0, 0, DriveMode.GYROLOCK);
+                        driveGyrolock(0, 0
+                        , DriveMode.GYROLOCK);
                     else if(getStartPos() == "StartL") 
                         driveGyrolock(0, 0, DriveMode.GYROLOCK);
                 }

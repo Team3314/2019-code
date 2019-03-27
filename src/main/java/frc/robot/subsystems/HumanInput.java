@@ -79,10 +79,10 @@ public class HumanInput implements Subsystem {
 		return gamepad.getRawButton(10); // right stick in
 	}
 	public boolean getGamePieceInteract() {
-		return gamepad.getRawButton(6);
+		return gamepad.getRawButton(6) && !getShift();
 	}
 	public boolean getForceGamePieceInteract() {
-		return getGamePieceInteract() && getShift();
+		return gamepad.getRawButton(6)&& getShift();
 	}
 	public boolean getStopGamePieceInteract() {
 		return buttonBox.getRawButton(7);

@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 public class Constants {
 
-	public static boolean kPracticeBot = false;
+	public static boolean kPracticeBot = true;
 
 
 //Conversions	
@@ -56,11 +56,11 @@ public class Constants {
 		
 
 //Elevator
-		public static int kElevatorCruiseVelocity = (int)(62/ kElevatorInchesPerTick/ 10); //inches/sec -> ticks/100ms
-		public static int kElevatorAcceleration = (int)(120 / kElevatorInchesPerTick / 10); //inches/sec/sec -> tick/100ms^2
+		public static int kElevatorCruiseVelocity = (int)(76/ kElevatorInchesPerTick/ 10); //inches/sec -> ticks/100ms
+		public static int kElevatorAcceleration = (int)(200 / kElevatorInchesPerTick / 10); //inches/sec/sec -> tick/100ms^2
 		public static final int kElevatorSCurveStrength = 0;
 		public static double kElevatorVoltageScale = 12.0;
-		public static final double kElevatorRampTime = .1; 
+		public static final double kElevatorRampTime = .025; 
 		public static final int kElevatorContinuousCurrentLimit = 20;
 		public static final int kElevatorPeakCurrentLimit = 35;
 		public static final int kElevatorPeakCurrentDuration = 200;
@@ -96,16 +96,37 @@ public class Constants {
 		public static int kElevatorSlot = 0;
 
 //Cargo Intake
-		public static final int kIntakeContinuousCurrentLimit = 0; //last year 15a
-		public static final int kIntakePeakCurrentLimit = 0; //last year 15a
-		public static final int kIntakeCurrentDuration = 0; //last year 100 ms
+		public static final int kIntakeContinuousCurrentLimit = 15; 
+		public static final int kIntakePeakCurrentLimit = 25; 
+		public static final int kIntakeCurrentDuration = 500; 
+
+		public static final int kOuttakeContinuousCurrentLimit = 0;
+		public static final int kOuttakePeakCurrentLimit = 0;
+		public static final int kOuttakeCurrentDuration = 0;
 //PID Constants
 	//Gyrolock
-		public static double kGyroLock_kP = .007;
-		public static double kGyroLock_kI = 0;
-		public static double kGyroLock_kD = 0;
-		public static double kGyroLock_kF = 0;
 		public static final double kGyroLock_LoopTime = .02;
+
+		public static double kGyroLockLow_kP = .007;
+		public static double kGyroLockLow_kI = 0;
+		public static double kGyroLockLow_kD = 0;
+		public static double kGyroLockLow_kF = 0;
+
+		public static double kGyroLockHigh_kP = .005;
+		public static double kGyroLockHigh_kI = 0;
+		public static double kGyroLockHigh_kD = 0;
+		public static double kGyroLockHigh_kF = 0;
+
+	//One side gyrolock
+		public static double kGyroLockOneSideLow_kP = .0095;
+		public static double kGyroLockOneSideLow_kI = 0;
+		public static double kGyroLockOneSideLow_kD = 0;
+		public static double kGyroLockOneSideLow_kF = 0;
+
+		public static double kGyroLockOneSideHigh_kP = .007;
+		public static double kGyroLockOneSideHigh_kI = 0;
+		public static double kGyroLockOneSideHigh_kD = 0;
+		public static double kGyroLockOneSideHigh_kF = 0;
 	//Velocity
 		public static double kVelocity_kP = 1.6e-5;
 		public static double kVelocity_kI = 0;

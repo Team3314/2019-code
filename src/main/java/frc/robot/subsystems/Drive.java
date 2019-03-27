@@ -98,8 +98,8 @@ public class Drive extends Drivetrain implements Subsystem {
         
 
         gyroPIDOutput = new CustomPIDOutput();
-    	gyroControl = new PIDController(Constants.kGyroLock_kP, Constants.kGyroLock_kI, Constants.kGyroLock_kD,
-            Constants.kGyroLock_kF, navx, gyroPIDOutput, Constants.kGyroLock_LoopTime);
+    	gyroControl = new PIDController(Constants.kGyroLockLow_kP, Constants.kGyroLockLow_kI, Constants.kGyroLockLow_kD,
+            Constants.kGyroLockLow_kF, navx, gyroPIDOutput, Constants.kGyroLock_LoopTime);
 		//Sets the PID controller to treat 180 and -180 to be the same point, 
 		//so that when turning the robot takes the shortest path instead of going the long way around
 		//Effectively changes PID input from a line to a circle
@@ -187,7 +187,7 @@ public class Drive extends Drivetrain implements Subsystem {
             targetDistance = getAverageRioPosition() + cameraDistance;
         }
         if(gyroControl.getError() < 5) {
-            gyroControl.setI(Constants.kGyroLock_kI);
+            gyroControl.setI(Constants.kGyroLockLow_kI);
         }  
         else {
             gyroControl.setI(0);
@@ -358,9 +358,15 @@ public class Drive extends Drivetrain implements Subsystem {
     
     public void setDriveMode(DriveMode mode) {
         if(mode != currentDriveMode) {
-            if(mode == DriveMode.GYROLOCK || mode == DriveMode.GYROLOCK_LEFT || mode == DriveMode.GYROLOCK_RIGHT) {
+            if(mode == DriveMode.GYROLOCK) {
                 gyroControl.enable();
                 setDesiredAngle(getAngle());
+                gyroControl.setPID(Constants.kGyroLockLow_kP, Constants.kGyroLockLow_kI, Constants.kGyroLockLow_kD, Constants.kGyroLockLow_kF);
+            }
+            else if(mode == DriveMode.GYROLOCK_LEFT || mode == DriveMode.GYROLOCK_RIGHT) {
+                gyroControl.enable();
+                setDesiredAngle(getAngle());
+                gyroControl.setPID(Constants.kGyroLockOneSideLow_kP, Constants.kGyroLockOneSideLow_kI, Constants.kGyroLockOneSideLow_kD, Constants.kGyroLockOneSideLow_kF);
             }
             else if(mode == DriveMode.VISION_CONTROL) {
                 gyroControl.enable();
@@ -450,7 +456,7 @@ public class Drive extends Drivetrain implements Subsystem {
     public double getDistanceToTarget() {
         double adjustment = 0;
         if(Constants.kPracticeBot) {
-            adjustment = 0;
+            adjustment = 8;
         }
         else {
             adjustment = 3;

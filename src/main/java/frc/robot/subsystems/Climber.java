@@ -58,7 +58,6 @@ public class Climber implements Subsystem {
         if(!autoClimbButton && (climbRequest && !lastClimbRequest) || (previousStateRequest && !lastPreviousStateRequest)){
             manualControlClimb = true;
         }
-        drive.set(0, 0);
         switch(currentState) {
             case WAITING:
                 highPressure.set(false);
@@ -82,6 +81,7 @@ public class Climber implements Subsystem {
                     climberPiston.set(Constants.kClimberUp);
                     cargoIntake.setIntakeState(IntakeState.INTAKE_DOWN);
                     intakeClimbPiston.set(Constants.kIntakeClimberUp);
+                    drive.set(0, 0);
                     if(previousStateRequest && !lastPreviousStateRequest) {
                         highPressure.set(false);
                         climberPiston.set(Constants.kClimberUp);
@@ -99,6 +99,7 @@ public class Climber implements Subsystem {
                     climberPiston.set(Constants.kClimberDown);
                     cargoIntake.setIntakeState(IntakeState.INTAKE_DOWN);
                     intakeClimbPiston.set(Constants.kIntakeClimberUp);
+                    drive.set(0, 0);
                 if(previousStateRequest && !lastPreviousStateRequest) {
                     currentState = State.INTAKE_DOWN;
                 }
@@ -112,6 +113,7 @@ public class Climber implements Subsystem {
                     climberPiston.set(Constants.kClimberDown);
                     cargoIntake.setIntakeState(IntakeState.INTAKE_DOWN);
                     intakeClimbPiston.set(Constants.kIntakeClimberDown);
+                    drive.set(0, 0);
                 if(previousStateRequest && !lastPreviousStateRequest) {
                     currentState = State.INTAKE_AND_CLIMBER_DOWN;
                 }
@@ -135,6 +137,7 @@ public class Climber implements Subsystem {
                 climberPiston.set(Constants.kClimberUp);
                 cargoIntake.setIntakeState(IntakeState.INTAKE_DOWN);
                 highPressure.set(false);
+                drive.set(0, 0);
                 timer.start();
                 if(previousStateRequest && !lastPreviousStateRequest) {
                     currentState = State.DRIVE;
@@ -158,6 +161,7 @@ public class Climber implements Subsystem {
                 break;
             case STOP:
                 cargoIntake.setIntakeState(IntakeState.INTAKE_DOWN);
+                drive.set(0, 0);
                 if(previousStateRequest && !lastPreviousStateRequest) {
                     currentState = State.KEEP_DRIVING;
                 }
