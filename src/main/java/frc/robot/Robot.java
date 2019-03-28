@@ -152,6 +152,8 @@ public class Robot extends TimedRobot {
       climber.setClimbRequest(HI.getClimbMode());
       climber.setAutoClimbButton(HI.getAutoClimbMode());
       climber.setPreviousStateRequest(HI.getPrevious());
+      trackingStateMachine.reset();
+      gamePieceStateMachine.reset();
     }
     else {
       if(gamePieceStateMachine.isPlacing()) {

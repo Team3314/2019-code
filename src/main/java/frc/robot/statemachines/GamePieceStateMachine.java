@@ -23,7 +23,7 @@ public class GamePieceStateMachine {
         BACKUP_HATCH,
         BACKUP_BALL,
         RETRACT,
-        DONE
+        DONE, 
     }
 
     public enum GamePieceStateMachineMode {
@@ -48,10 +48,10 @@ public class GamePieceStateMachine {
 
     private Timer timer = new Timer();
 
-    private boolean request, force;
-    private boolean lastRequest, lastElevatorInPosition, lastForce;
+    private boolean request, force, visionHeightRequest;
+    private boolean lastRequest, lastElevatorInPosition, lastForce, lastVisionHeightRequest;
 
-    private int desiredElevatorHeight = 0;
+    private int desiredElevatorHeight = 0, visionTrackingHeight = 0;
 
     
     public void update() {

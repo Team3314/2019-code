@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 public class Constants {
 
-	public static boolean kPracticeBot = true;
+	public static boolean kPracticeBot = false;
 
 
 //Conversions	
@@ -87,6 +87,7 @@ public class Constants {
 		public static final int kElevatorHatchLevel1 = (int)(5 / kElevatorInchesPerTick);
 		public static final int kElevatorHatchLevel2 = (int)(33 / kElevatorInchesPerTick);
 		public static final int kElevatorHatchLevel3 = (int)(62 / kElevatorInchesPerTick);
+		public static final int kElevatorHighHatchVision = (int)(12 / kElevatorInchesPerTick);
 
 		public static double kElevator_kP = .1;
 		public static double kElevator_kI = 0;

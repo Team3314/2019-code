@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.subsystems.CargoIntake.IntakeState;
+import frc.robot.subsystems.Drive.DriveMode;
 
 public class Climber implements Subsystem {
 
@@ -69,10 +70,12 @@ public class Climber implements Subsystem {
                 if(autoClimbButton){
                     navx.reset();
                     manualControlClimb = false;
+                    drive.setDriveMode(DriveMode.TANK);
                     currentState = State.INTAKE_DOWN;
                 }
                 if(manualControlClimb && climbRequest && !lastClimbRequest){
                     navx.reset();
+                    drive.setDriveMode(DriveMode.TANK);
                     currentState = State.INTAKE_DOWN;
                 }
                 break;
@@ -148,7 +151,7 @@ public class Climber implements Subsystem {
                     currentState = State.KEEP_DRIVING;*/
                 break;
             case KEEP_DRIVING:
-                cargoIntake.setIntakeState(IntakeState.DRIVE_BACK);
+                cargoIntake.setIntakeState(IntakeState.INTAKE_DOWN);
                 drive.set(-.025, -.025);
                 if(previousStateRequest && !lastPreviousStateRequest) {
                     currentState = State.RAISE_CLIMBER;
