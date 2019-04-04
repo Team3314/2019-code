@@ -141,6 +141,9 @@ public class HumanInput implements Subsystem {
 	public boolean getResetGyro() {
 		return buttonBox.getRawButton(9);
 	}
+	public boolean getDriveOffLevel2() {
+		return false;
+	}
 	//Elevator Controls
 	public boolean getElevatorPickup() {
 		return getShift() && getStoreElevatorPickup();

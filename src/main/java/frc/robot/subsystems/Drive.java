@@ -48,7 +48,7 @@ public class Drive extends Drivetrain implements Subsystem {
     SpeedControllerMode controlMode = SpeedControllerMode.kIdle;
     
     //Hardware states
-    private boolean mIsHighGear, elevatorUp, velocityControl = true, placingCargoOnRocket;
+    private boolean mIsHighGear = false, elevatorUp, velocityControl = true, placingCargoOnRocket;
 
     private IdleMode idleMode;
     private double rawLeftSpeed, rawRightSpeed, arbFFLeft = 0, arbFFRight = 0, desiredAngle, cameraTurnAngle, tickToInConversion, speedCap,
@@ -77,7 +77,7 @@ public class Drive extends Drivetrain implements Subsystem {
 
     private DigitalInput leftStationSensor, rightStationSensor;
 
-    private boolean lastHighGear;
+    private boolean lastHighGear = true;
 
     private Camera camera;
     public Drive(EncoderTransmission left, EncoderTransmission right, AHRS gyro, DoubleSolenoid shifter, 
@@ -107,6 +107,7 @@ public class Drive extends Drivetrain implements Subsystem {
         gyroControl.setAbsoluteTolerance(Constants.kAbsoluteGyroTolerance);
         gyroControl.setInputRange(-180, 180);
         gyroControl.setContinuous(true);
+        shifter.set(Constants.kLowGear);
 
     }
 
@@ -137,6 +138,7 @@ public class Drive extends Drivetrain implements Subsystem {
                 arbFFRight = Constants.kMotionProfileRightBackHigh_Intercept;
             else {
                 arbFFRight = 0;
+
             }
 
 

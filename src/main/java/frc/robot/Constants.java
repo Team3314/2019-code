@@ -35,7 +35,7 @@ public class Constants {
 		public static int kTalonDrivePeakCurrentDuration = 0;
 		public static int kNEODriveStallCurrentLimit = 80;
 		public static int kNEODriveFreeCurrentLimit = 20;
-		public static double kSafeImpactSpeed = 2; //inches/sec
+		public static double kSafeImpactSpeed = 8; //inches/sec
 		public static double kSafeImpactRevsHighGear = kSafeImpactSpeed / kRevToInConvFactorHighGear * 60;
 		public static double kSafeImpactRevsLowGear = kSafeImpactSpeed / kRevToInConvFactorLowGear * 60;
 		public static double kDriveDeadband = .1;
@@ -98,8 +98,8 @@ public class Constants {
 		public static int kElevatorSlot = 0;
 
 //Cargo Intake
-		public static final int kIntakeContinuousCurrentLimit = 15; 
-		public static final int kIntakePeakCurrentLimit = 25; 
+		public static final int kIntakeContinuousCurrentLimit = 25; 
+		public static final int kIntakePeakCurrentLimit = 30; 
 		public static final int kIntakeCurrentDuration = 500; 
 
 		public static final int kOuttakeContinuousCurrentLimit = 0;

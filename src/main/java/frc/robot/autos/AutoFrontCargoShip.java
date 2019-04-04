@@ -9,6 +9,10 @@ public class AutoFrontCargoShip extends Autonomous {
         DRIVE,
         STOP,
         PLACE_HATCH,
+        DRIVE_BACK,
+        TURN_AT_STATION,
+        PICKUP_HATCH,
+        BACKUP_FROM_STATION,
         DONE
     }
 
