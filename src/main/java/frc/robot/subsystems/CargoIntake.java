@@ -90,6 +90,9 @@ public class CargoIntake implements Subsystem {
                     hasBall = true;
                     timer.reset();
                     timer.stop();
+                    if(hasBall) {
+                        setOuttakeSpeed(-.2);
+                    }
                 }
                 else if(hasBall && !getCargoCarriageSensor()) {
                     setOuttakeSpeed(.2);
@@ -111,8 +114,8 @@ public class CargoIntake implements Subsystem {
                 }
                 setIntakeDown(true);
                 if(runningIntake)
-                    setIntakeSpeed(1);
-                elevator.set(Constants.kElevatorBallLevel1);
+                    setIntakeSpeed(.9);
+                elevator.set(Constants.kElevatorBallIntake);
                 if(getCargoIntakeSensor() && intakeRequest) {
                     setIntakeDown(false);
                     currentIntakeState = IntakeState.RAISING;
@@ -127,8 +130,8 @@ public class CargoIntake implements Subsystem {
                 break;
             case TRANSFERRING:
                 setIntakeDown(false);
-                setOuttakeSpeed(.375);
-                setIntakeSpeed(1);
+                setOuttakeSpeed(.35);
+                setIntakeSpeed(.6);
                 if(getCargoCarriageSensor()) {
                     hasBall = true;
                     currentIntakeState = IntakeState.DONE;
@@ -156,7 +159,7 @@ public class CargoIntake implements Subsystem {
                 break;
             case DRIVE_BACK:
                 setIntakeDown(true);
-                setIntakeSpeed(.5);
+                setIntakeSpeed(1);
                 break;
             case DONE:
                 setIntakeDown(false);

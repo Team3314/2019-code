@@ -163,6 +163,8 @@ public abstract class Autonomous {
 
 	protected void stopGamePieceInteract() {
 		gamePieceStateMachine.setRequest(false);
+		gamePieceStateMachine.reset();
 		trackingStateMachine.setRequest(false);
+		trackingStateMachine.reset();
 	}
 }

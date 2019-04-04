@@ -57,7 +57,7 @@ public class Constants {
 
 //Elevator
 		public static int kElevatorCruiseVelocity = (int)(76/ kElevatorInchesPerTick/ 10); //inches/sec -> ticks/100ms
-		public static int kElevatorAcceleration = (int)(200 / kElevatorInchesPerTick / 10); //inches/sec/sec -> tick/100ms^2
+		public static int kElevatorAcceleration = (int)(180 / kElevatorInchesPerTick / 10); //inches/sec/sec -> tick/100ms^2
 		public static final int kElevatorSCurveStrength = 0;
 		public static double kElevatorVoltageScale = 12.0;
 		public static final double kElevatorRampTime = .025; 
@@ -80,6 +80,7 @@ public class Constants {
 		public static final int kElevatorLoweredHatchPickup = (int) (1 / kElevatorInchesPerTick);
 		public static final int kElevatorRaisedHatchPickup = (int)(9 / kElevatorInchesPerTick);
 		public static final int kElevatorCargoStationPickup = (int)(25/ kElevatorInchesPerTick);
+		public static final int kElevatorBallIntake = (int)(2.5 / kElevatorInchesPerTick);
 		public static final int kElevatorBallLevel1 = (int)(2.5 / kElevatorInchesPerTick);
 		public static final int kElevatorBallLevel2 = (int)(29 / kElevatorInchesPerTick);
 		public static final int kElevatorBallLevel3 = (int)(58 / kElevatorInchesPerTick);
@@ -119,7 +120,7 @@ public class Constants {
 		public static double kGyroLockHigh_kF = 0;
 
 	//One side gyrolock
-		public static double kGyroLockOneSideLow_kP = .0095;
+		public static double kGyroLockOneSideLow_kP = .009;
 		public static double kGyroLockOneSideLow_kI = 0;
 		public static double kGyroLockOneSideLow_kD = 0;
 		public static double kGyroLockOneSideLow_kF = 0;

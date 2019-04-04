@@ -73,7 +73,7 @@ public class HumanInput implements Subsystem {
 		return leftStick.getRawButton(1); // trigger
 	}
 	public boolean getAuto() {
-		return  leftStick.getRawButton(2); // side button
+		return  false;//leftStick.getRawButton(2); // side button
 	}
 	public boolean getStopAuto() {
 		return gamepad.getRawButton(10); // right stick in
@@ -374,7 +374,7 @@ public class HumanInput implements Subsystem {
 	} 
 
 	public boolean getBackwards() {
-		return rightStick.getRawButton(4);
+		return false;//rightStick.getRawButton(4);
 	}
 	public boolean getSticksZero() {
 		return sticksZero;

@@ -55,9 +55,6 @@ public class GamePieceStateMachine {
 
     
     public void update() {
-        if((ds.isAutonomous() || HI.getAuto()) && !request) {
-            currentState = GamePieceState.WAITING;
-        }
         drive.setPlacingOnRocket(placingCargoOnRocket());
         switch(currentState) {
             case WAITING:
@@ -199,7 +196,7 @@ public class GamePieceStateMachine {
                 break;
             case BACKUP_HATCH:
                 drive.setDriveMode(DriveMode.GYROLOCK);
-                drive.set(-.25, -.25);
+                drive.set(-.375, -.375);
                 if(drive.getAverageRioPosition() <= -12 || getForce()) {
                     hatch.setRetractRequest(true);
                     drive.set(0, 0);
@@ -261,8 +258,7 @@ public class GamePieceStateMachine {
     public boolean isPlacing() {
         return currentState == GamePieceState.PLACING_BALL || currentState == GamePieceState.PLACING_HATCH
          || currentState == GamePieceState.GRABBING_HATCH || currentState == GamePieceState.GRABBING_BALL
-         || currentState == GamePieceState.BACKUP_BALL || currentState == GamePieceState.BACKUP_HATCH ||
-         currentState == GamePieceState.RETRACT;
+         || currentState == GamePieceState.BACKUP_BALL || currentState == GamePieceState.BACKUP_HATCH;
     }
     
     public boolean placingCargoOnRocket() {

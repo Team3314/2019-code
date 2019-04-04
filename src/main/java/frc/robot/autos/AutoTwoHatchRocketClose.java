@@ -1,6 +1,7 @@
 package frc.robot.autos;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants;
 import frc.robot.statemachines.GamePieceStateMachine.GamePieceState;
 import frc.robot.statemachines.GamePieceStateMachine.GamePieceStateMachineMode;
 import frc.robot.subsystems.Drive.DriveMode;
@@ -56,7 +57,7 @@ public class AutoTwoHatchRocketClose extends Autonomous {
                 }
                 break;
             case PICKUP_HATCH:
-                gamePieceInteract(GamePieceStateMachineMode.HATCH_PICKUP, .6);
+                gamePieceInteract(GamePieceStateMachineMode.HATCH_PICKUP, .65);
                 if(gamePieceStateMachine.getCurrentState() == GamePieceState.BACKUP_HATCH) {
                     stopGamePieceInteract();
                     currentState = State.BACKUP;
@@ -72,27 +73,27 @@ public class AutoTwoHatchRocketClose extends Autonomous {
                 if(drive.getAverageRioPosition() <= -54) {
                     currentState = State.TURN_TO_ROCKET2;
                     if(getStartPos() == "StartR")
-                        driveGyrolock(0, 0
-                        , DriveMode.GYROLOCK);
+                        driveGyrolock(0, -10, DriveMode.GYROLOCK);
                     else if(getStartPos() == "StartL") 
-                        driveGyrolock(0, 0, DriveMode.GYROLOCK);
+                        driveGyrolock(0, 10, DriveMode.GYROLOCK);
                 }
                 break;
             case TURN_TO_ROCKET2: 
                 if(gyroTurnDone()) {
+                    elevator.set(Constants.kElevatorHatchLevel2);
                     startTimer();
                     drivePower(0);
                     currentState = State.STOP2;
                 }
                 break;
             case STOP2:
-                if(getTime() > .5) {
+                if(getTime() > .25) {
                     resetTimer();
                     currentState = State.PLACE_HATCH2;
                 }
                 break;
             case PLACE_HATCH2:
-                gamePieceInteract(GamePieceStateMachineMode.LEVEL2, .6);
+                gamePieceInteract(GamePieceStateMachineMode.LEVEL2, .65);
                 if(gamePieceStateMachine.isDone()) {
                     stopGamePieceInteract();
                     currentState = State.TURN_TO_STATION2;

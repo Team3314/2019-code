@@ -39,6 +39,8 @@ public class Camera implements Subsystem {
 	private double offset = 0;
 
 	private Solenoid leftLightRing, rightLightRing, targetsLight;
+	
+	private double increment;
     
     private double distance, highDistance;
 	
@@ -56,7 +58,9 @@ public class Camera implements Subsystem {
         
 		targetHorizError = -(table.getEntry("Angle To Target").getDouble(0) + offset);
 		distance = table.getEntry("Distance").getDouble(1337.254);
+		increment = table.getEntry("increment").getDouble(1337.254);
 		highDistance = table.getEntry("DistanceHigh").getDouble(1337.254);
+		
 		hasLeft = table.getEntry("Left hasRight").getBoolean(false);
 		hasRight = table.getEntry("Left hasLeft").getBoolean(false);
 		
@@ -139,6 +143,7 @@ public class Camera implements Subsystem {
 		SmartDashboard.putNumber("Target horizontal error", getTargetHorizError());
 		SmartDashboard.putNumber("Distance", getDistance());
 		SmartDashboard.putBoolean("Light Rings On", getLightRingsOn());
+		SmartDashboard.putNumber("Increment", increment);
 	}
 
 	@Override
