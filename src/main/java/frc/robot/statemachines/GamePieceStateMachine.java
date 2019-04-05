@@ -123,28 +123,30 @@ public class GamePieceStateMachine {
                     if((nextState == GamePieceState.GRABBING_HATCH)) {
                         hatch.setGripperDown(true);
                     }
-                    if((nextState == GamePieceState.GRABBING_HATCH || nextState == GamePieceState.GRABBING_BALL) || mode == GamePieceStateMachineMode.CARGO_SHIP) {
-                        if(nextState != GamePieceState.PLACING_HATCH)
-                            elevator.set(desiredElevatorHeight); 
-                        if(drive.getAtStation()) {
-                            elevator.set(desiredElevatorHeight);
-                            timer.stop();
-                            timer.reset();
-                            currentState = nextState;
-                            Robot.driverDisabled = true;
-                            drive.set(0,0);
+                    if(drive.getDistanceToTarget() <= 24 || !trackingStateMachine.isDriving()) {
+                        if((nextState == GamePieceState.GRABBING_HATCH || nextState == GamePieceState.GRABBING_BALL) || mode == GamePieceStateMachineMode.CARGO_SHIP) {
+                            if(nextState != GamePieceState.PLACING_HATCH)
+                                elevator.set(desiredElevatorHeight); 
+                            if(drive.getAtStation()) {
+                                elevator.set(desiredElevatorHeight);
+                                timer.stop();
+                                timer.reset();
+                                currentState = nextState;
+                                Robot.driverDisabled = true;
+                                drive.set(0,0);
+                            }
                         }
-                    }
-                    else if(!(nextState == GamePieceState.GRABBING_HATCH || nextState == GamePieceState.GRABBING_BALL)) {
-                        if(nextState == GamePieceState.PLACING_BALL)
-                            elevator.set(desiredElevatorHeight);
-                        if(drive.getAtRocket()) {
-                            currentState = nextState;
-                            Robot.driverDisabled = true;
-                            elevator.set(desiredElevatorHeight);
-                            timer.stop();
-                            timer.reset();
-                            drive.set(0,0);
+                        else if(!(nextState == GamePieceState.GRABBING_HATCH || nextState == GamePieceState.GRABBING_BALL)) {
+                            if(nextState == GamePieceState.PLACING_BALL)
+                                elevator.set(desiredElevatorHeight);
+                            if(drive.getAtRocket()) {
+                                currentState = nextState;
+                                Robot.driverDisabled = true;
+                                elevator.set(desiredElevatorHeight);
+                                timer.stop();
+                                timer.reset();
+                                drive.set(0,0);
+                            }
                         }
                     }
                 }

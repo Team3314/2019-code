@@ -65,10 +65,11 @@ public class CargoIntake implements Subsystem {
         }
         setIntakeSpeed(0);
         setOuttakeSpeed(0);
+        
         switch (currentIntakeState) {
             case WAITING:
                 loadingBall = false;
-                pivotState = Value.kOff;
+                pivotState = Constants.kIntakeUp;
                 if(vomitRequest && !lastVomitRequest) {
                     currentIntakeState = IntakeState.VOMIT;
                 }

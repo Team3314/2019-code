@@ -48,7 +48,7 @@ public class Drive extends Drivetrain implements Subsystem {
     SpeedControllerMode controlMode = SpeedControllerMode.kIdle;
     
     //Hardware states
-    private boolean mIsHighGear = false, elevatorUp, velocityControl = true, placingCargoOnRocket;
+    private boolean mIsHighGear, elevatorUp, velocityControl = true, placingCargoOnRocket;
 
     private IdleMode idleMode;
     private double rawLeftSpeed, rawRightSpeed, arbFFLeft = 0, arbFFRight = 0, desiredAngle, cameraTurnAngle, tickToInConversion, speedCap,
@@ -76,8 +76,6 @@ public class Drive extends Drivetrain implements Subsystem {
     private AnalogInput rightRocketSensor, leftRocketSensor;
 
     private DigitalInput leftStationSensor, rightStationSensor;
-
-    private boolean lastHighGear = true;
 
     private Camera camera;
     public Drive(EncoderTransmission left, EncoderTransmission right, AHRS gyro, DoubleSolenoid shifter, 
@@ -115,10 +113,7 @@ public class Drive extends Drivetrain implements Subsystem {
        if(mIsHighGear) {
             leftDrive.setEncoderDistancePerPulse(Constants.kNeoTicksToInHighGear);
             rightDrive.setEncoderDistancePerPulse(Constants.kNeoTicksToInHighGear);
-            if(lastHighGear)
-                 shifter.set(Value.kOff);
-            else
-                shifter.set(Constants.kHighGear);
+            shifter.set(Constants.kHighGear);
             leftNeoInchesHighGear =  getLeftNeoPosition() - leftNeoInchesLowGear;
             rightNeoInchesHighGear = getRightNeoPosition() - rightNeoInchesLowGear;
             speedCap = Constants.kRaisedElevatorDriveSpeedCap / Constants.kMaxSpeedHighGear;
@@ -138,7 +133,6 @@ public class Drive extends Drivetrain implements Subsystem {
                 arbFFRight = Constants.kMotionProfileRightBackHigh_Intercept;
             else {
                 arbFFRight = 0;
-
             }
 
 
@@ -146,10 +140,7 @@ public class Drive extends Drivetrain implements Subsystem {
     	else {
             leftDrive.setEncoderDistancePerPulse(Constants.kNeoTicksToInLowGear);
             rightDrive.setEncoderDistancePerPulse(Constants.kNeoTicksToInLowGear);
-            if(!lastHighGear)
-                shifter.set(Value.kOff);
-            else
-                shifter.set(Constants.kLowGear);
+            shifter.set(Constants.kLowGear);
             leftNeoInchesLowGear =  getLeftNeoPosition() - leftNeoInchesHighGear;
             rightNeoInchesLowGear = getRightNeoPosition() - rightNeoInchesHighGear;
             speedCap = Constants.kRaisedElevatorDriveSpeedCap / Constants.kMaxSpeedLowGear;
@@ -272,7 +263,6 @@ public class Drive extends Drivetrain implements Subsystem {
         }
         rightDrive.set(rawRightSpeed, controlMode, arbFFRight);
         leftDrive.set(rawLeftSpeed, controlMode, arbFFLeft);
-        lastHighGear = mIsHighGear;
     }
 
     public void setIdleMode(IdleMode mode) {
@@ -521,6 +511,10 @@ public class Drive extends Drivetrain implements Subsystem {
 
     public void setPlacingOnRocket(boolean rocket) {
         placingCargoOnRocket = rocket;
+    }
+
+    public DriveMode getDriveMode() {
+        return currentDriveMode;
     }
 
     @Override
