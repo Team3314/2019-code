@@ -50,6 +50,7 @@ public class Robot extends TimedRobot {
   public static Climber climber = new Climber(map.climberPiston, map.intakeToGroundPiston, map.highPressure, map.navx);
   public static TrackingStateMachine trackingStateMachine = new TrackingStateMachine();
   public static GamePieceStateMachine gamePieceStateMachine = new GamePieceStateMachine();
+  public static DataLogger logger = DataLogger.getInstance();
 
   public static UsbCamera usbCamera = CameraServer.getInstance().startAutomaticCapture();
 
@@ -89,6 +90,7 @@ public class Robot extends TimedRobot {
   public void disabledInit() {
     drive.resetDriveEncoders();
     cargoIntake.stopLoadingBall();
+    logger.stop();
   }
 
   @Override
@@ -106,6 +108,7 @@ public class Robot extends TimedRobot {
   }
   @Override
   public void autonomousInit() {
+    logger.createNewFile();
     camera.setLightRings(true);
     drive.resetSensors();
     superstructure.stopCompressor();
@@ -118,6 +121,10 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() { 
     if(!elevator.getHomed())
       elevator.setElevatorState(ElevatorControlMode.HOMING);
+    String names[] = {"Left Rocket Sensor", "Right Rocket Sensor", "Camera Distance", "Bookmarked Distance", "Camera Angle"};
+    String values[] = {String.valueOf(drive.getLeftRocketSensor()), String.valueOf(drive.getRightRocketSensor()), 
+                        String.valueOf(camera.getDistance()), String.valueOf(drive.getDistanceToTarget()), String.valueOf(camera.getTargetHorizError())};
+    logger.logData(names, values);
     if(HI.getStopAuto()) {
       stopAuto = true;
     }

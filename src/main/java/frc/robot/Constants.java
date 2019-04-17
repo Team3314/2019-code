@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 public class Constants {
 
-	public static boolean kPracticeBot = false;
+	public static boolean kPracticeBot = true;
 
 
 //Conversions	
@@ -120,7 +120,7 @@ public class Constants {
 		public static double kGyroLockHigh_kF = 0;
 
 	//One side gyrolock
-		public static double kGyroLockOneSideLow_kP = .009;
+		public static double kGyroLockOneSideLow_kP = .00875;
 		public static double kGyroLockOneSideLow_kI = 0;
 		public static double kGyroLockOneSideLow_kD = 0;
 		public static double kGyroLockOneSideLow_kF = 0;
@@ -252,7 +252,7 @@ public class Constants {
 
 		public static final double kJoystickPower = 1;
 
-		public static final double kTurningSensitivityScale = .5;
+		public static final double kTurningSensitivityScale = .25;
 
 
 }

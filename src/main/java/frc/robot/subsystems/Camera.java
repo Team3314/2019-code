@@ -68,7 +68,7 @@ public class Camera implements Subsystem {
 		matchNumber.setNumber(ds.getMatchNumber());
 		matchTime.setNumber(ds.getMatchTime());
 
-		targetInView = hasLeft && hasRight &&  distance >= 24;
+		targetInView = hasLeft && hasRight &&  distance >= 18;
 
 		targetsLight.set(targetInView);
     }
