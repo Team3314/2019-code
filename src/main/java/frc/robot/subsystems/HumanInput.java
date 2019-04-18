@@ -43,7 +43,7 @@ public class HumanInput implements Subsystem {
 	
 	@Override
 	public void update() {
-		sticksZero = !getGyrolock() && !getTracking() && getLeftThrottle() ==0 && getRightThrottle() == 0;
+		sticksZero = !getGyrolock() && !getTracking() && Math.abs(getSpeed()) < .2 && Math.abs(getTurn()) < .2;
 		if(ds.isDisabled()) {
 			hasGamepad = getHasGamepad();
 		}
@@ -90,7 +90,7 @@ public class HumanInput implements Subsystem {
 		return buttonBox.getRawButton(7);
 	}
 //Drive Controls
-   public double getLeftThrottle() {
+   public double getSpeed() {
 		double throttle = -driver.getRawAxis(1);
 		if(Math.abs(throttle) < Constants.kJoystickDeadband)
 			throttle = 0;
@@ -106,7 +106,7 @@ public class HumanInput implements Subsystem {
 		else 
 			return throttle;
 	}
-	public double getRightThrottle() {
+	public double getTurn() {
 		double throttle = -driver.getRawAxis(4);
 		if(Math.abs(throttle) < Constants.kJoystickDeadband)
 			throttle = 0;
@@ -135,10 +135,10 @@ public class HumanInput implements Subsystem {
 		return false;
 	}
 	public boolean getLightRingsOff() {
-		return leftStick.getRawButton(9);
+		return false;//leftStick.getRawButton(9);
 	}
 	public boolean getLightRingsOn() {
-		return leftStick.getRawButton(10);
+		return false;//leftStick.getRawButton(10);
 	}
 	public boolean getResetGyro() {
 		return buttonBox.getRawButton(9);
@@ -356,16 +356,16 @@ public class HumanInput implements Subsystem {
 	}
 
 	public boolean turnToZero() {
-		return leftStick.getPOV() == 0;
+		return false;//leftStick.getPOV() == 0;
 	}
 	public boolean turnToRight() {
-		return leftStick.getPOV() == 90;
+		return false;// leftStick.getPOV() == 90;
 	}
 	public boolean turnBack() {
-		return leftStick.getPOV() == 180;
+		return false;// leftStick.getPOV() == 180;
 	}
 	public boolean turnToLeft() {
-		return leftStick.getPOV() == 270;
+		return false;// leftStick.getPOV() == 270;
 	}
 	public boolean getHasGamepad() {
 		return gamepad.getPOV() == -1;

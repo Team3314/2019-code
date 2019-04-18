@@ -39,14 +39,14 @@ public class Constants {
 		public static double kSafeImpactRevsHighGear = kSafeImpactSpeed / kRevToInConvFactorHighGear * 60;
 		public static double kSafeImpactRevsLowGear = kSafeImpactSpeed / kRevToInConvFactorLowGear * 60;
 		public static double kDriveDeadband = .1;
-		public static double kDriveRampRate = .5;
+		public static double kDriveRampRate = .375;
 		public static double kDriveVoltageScale = 12.0;
 		public static double kDriveClosedLoopRampTime = 0;
 		public static double kMaxSpeedRevs = 5600;
 		public static double kMaxSpeedLowGear = 108; //fps * 12 * 60 / kRevtoin
 		public static double kMaxSpeedHighGear = 246;//fps * 12 * 60 / kRevtoin
 		public static double kMaxDeccelerationHighGear = -36;//inches/sec^2
-		public static double kMaxDeccelerationLowGear = -25;//inches/sec^2
+		public static double kMaxDeccelerationLowGear = -36;//inches/sec^2
 		public static double kMaxRampHighGear = kMaxSpeedHighGear / kMaxDeccelerationHighGear; 
 		public static double kMaxRampLowGear = kMaxSpeedLowGear / kMaxDeccelerationLowGear;
 		public static MotorType kSparkMotorType = CANSparkMaxLowLevel.MotorType.kBrushless;
