@@ -51,8 +51,8 @@ public class Constants {
 		public static double kMaxRampLowGear = kMaxSpeedLowGear / kMaxDeccelerationLowGear;
 		public static MotorType kSparkMotorType = CANSparkMaxLowLevel.MotorType.kBrushless;
 		public static double kDrivePIDPeriod = .02;
-		public static double kRaisedElevatorDriveRampRate = .5;
-		public static double kRaisedElevatorDriveSpeedCap = 60; // in/s
+		public static double kRaisedElevatorDriveRampRate = 1;
+		public static double kRaisedElevatorDriveSpeedCap = 50; // in/s
 		
 
 //Elevator

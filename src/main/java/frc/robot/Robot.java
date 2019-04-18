@@ -227,7 +227,7 @@ public class Robot extends TimedRobot {
             }
             else {  
               drive.setDriveMode(DriveMode.TANK);
-              drive.setTank(HI.getLeftThrottle(), HI.getRightThrottle(), Constants.kJoystickPower, Constants.kTurningSensitivityScale);
+              drive.setArcade(HI.getLeftThrottle(), HI.getRightThrottle(), 3, .5); //Constants.kJoystickPower, Constants.kTurningSensitivityScale);
             }
           }
           if(HI.getHighGear()) {

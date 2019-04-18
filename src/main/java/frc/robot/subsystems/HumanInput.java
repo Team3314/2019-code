@@ -27,6 +27,7 @@ public class HumanInput implements Subsystem {
 	private final Joystick rightStick;
 	private final Joystick buttonBox;
 	private final Joystick autoSelector;
+	private final Joystick driver;
 
 	public boolean hasGamepad = false, sticksZero = false;
     
@@ -36,6 +37,7 @@ public class HumanInput implements Subsystem {
 		rightStick = new Joystick(2);
 		buttonBox = new Joystick(3);
 		autoSelector = new Joystick(4);
+		driver = new Joystick(5);
 	}
 
 	
@@ -70,7 +72,7 @@ public class HumanInput implements Subsystem {
 	}
 	//Actions
 	public boolean getTracking() {
-		return leftStick.getRawButton(1); // trigger
+		return driver.getRawAxis(2) > .5; // trigger
 	}
 	public boolean getAuto() {
 		return  false;//leftStick.getRawButton(2); // side button
@@ -89,7 +91,7 @@ public class HumanInput implements Subsystem {
 	}
 //Drive Controls
    public double getLeftThrottle() {
-		double throttle = -leftStick.getRawAxis(1);
+		double throttle = -driver.getRawAxis(1);
 		if(Math.abs(throttle) < Constants.kJoystickDeadband)
 			throttle = 0;
 		else if(throttle < 0) {
@@ -105,7 +107,7 @@ public class HumanInput implements Subsystem {
 			return throttle;
 	}
 	public double getRightThrottle() {
-		double throttle = -rightStick.getRawAxis(1);
+		double throttle = -driver.getRawAxis(4);
 		if(Math.abs(throttle) < Constants.kJoystickDeadband)
 			throttle = 0;
 		else if(throttle < 0) {
@@ -121,13 +123,13 @@ public class HumanInput implements Subsystem {
 			return throttle;
 	}
 	public boolean getLowGear() {
-		return leftStick.getRawButton(4);
+		return driver.getRawButton(5);
 	}
 	public boolean getHighGear() {
-		return leftStick.getRawButton(6);
+		return driver.getRawButton(6);
 	}
 	public boolean getGyrolock() {
-		return rightStick.getRawButton(1);
+		return driver.getRawAxis(3) > .5;
 	}
 	public boolean getVision() {
 		return false;

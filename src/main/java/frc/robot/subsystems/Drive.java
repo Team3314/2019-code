@@ -48,7 +48,7 @@ public class Drive extends Drivetrain implements Subsystem {
     SpeedControllerMode controlMode = SpeedControllerMode.kIdle;
     
     //Hardware states
-    private boolean mIsHighGear, elevatorUp, velocityControl = false, placingCargoOnRocket;
+    private boolean mIsHighGear, elevatorUp, velocityControl = true, placingCargoOnRocket;
 
     private IdleMode idleMode;
     private double rawLeftSpeed, rawRightSpeed, arbFFLeft = 0, arbFFRight = 0, desiredAngle, cameraTurnAngle, tickToInConversion, speedCap,
@@ -167,7 +167,7 @@ public class Drive extends Drivetrain implements Subsystem {
         tickToInConversion = neoInchesPerRev / Constants.kNEODriveEncoderCodesPerRev;
         if(velocityControl)
             controlMode = SpeedControllerMode.kVelocity;
-        else 
+        else
                 controlMode = SpeedControllerMode.kDutyCycle;
         gryoAngleHistory[gyroAngleHistoryStoreIndex] = getAngle();
         gyroAngleHistoryStoreIndex++;
@@ -191,10 +191,10 @@ public class Drive extends Drivetrain implements Subsystem {
             setOpenLoopRampTime(Constants.kRaisedElevatorDriveRampRate);
             setClosedLoopRampTime(Constants.kRaisedElevatorDriveRampRate);            
             if(Math.abs(leftDemand) > speedCap) {
-                leftDemand = speedCap;
+                leftDemand = Math.copySign(speedCap, leftDemand);
             }
             if(Math.abs(rightDemand) > speedCap) {
-                rightDemand = speedCap;
+                rightDemand =  Math.copySign(speedCap, rightDemand);;
             }
         }
         else {
