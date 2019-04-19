@@ -356,14 +356,18 @@ public class Drive extends Drivetrain implements Subsystem {
                 gyroControl.enable();
                 setDesiredAngle(getAngle());
                 gyroControl.setPID(Constants.kGyroLockLow_kP, Constants.kGyroLockLow_kI, Constants.kGyroLockLow_kD, Constants.kGyroLockLow_kF);
+                gyroControl.setAbsoluteTolerance(Constants.kAbsoluteGyroTolerance);
             }
             else if(mode == DriveMode.GYROLOCK_LEFT || mode == DriveMode.GYROLOCK_RIGHT) {
                 gyroControl.enable();
                 setDesiredAngle(getAngle());
                 gyroControl.setPID(Constants.kGyroLockOneSideLow_kP, Constants.kGyroLockOneSideLow_kI, Constants.kGyroLockOneSideLow_kD, Constants.kGyroLockOneSideLow_kF);
+                gyroControl.setAbsoluteTolerance(Constants.kAbsoluteGyroTolerance);
             }
             else if(mode == DriveMode.VISION_CONTROL) {
                 gyroControl.enable();
+                gyroControl.setPID(Constants.kVisionCtrl_kP, Constants.kVisionCtrl_kI, Constants.kVisionCtrl_kD, Constants.kVisionCtrl_kF);
+                gyroControl.setAbsoluteTolerance(Constants.kVisionGyroTolerance);
             }
             else {
                 gyroControl.disable();

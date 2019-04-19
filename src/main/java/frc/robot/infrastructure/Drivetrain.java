@@ -56,11 +56,16 @@ public class Drivetrain {
         leftDemand = left;
         rightDemand = right;
     }
-    public void setArcade(double speed, double turn, double power, double turningScale) {
-        double extraTurn = 0;
+    public void setArcade(double speed, double turn, double turnPower, double speedPower, double turningScale) {
+        //double extraTurn = 0;
         if((Math.abs(speed) +Math.abs(turn)) > 1) {
-            extraTurn = (Math.abs(speed) +Math.abs(turn)) - 1;
+            //extraTurn = (Math.abs(speed) +Math.abs(turn)) - 1;
+                leftDemand = (Math.copySign(Math.pow(speed, speedPower), speed) - Math.copySign(Math.pow(turn, turnPower), turn) *turningScale) * (1 /((Math.abs(speed) +Math.abs(turn))));
+                rightDemand = (Math.copySign(Math.pow(speed, speedPower), speed) + Math.copySign(Math.pow(turn, turnPower), turn) *turningScale) * (1 /((Math.abs(speed) +Math.abs(turn))));
+            return;
         }
+            leftDemand = Math.copySign(Math.pow(speed, speedPower), speed) - Math.copySign(Math.pow(turn, turnPower), turn) * turningScale;
+            rightDemand = Math.copySign(Math.pow(speed, speedPower), speed) + Math.copySign(Math.pow(turn, turnPower), turn) * turningScale;/*
         if(speed <= 0) {
             if(turn > 0) {
                 leftDemand = Math.copySign(Math.pow(speed, power), speed) - Math.copySign(Math.pow(turn, power), turn) *turningScale;
@@ -80,6 +85,10 @@ public class Drivetrain {
                 leftDemand = Math.copySign(Math.pow(speed, power), speed) - Math.copySign(Math.pow(turn, power), turn) *turningScale;
                 rightDemand = Math.copySign(Math.pow(speed, power), speed) + Math.copySign(Math.pow(turn, power), turn) *turningScale - extraTurn;
             }
-        }
+        }*/
+    }
+    public void setArcade(double speed, double speedPower) {
+        leftDemand = Math.copySign(Math.pow(speed, speedPower), speed);
+        rightDemand = Math.copySign(Math.pow(speed, speedPower), speed);
     }
 }

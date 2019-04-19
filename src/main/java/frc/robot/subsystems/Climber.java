@@ -21,7 +21,9 @@ public class Climber implements Subsystem {
         DRIVE,
         RAISE_CLIMBER,
         KEEP_DRIVING,
-        STOP
+        STOP,
+        INTAKE_DOWN_LEVEL2,
+        CLIMBER_DOWN_LEVEL2,
 
     }
 
@@ -170,6 +172,9 @@ public class Climber implements Subsystem {
                 }
                 if(climbRequest && !lastClimbRequest)
                     currentState = State.WAITING;
+                break;
+            case INTAKE_DOWN_LEVEL2:
+                
                 break;
         }
         timer.stop();

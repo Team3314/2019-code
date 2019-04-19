@@ -205,12 +205,12 @@ public class Robot extends TimedRobot {
           if(!driverDisabled) {
           trackingStateMachine.setRequest(HI.getTracking());
           if(trackingStateMachine.isDriving()) {
-            trackingStateMachine.setDriveSpeed(HI.getSpeed());
+            trackingStateMachine.setDriveSpeed(HI.getSpeed() * .8);
           }
           else{
             if(HI.getGyrolock()) {
               drive.setDriveMode(DriveMode.GYROLOCK);
-              drive.setArcade(HI.getSpeed(), 0, 3, .5);
+              drive.setArcade(HI.getSpeed(), 2);
               /*XXX GYRO TEST CODE
               if(HI.turnToZero())
                 drive.setDesiredAngle(0);
@@ -223,7 +223,7 @@ public class Robot extends TimedRobot {
             }
             else {  
               drive.setDriveMode(DriveMode.TANK);
-              drive.setArcade(HI.getSpeed(), HI.getTurn(), 3, .5); //Constants.kJoystickPower, Constants.kTurningSensitivityScale);
+              drive.setArcade(HI.getSpeed(), HI.getTurn(), 2, 2, 1); //Constants.kJoystickPower, Constants.kTurningSensitivityScale);
             }
           }
           if(HI.getHighGear()) {
