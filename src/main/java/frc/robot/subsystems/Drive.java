@@ -235,6 +235,8 @@ public class Drive extends Drivetrain implements Subsystem {
                 if(!gyroInPosition()) {
                     //leftDemand = 0;
                     //rightDemand = 0;
+                    leftDemand *= .85;
+                    rightDemand *= .85;
                 }
                 calculatedVelocity = calcVelocity(Constants.kSafeImpactSpeed, getDistanceToTarget());
                 if((leftDemand * maxSpeed) > calculatedVelocity) {

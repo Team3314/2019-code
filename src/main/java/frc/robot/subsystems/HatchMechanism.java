@@ -126,6 +126,7 @@ public class HatchMechanism implements Subsystem {
         else   
             gripper.set(Constants.kGripperUp);
         lastPlaceRequest = placeRequest;
+        lastRetractRequest = retractRequest;
         lastIntakeRequest = intakeRequest;
 
     }

@@ -10,10 +10,10 @@ public class AutoModeSelector {
 	private static int autoModeDecimal;
 	private static Autonomous autoMode;
 	private static Autonomous auto0 = null,
-						auto1 = null,
-						auto2 = new AutoFrontCargoShip(),
+						auto1 = new AutoFrontCargoShip(),
+						auto2 = new AutoTwoHatchRocketClose(),
 						auto3 = null,
-						auto4 = new AutoTwoHatchRocketClose(),
+						auto4 = null,
 						auto5 = null,
 						auto6 = null,
 						auto7 = null,

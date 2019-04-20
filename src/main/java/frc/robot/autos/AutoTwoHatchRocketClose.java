@@ -23,10 +23,26 @@ public class AutoTwoHatchRocketClose extends Autonomous {
     }
 
     private State currentState = State.START;
+    private String firstHatchBinary, secondHatchBinary;
+    private int firstHatch, secondHatch;
 
     @Override
     public void reset() {
         currentState =State.START;
+        firstHatchBinary = ("" + HI.getFirstHatchTwo() + HI.getFirstHatchOne());
+        secondHatchBinary = ("" + HI.getSecondHatchTwo() + HI.getSecondHatchOne());
+        firstHatch = Integer.parseInt(firstHatchBinary, 2);
+        secondHatch = Integer.parseInt(secondHatchBinary, 2);
+        if(firstHatch > 3 || firstHatch < 1)
+            firstHatch = 1;
+        if(secondHatch > 3 || secondHatch < 1)
+            secondHatch = 2;
+        if(firstHatch == secondHatch) {
+            firstHatch = 1;
+            secondHatch = 2;
+        }
+        System.out.println(firstHatch);
+        System.out.println(secondHatch);
     }
 
 
@@ -39,7 +55,20 @@ public class AutoTwoHatchRocketClose extends Autonomous {
                 currentState = State.PLACE_HATCH1;
                 break;
             case PLACE_HATCH1:
-                gamePieceInteract(GamePieceStateMachineMode.LEVEL1, .65);
+                switch(firstHatch) {
+                    case 1:
+                        gamePieceInteract(GamePieceStateMachineMode.LEVEL1, .65);
+                        break;
+                    case 2:
+                        gamePieceInteract(GamePieceStateMachineMode.LEVEL2, .65);
+                        break;
+                    case 3:
+                        gamePieceInteract(GamePieceStateMachineMode.LEVEL3, .65);
+                        break;
+                    default:
+                        gamePieceInteract(GamePieceStateMachineMode.LEVEL1, .65);
+                        break;
+                }
                 if(gamePieceStateMachine.getCurrentState() == GamePieceState.BACKUP_HATCH) {
                     stopGamePieceInteract();
                     hatch.setSliderOut(false);
@@ -92,8 +121,21 @@ public class AutoTwoHatchRocketClose extends Autonomous {
                 }
                 break;
             case PLACE_HATCH2:
-                gamePieceInteract(GamePieceStateMachineMode.LEVEL2, .65);
-                if(gamePieceStateMachine.isDone()) {
+                switch(secondHatch) {
+                    case 1:
+                        gamePieceInteract(GamePieceStateMachineMode.LEVEL1, .65);
+                        break;
+                    case 2:
+                        gamePieceInteract(GamePieceStateMachineMode.LEVEL2, .65);
+                        break;
+                    case 3:
+                        gamePieceInteract(GamePieceStateMachineMode.LEVEL3, .65);
+                        break;
+                    default:
+                        gamePieceInteract(GamePieceStateMachineMode.LEVEL2, .65);
+                        break;
+                }
+                if(gamePieceStateMachine.isDone() && elevator.inPosition()) {
                     stopGamePieceInteract();
                     currentState = State.TURN_TO_STATION2;
                     if(getStartPos() == "StartR")

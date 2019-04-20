@@ -135,10 +135,10 @@ public class HumanInput implements Subsystem {
 		return false;
 	}
 	public boolean getLightRingsOff() {
-		return false;//leftStick.getRawButton(9);
+		return buttonBox.getRawButton(5);//leftStick.getRawButton(9);
 	}
 	public boolean getLightRingsOn() {
-		return false;//leftStick.getRawButton(10);
+		return buttonBox.getRawButton(8);//leftStick.getRawButton(10);
 	}
 	public boolean getResetGyro() {
 		return buttonBox.getRawButton(9);
@@ -164,9 +164,6 @@ public class HumanInput implements Subsystem {
 	}
 	public boolean getElevatorCargoStationPickup() {
 		return false;
-	}
-	public boolean getElevatorVisionTracking() {
-		return buttonBox.getRawButton(8);
 	}
 	public boolean getStoreElevatorLevel1() {
 		return gamepad.getPOV() == 180;
@@ -347,6 +344,9 @@ public class HumanInput implements Subsystem {
 	public boolean getAutoClimbMode(){
 		return getShift() && getClimbMode();
 	}
+	public boolean getLevelTwoClimb() {
+		return getHatchRetract() && getClimbMode();
+	}
 	public boolean getPrevious() {
 		return gamepad.getRawButton(7) && gamepad.getRawButton(6);
 	}
@@ -375,7 +375,7 @@ public class HumanInput implements Subsystem {
 	}
 
 	public boolean getDebugMode() {
-		return autoSelector.getRawButton(1);
+		return autoSelector.getRawButton(3);
 	} 
 
 	public boolean getBackwards() {
@@ -385,5 +385,24 @@ public class HumanInput implements Subsystem {
 		return sticksZero;
 	}
 
-
+	public int getFirstHatchOne() {
+		if(autoSelector.getRawButton(7))
+			return 1;
+		return 0;
+	}
+	public int getFirstHatchTwo() {
+		if(autoSelector.getRawButton(8)) 
+			return 1;
+		return 0;
+	}
+	public int getSecondHatchOne() {
+		if(autoSelector.getRawButton(10))
+			return 1;
+		return 0;
+	}
+	public int getSecondHatchTwo() {
+		if(autoSelector.getRawButton(11)) 
+			return 1;
+		return 0;
+	}
 }

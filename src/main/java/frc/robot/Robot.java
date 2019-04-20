@@ -164,10 +164,12 @@ public class Robot extends TimedRobot {
     else if(climber.isClimbing()) {
       climber.setStopClimb(HI.getAbortClimb());
       climber.setClimbRequest(HI.getClimbMode());
+      climber.setLevelTwoClimbRequest(HI.getLevelTwoClimb());
       climber.setAutoClimbButton(HI.getAutoClimbMode());
       climber.setPreviousStateRequest(HI.getPrevious());
       trackingStateMachine.reset();
       gamePieceStateMachine.reset();
+      elevator.set(0);
     }
     else {
       if(gamePieceStateMachine.isPlacing()) {
@@ -192,6 +194,7 @@ public class Robot extends TimedRobot {
       }
       climber.setClimbRequest(HI.getClimbMode());
       climber.setAutoClimbButton(HI.getAutoClimbMode());
+      climber.setLevelTwoClimbRequest(HI.getLevelTwoClimb());
       climber.setPreviousStateRequest(HI.getPrevious());
       climber.setIntakeFurtherDownRequest(HI.getIntakeFurtherDown());
       if(HI.getResetGyro()) {
@@ -302,10 +305,6 @@ public class Robot extends TimedRobot {
                 else if(HI.getElevatorPickup()) { 
                   elevator.set(Constants.kElevatorHatchPickup);
                 }
-                else if(HI.getElevatorVisionTracking()) {
-                  elevator.set(Constants.kElevatorLoweredHatchPickup);
-                }
-                
               }
 
             /**

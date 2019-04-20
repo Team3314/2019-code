@@ -39,14 +39,14 @@ public class Constants {
 		public static double kSafeImpactRevsHighGear = kSafeImpactSpeed / kRevToInConvFactorHighGear * 60;
 		public static double kSafeImpactRevsLowGear = kSafeImpactSpeed / kRevToInConvFactorLowGear * 60;
 		public static double kDriveDeadband = .1;
-		public static double kDriveRampRate = .375;
+		public static double kDriveRampRate = .4;
 		public static double kDriveVoltageScale = 12.0;
 		public static double kDriveClosedLoopRampTime = 0;
 		public static double kMaxSpeedRevs = 5600;
 		public static double kMaxSpeedLowGear = 108; //fps * 12 * 60 / kRevtoin
 		public static double kMaxSpeedHighGear = 246;//fps * 12 * 60 / kRevtoin
 		public static double kMaxDeccelerationHighGear = -36;//inches/sec^2
-		public static double kMaxDeccelerationLowGear = -36;//inches/sec^2
+		public static double kMaxDeccelerationLowGear = -25;//inches/sec^2
 		public static double kMaxRampHighGear = kMaxSpeedHighGear / kMaxDeccelerationHighGear; 
 		public static double kMaxRampLowGear = kMaxSpeedLowGear / kMaxDeccelerationLowGear;
 		public static MotorType kSparkMotorType = CANSparkMaxLowLevel.MotorType.kBrushless;
@@ -148,8 +148,8 @@ public class Constants {
 		public static int kHighGearVelocitySlot = 1;
 	//Vision
 		public static double kVisionCtrl_kP = .01;
-		public static double kVisionCtrl_kI = 0;
-		public static double kVisionCtrl_kD = .035;
+		public static double kVisionCtrl_kI = 0.00001;
+		public static double kVisionCtrl_kD = .03;
 		public static double kVisionCtrl_kF = 0;
 		public static double kVisionCtrl_kIZone = 0;
 		public static int kVisionCtrlSlot = 3;
@@ -219,7 +219,7 @@ public class Constants {
 	
 //Gyro
 		public static double kGyroOutputRange = 1;
-		public static double kVisionGyroTolerance = 3;
+		public static double kVisionGyroTolerance = 2;
 		public static double kAbsoluteGyroTolerance = 5;
 
 //Pneumatics
@@ -247,7 +247,7 @@ public class Constants {
 		public static final int kGyroDelay = 4;
 
 		//Controls
-		public static final double kJoystickDeadband = .075;
+		public static final double kJoystickDeadband = .1;
 
 		public static final double kJoystickThrottleScale = 1/ (1-kJoystickDeadband);
 
